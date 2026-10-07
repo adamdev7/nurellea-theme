@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -7,28 +16,38 @@
           "type": "bundle_tier",
           "settings": {
             "quantity": 1,
-            "discount": 0
+            "discount": 0,
+            "title": "",
+            "subtitle": "",
+            "badge": ""
           }
         },
         "nurellea_2": {
           "type": "bundle_tier",
           "settings": {
             "quantity": 2,
-            "discount": 10
+            "discount": 10,
+            "title": "",
+            "subtitle": "",
+            "badge": ""
           }
         },
         "nurellea_3": {
           "type": "bundle_tier",
           "settings": {
             "quantity": 3,
-            "discount": 15
+            "discount": 15,
+            "title": "",
+            "subtitle": "",
+            "badge": ""
           }
         },
         "nurellea_4": {
           "type": "assurance",
           "settings": {
             "icon": "lock",
-            "text": "Secure checkout"
+            "text": "Secure checkout",
+            "link": ""
           }
         },
         "nurellea_5": {
@@ -57,11 +76,12 @@
         "nurellea_6"
       ],
       "settings": {
+        "product": "",
         "color_scheme": "scheme-1",
         "show_breadcrumbs": true,
         "variant_heading": "Choose your supply",
         "default_variant_position": 3,
-        "bundle_discounts_live": false,
+        "bundle_discounts_live": true,
         "unit_singular": "bag",
         "unit_plural": "bags",
         "supply_days_per_unit": 30,
@@ -78,13 +98,15 @@
     "ingredients": {
       "type": "nurellea-ingredients",
       "settings": {
+        "product": "",
         "color_scheme": "scheme-3",
         "eyebrow": "What's inside",
         "heading": "Ingredients you can",
         "heading_accent": "actually read",
         "text": "<p>Each ingredient below is listed exactly as on the label. See the supplement facts above for amounts per serving.</p>",
         "columns": "4",
-        "button_label": ""
+        "button_label": "",
+        "button_link": ""
       }
     },
     "ritual": {
@@ -118,10 +140,13 @@
         "nurellea_3"
       ],
       "settings": {
+        "product": "",
         "color_scheme": "scheme-1",
         "eyebrow": "How to use",
         "heading": "Your daily",
         "heading_accent": "ritual",
+        "text": "",
+        "show_placeholders": false,
         "show_directions": true
       }
     },
@@ -129,6 +154,7 @@
       "type": "nurellea-reviews",
       "settings": {
         "scope": "product",
+        "product": "",
         "color_scheme": "scheme-2",
         "eyebrow": "Reviews",
         "heading": "What customers",
@@ -139,7 +165,10 @@
         "limit": 0,
         "show_form": true,
         "form_expanded": false,
-        "hide_when_empty": false
+        "hide_when_empty": false,
+        "app_only": false,
+        "link_label": "",
+        "link_url": ""
       }
     },
     "faq": {
@@ -204,13 +233,18 @@
       ],
       "settings": {
         "source": "product",
+        "product": "",
         "color_scheme": "scheme-1",
         "layout": "split",
         "eyebrow": "FAQ",
         "heading": "Good to",
         "heading_accent": "know",
+        "text": "",
         "contact_label": "Still have a question? Contact us",
-        "contact_link": "/pages/contact"
+        "contact_link": "/pages/contact",
+        "show_search": false,
+        "card_style": false,
+        "open_first": false
       }
     }
   },

@@ -39,7 +39,6 @@
     const go = (delta) => { active = (active + delta + visible.length) % visible.length; layout(); };
     root.querySelector('[data-nh-prev]')?.addEventListener('click', () => go(-1));
     root.querySelector('[data-nh-next]')?.addEventListener('click', () => go(1));
-    items.forEach((el) => el.addEventListener('click', () => { const i = visible.indexOf(el); if (i > -1) { active = i; layout(); } }));
     tabs.forEach((t) => t.addEventListener('click', () => {
       select(tabs, t);
       const g = t.dataset.nhFilter;
@@ -49,21 +48,53 @@
       layout();
     }));
 
-    let startX = null;
+    let lastSwipe = 0;
     const stage = root.querySelector('.nh-stage');
     if (stage) {
-      stage.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+      let startX = 0;
+      let startY = 0;
+      let tracking = false;
+      stage.addEventListener('touchstart', (e) => {
+        if (e.target.closest('a, button')) { tracking = false; return; }
+        const t = e.changedTouches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+        tracking = true;
+      }, { passive: true });
+      stage.addEventListener('touchend', (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        if (Math.abs(dx) < 28 || Math.abs(dx) < Math.abs(dy)) return;
+        lastSwipe = Date.now();
+        go(dx < 0 ? 1 : -1);
+      }, { passive: true });
       stage.addEventListener('pointerup', (e) => {
-        if (startX === null) return;
+        if (e.pointerType === 'touch' || !tracking) return;
+        tracking = false;
         const dx = e.clientX - startX;
-        startX = null;
-        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+        if (Math.abs(dx) < 40) return;
+        lastSwipe = Date.now();
+        go(dx < 0 ? 1 : -1);
+      });
+      stage.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch' || e.target.closest('a, button')) return;
+        startX = e.clientX;
+        startY = 0;
+        tracking = true;
       });
       stage.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') go(-1);
         if (e.key === 'ArrowRight') go(1);
       });
     }
+    items.forEach((el) => el.addEventListener('click', (e) => {
+      if (Date.now() - lastSwipe < 450) { e.preventDefault(); e.stopPropagation(); return; }
+      const i = visible.indexOf(el);
+      if (i > -1) { active = i; layout(); }
+    }));
     window.addEventListener('resize', layout, { passive: true });
     layout();
   }

@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "logo_height": 34,
@@ -70,6 +79,21 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 12,
     "variant_button_width": "equal-width-buttons",
+    "nurellea_product": "gut-gummies",
+    "brand_support_email": "",
+    "subscriptions_enabled": true,
+    "skip_cart_to_checkout": false,
+    "reviews_allow_submissions": false,
+    "reviews_demo_preview": true,
+    "seo_noindex_all": false,
+    "seo_default_description": "Nurellea makes women’s wellness gummies for a simple, enjoyable daily routine. Shop gut gummies, read the full ingredient details and find answers to common questions.",
+    "show_placeholder_labels": true,
+    "legacy_vendor_scripts": true,
+    "phx_enabled": false,
+    "phx_checkout_url": "",
+    "phx_routing_mode": "all",
+    "phx_product_allowlist": "",
+    "phx_buy_now_mode": "variant_only",
     "app_manager_api_base": "https://appmanager.store",
     "app_manager_store_id": "",
     "meta_capi_enabled": true,
@@ -77,13 +101,6 @@
     "meta_capi_store_id": "",
     "meta_capi_browser_token": "",
     "content_for_index": [],
-    "blocks": {
-      "620429387195482783": {
-        "type": "shopify://apps//blocks/embed-gp-script-head/20b379d4-1b20-474c-a6ca-665c331919f3",
-        "disabled": true,
-        "settings": {}
-      }
-    },
     "color_schemes": {
       "scheme-1": {
         "settings": {
@@ -358,21 +375,7 @@
           "selected_variant_hover_border_color": "#1f1b19"
         }
       }
-    },
-    "phx_enabled": false,
-    "phx_checkout_url": "",
-    "phx_routing_mode": "all",
-    "phx_product_allowlist": "",
-    "phx_buy_now_mode": "variant_only",
-    "brand_support_email": "",
-    "subscriptions_enabled": false,
-    "skip_cart_to_checkout": false,
-    "reviews_allow_submissions": true,
-    "reviews_demo_preview": false,
-    "seo_noindex_all": false,
-    "seo_default_description": "Nurellea makes women’s wellness gummies for a simple, enjoyable daily routine. Shop gut gummies, read the full ingredient details and find answers to common questions.",
-    "show_placeholder_labels": true,
-    "legacy_vendor_scripts": false
+    }
   },
   "presets": {
     "Horizon": {

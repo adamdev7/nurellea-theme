@@ -19,7 +19,7 @@
 -%}
 {%- if image != blank -%}
   {%- if priority -%}
-    {{ image | image_url: width: 1600 | image_tag: loading: ld, fetchpriority: 'high', class: class, sizes: sz, alt: alt, widths: '480, 800, 1200, 1600' }}
+    {{ image | image_url: width: 1600 | image_tag: loading: ld, preload: true, class: class, sizes: sz, alt: alt, widths: '480, 800, 1200, 1600' }}
   {%- else -%}
     {{ image | image_url: width: 1600 | image_tag: loading: ld, class: class, sizes: sz, alt: alt, widths: '480, 800, 1200, 1600' }}
   {%- endif -%}

@@ -1,7 +1,19 @@
 {%- liquid
   assign p = section.settings.product | default: settings.nurellea_product
-  assign shop_url = section.settings.button_link | default: p.url | default: routes.all_products_collection_url
-  assign promo_url = section.settings.promo_link | default: shop_url
+  assign shop_url = routes.all_products_collection_url
+  if section.settings.button_link != blank
+    assign shop_url = section.settings.button_link
+  elsif p != blank
+    assign shop_url = p.url | default: shop_url
+  endif
+  assign promo_url = shop_url
+  if section.settings.promo_link != blank
+    assign promo_url = section.settings.promo_link
+  endif
+  assign pouch_alt = 'Nurellea Gut Gummies'
+  if p != blank
+    assign pouch_alt = p.title | default: pouch_alt
+  endif
 -%}
 <div class="nh nh-hero-host">
   {%- if section.settings.show_awning -%}
@@ -44,7 +56,7 @@
     <div class="nh-hero__media">
       {% render 'nurellea-home-img', image: section.settings.image, asset: 'nl-home-hero.webp', asset_small: 'nl-home-hero-960.webp', small_w: 960, width: 1280, height: 720, alt: section.settings.image_alt, class: 'nh-hero__bg', loading: 'eager', priority: true, sizes: '(min-width: 990px) 86vw, 100vw' %}
       {%- if section.settings.show_pouch -%}
-        {% render 'nurellea-home-img', image: section.settings.pouch, asset: 'nurellea-gut-gummies-pouch.webp', asset_small: 'nurellea-gut-gummies-pouch-480.webp', small_w: 480, width: 819, height: 819, alt: p.title, class: 'nh-hero__pouch', loading: 'eager', sizes: '(min-width: 990px) 20vw, 40vw' %}
+        {% render 'nurellea-home-img', image: section.settings.pouch, asset: 'nurellea-gut-gummies-pouch.webp', asset_small: 'nurellea-gut-gummies-pouch-480.webp', small_w: 480, width: 819, height: 819, alt: pouch_alt, class: 'nh-hero__pouch', loading: 'eager', sizes: '(min-width: 990px) 20vw, 40vw' %}
       {%- endif -%}
     </div>
     {%- if section.settings.sticker_1 != blank -%}
@@ -61,7 +73,7 @@
 {% schema %}
 {
   "name": "Home: hero",
-  "tag": "section",
+  "tag": "div",
   "class": "nh-section-hero",
   "settings": [
     { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product in Theme settings." },

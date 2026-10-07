@@ -1,6 +1,11 @@
 {%- liquid
   assign p = section.settings.product | default: settings.nurellea_product
-  assign shop_url = section.settings.button_link | default: p.url | default: routes.all_products_collection_url
+  assign shop_url = routes.all_products_collection_url
+  if section.settings.button_link != blank
+    assign shop_url = section.settings.button_link
+  elsif p != blank
+    assign shop_url = p.url | default: shop_url
+  endif
   assign perks = 'perk_1,perk_2,perk_3' | split: ','
   assign icons = 'truck,shield,leaf' | split: ','
 -%}

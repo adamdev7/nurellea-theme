@@ -1,6 +1,9 @@
 {%- liquid
   assign p = section.settings.product | default: settings.nurellea_product
-  assign v = p.selected_or_first_available_variant
+  assign v = nil
+  if p != blank
+    assign v = p.selected_or_first_available_variant
+  endif
   assign tiers = section.blocks | where: 'type', 'tier'
   assign focuses = section.blocks | where: 'type', 'focus'
   assign live = section.settings.bundle_discounts_live
@@ -69,8 +72,12 @@
             {%- for tier in tiers -%}
               {%- liquid
                 assign qty = tier.settings.quantity | at_least: 1
+                assign price = 0
+                if v != blank
+                  assign price = v.price | default: 0
+                endif
                 capture math
-                  render 'nurellea-bundle-math', price: v.price, qty: qty, discount: tier.settings.discount, days: days, live: live
+                  render 'nurellea-bundle-math', price: price, qty: qty, discount: tier.settings.discount, days: days, live: live
                 endcapture
                 assign math = math | strip | split: '|'
                 assign t_total = math[0] | plus: 0
@@ -120,7 +127,7 @@
           </ul>
           <p class="nh-builder__tip">{% render 'nurellea-icon', name: 'sparkle' %}<span data-nh-tip data-template="{{ section.settings.tip_template | escape }}"></span></p>
           <div class="nh-builder__actions">
-            {%- if p != blank -%}
+            {%- if p != blank and v != blank -%}
               <form method="post" action="{{ routes.cart_add_url }}" accept-charset="UTF-8" class="nh-builder__form">
                 <input type="hidden" name="form_type" value="product">
                 <input type="hidden" name="utf8" value="✓">

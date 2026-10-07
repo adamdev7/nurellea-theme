@@ -1,6 +1,15 @@
 {%- liquid
   assign p = section.settings.product | default: settings.nurellea_product
-  assign shop_url = section.settings.button_link | default: p.url | default: routes.all_products_collection_url
+  assign shop_url = routes.all_products_collection_url
+  if section.settings.button_link != blank
+    assign shop_url = section.settings.button_link
+  elsif p != blank
+    assign shop_url = p.url | default: shop_url
+  endif
+  assign pouch_alt = 'Nurellea Gut Gummies'
+  if p != blank
+    assign pouch_alt = p.title | default: pouch_alt
+  endif
   assign tags = section.settings.tags | newline_to_br | split: '<br />'
   assign steps = 'step_1,step_2,step_3' | split: ','
   assign icons = 'droplet,gummy,heart' | split: ','
@@ -31,7 +40,7 @@
             {%- endfor -%}
           </ol>
         </div>
-        {% render 'nurellea-home-img', image: section.settings.image, asset: 'nurellea-gut-gummies-pouch.webp', asset_small: 'nurellea-gut-gummies-pouch-480.webp', small_w: 480, width: 819, height: 819, alt: p.title, class: 'nh-motm__pouch', sizes: '(min-width: 990px) 28vw, 52vw' %}
+        {% render 'nurellea-home-img', image: section.settings.image, asset: 'nurellea-gut-gummies-pouch.webp', asset_small: 'nurellea-gut-gummies-pouch-480.webp', small_w: 480, width: 819, height: 819, alt: pouch_alt, class: 'nh-motm__pouch', sizes: '(min-width: 990px) 28vw, 52vw' %}
         <span class="nh-spark" style="left: 56%; top: 2%; --s: 26px;" aria-hidden="true"></span>
         <span class="nh-spark nh-spark--rose" style="right: 4%; top: 12%; --s: 34px;" aria-hidden="true"></span>
       </div>

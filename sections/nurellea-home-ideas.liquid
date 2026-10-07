@@ -1,6 +1,9 @@
 {%- liquid
   assign p = section.settings.product | default: settings.nurellea_product
-  assign shop_url = p.url | default: routes.all_products_collection_url
+  assign shop_url = routes.all_products_collection_url
+  if p != blank
+    assign shop_url = p.url | default: shop_url
+  endif
   assign tabs = 'tab_1,tab_2,tab_3' | split: ','
 -%}
 <section class="nh nh-section nh-ideas" aria-labelledby="NhIdeas-{{ section.id }}" data-nh-ideas>

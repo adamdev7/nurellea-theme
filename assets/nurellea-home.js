@@ -30,9 +30,9 @@
       });
       const cur = visible[active];
       if (cur) {
-        tag.textContent = cur.dataset.tag;
-        name.textContent = cur.dataset.name;
-        text.textContent = cur.dataset.text;
+        if (tag) tag.textContent = cur.dataset.tag || '';
+        if (name) name.textContent = cur.dataset.name || '';
+        if (text) text.textContent = cur.dataset.text || '';
       }
     };
 
@@ -51,17 +51,19 @@
 
     let startX = null;
     const stage = root.querySelector('.nh-stage');
-    stage.addEventListener('pointerdown', (e) => { startX = e.clientX; });
-    stage.addEventListener('pointerup', (e) => {
-      if (startX === null) return;
-      const dx = e.clientX - startX;
-      startX = null;
-      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
-    });
-    stage.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') go(-1);
-      if (e.key === 'ArrowRight') go(1);
-    });
+    if (stage) {
+      stage.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+      stage.addEventListener('pointerup', (e) => {
+        if (startX === null) return;
+        const dx = e.clientX - startX;
+        startX = null;
+        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+      });
+      stage.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') go(-1);
+        if (e.key === 'ArrowRight') go(1);
+      });
+    }
     window.addEventListener('resize', layout, { passive: true });
     layout();
   }

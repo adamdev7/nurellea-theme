@@ -1,6 +1,9 @@
 {%- liquid
   assign p = section.settings.product | default: settings.nurellea_product
-  assign shop_url = p.url | default: routes.all_products_collection_url
+  assign shop_url = routes.all_products_collection_url
+  if p != blank
+    assign shop_url = p.url | default: shop_url
+  endif
 -%}
 <section class="nh nh-section nh-quiz" aria-labelledby="NhQuiz-{{ section.id }}" data-nh-quiz>
   <div class="nh-wrap">
@@ -30,7 +33,7 @@
             {% render 'nurellea-home-img', image: section.settings.pick_image, asset: 'nurellea-gut-gummies-pouch-480.webp', width: 480, height: 480, alt: '', sizes: '84px' %}
           </span>
           <div>
-            <p class="nh-quiz__name">{{ p.title | default: 'Nurellea Gut Gummies' | escape }}</p>
+            <p class="nh-quiz__name">{% if p != blank %}{{ p.title | escape }}{% else %}Nurellea Gut Gummies{% endif %}</p>
             <p class="nh-quiz__why" data-nh-why data-template="{{ section.settings.why_template | escape }}" data-empty="{{ section.settings.empty_text | escape }}"></p>
             {%- if p != blank -%}<p class="nh-quiz__price">{{ p.price_min | money }}</p>{%- endif -%}
           </div>

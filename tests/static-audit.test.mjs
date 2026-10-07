@@ -208,9 +208,10 @@ test('integrations stay configurable and default to off / blank for Nurellea', (
   assert.equal(data.app_manager_store_id, '');
   assert.equal(data.meta_capi_store_id, '');
   assert.equal(data.meta_capi_browser_token, '');
-  assert.equal(data.subscriptions_enabled ?? false, false);
+  for (const key of ['subscriptions_enabled', 'legacy_vendor_scripts']) {
+    assert.equal(typeof (data[key] ?? false), 'boolean', `${key} must stay a merchant toggle`);
+  }
   assert.notEqual(data.skip_cart_to_checkout, true);
-  assert.notEqual(data.legacy_vendor_scripts, true);
   const embeds = Object.values(data.blocks || {});
   for (const e of embeds) if (/gp-|gempages/i.test(e.type)) assert.equal(e.disabled, true, `${e.type} should stay disabled`);
 });

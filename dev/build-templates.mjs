@@ -212,7 +212,7 @@ write(
       show_breadcrumbs: true,
       variant_heading: 'Choose your supply',
       default_variant_position: 3,
-      bundle_discounts_live: false,
+      bundle_discounts_live: true,
       unit_singular: 'bag',
       unit_plural: 'bags',
       supply_days_per_unit: 30,

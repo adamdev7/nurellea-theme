@@ -1,0 +1,108 @@
+<section class="nl-section color-{{ section.settings.color_scheme }}" aria-labelledby="Compare-{{ section.id }}">
+  <div class="nl-container nl-container--narrow">
+    <header class="nl-section-head nl-section-head--center" data-nl-reveal>
+      {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      <h2 id="Compare-{{ section.id }}" class="nl-h2">
+        {{ section.settings.heading | escape }}
+        {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+      </h2>
+      {%- if section.settings.text != blank -%}<div class="nl-lead nl-muted">{{ section.settings.text }}</div>{%- endif -%}
+    </header>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="nl-compare" data-nl-reveal>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Feature</span></th>
+              <th scope="col" class="nl-compare__us">
+                {%- if section.settings.show_logo and settings.logo != blank -%}
+                  {{ settings.logo | image_url: width: 240 | image_tag: loading: 'lazy', alt: shop.name, class: 'nl-compare__logo' }}
+                {%- else -%}
+                  {{ section.settings.us_label | escape }}
+                {%- endif -%}
+              </th>
+              <th scope="col" class="nl-compare__them">{{ section.settings.them_label | escape }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for block in section.blocks -%}
+              <tr {{ block.shopify_attributes }}>
+                <th scope="row">{{ block.settings.feature | escape }}</th>
+                <td class="nl-compare__us">
+                  {%- if block.settings.us_text != blank -%}
+                    <span class="nl-compare__text">{{ block.settings.us_text | escape }}</span>
+                  {%- else -%}
+                    <span class="nl-compare__mark nl-compare__mark--yes">{% render 'nurellea-icon', name: 'check' %}<span class="visually-hidden">Yes</span></span>
+                  {%- endif -%}
+                </td>
+                <td class="nl-compare__them">
+                  {%- case block.settings.them -%}
+                    {%- when 'yes' -%}
+                      <span class="nl-compare__mark nl-compare__mark--yes">{% render 'nurellea-icon', name: 'check' %}<span class="visually-hidden">Yes</span></span>
+                    {%- when 'no' -%}
+                      <span class="nl-compare__mark nl-compare__mark--no">{% render 'nurellea-icon', name: 'close' %}<span class="visually-hidden">No</span></span>
+                    {%- else -%}
+                      <span class="nl-compare__text">{{ block.settings.them_text | default: 'Varies' | escape }}</span>
+                  {%- endcase -%}
+                </td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="nl-small nl-muted nl-center" style="margin-top: 20px;">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <div class="nl-actions" style="margin-top: 32px; justify-content: center;">
+        <a class="button nl-btn" href="{{ section.settings.button_link | default: '#MainContent' }}">{{ section.settings.button_label | escape }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea comparison",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why gummies" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Nurellea vs." },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "the rest" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "checkbox", "id": "show_logo", "label": "Show logo in header", "default": false },
+    { "type": "text", "id": "us_label", "label": "Our column label", "default": "Nurellea" },
+    { "type": "text", "id": "them_label", "label": "Comparison column label", "default": "Typical capsules & powders" },
+    { "type": "text", "id": "footnote", "label": "Footnote", "info": "Keep comparisons general and fair — do not name competitors." },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "feature", "label": "Feature", "default": "Feature" },
+        { "type": "text", "id": "us_text", "label": "Our value (text)", "info": "Leave blank to show a check mark." },
+        {
+          "type": "select",
+          "id": "them",
+          "label": "Comparison value",
+          "default": "varies",
+          "options": [
+            { "value": "yes", "label": "Check" },
+            { "value": "no", "label": "Cross" },
+            { "value": "varies", "label": "Text" }
+          ]
+        },
+        { "type": "text", "id": "them_text", "label": "Comparison text", "default": "Varies" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Nurellea comparison" }]
+}
+{% endschema %}

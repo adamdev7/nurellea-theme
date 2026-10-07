@@ -31,13 +31,20 @@
       {%- endfor -%}
     </ol>
 
-    {%- if section.settings.show_directions and directions != blank -%}
+    {%- assign serving_size = p.metafields.nurellea.serving_size.value | default: settings.facts_serving_size -%}
+    {%- if section.settings.show_directions and directions != blank or section.settings.show_directions and settings.facts_directions != blank -%}
       <div class="nl-card nl-card--soft" style="margin-top: 48px;" data-nl-reveal>
         <div class="nl-stack nl-stack--sm">
           <h3 class="nl-h4">Directions from the label</h3>
-          {%- if p.metafields.nurellea.serving_size != blank -%}<p><strong>Serving size:</strong> {{ p.metafields.nurellea.serving_size.value | escape }}</p>{%- endif -%}
-          <div class="nl-prose">{% render 'nurellea-rich', field: directions %}</div>
-          {%- if p.metafields.nurellea.warnings != blank -%}
+          {%- if serving_size != blank -%}<p><strong>Serving size:</strong> {{ serving_size | escape }}</p>{%- endif -%}
+          <div class="nl-prose">
+            {%- if directions != blank -%}
+              {% render 'nurellea-rich', field: directions %}
+            {%- else -%}
+              {% render 'nurellea-text', text: settings.facts_directions %}
+            {%- endif -%}
+          </div>
+          {%- if p.metafields.nurellea.warnings != blank or settings.facts_warnings != blank -%}
             <p class="nl-small nl-muted">Please read the <a href="{{ p.url }}#warnings">warnings</a> before use.</p>
           {%- endif -%}
         </div>

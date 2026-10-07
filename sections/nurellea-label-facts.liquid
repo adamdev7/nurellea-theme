@@ -4,8 +4,50 @@
   capture facts_html
     render 'nurellea-supplement-facts', product: p
   endcapture
+
+  capture ingredients_html
+    if mf.ingredients_text != blank
+      render 'nurellea-rich', field: mf.ingredients_text
+    else
+      render 'nurellea-text', text: settings.facts_other_ingredients
+    endif
+  endcapture
+  capture allergens_html
+    if mf.allergens != blank
+      render 'nurellea-rich', field: mf.allergens
+    else
+      render 'nurellea-text', text: settings.facts_allergens
+    endif
+  endcapture
+  capture directions_html
+    if mf.directions != blank
+      render 'nurellea-rich', field: mf.directions
+    else
+      render 'nurellea-text', text: settings.facts_directions
+    endif
+  endcapture
+  capture storage_html
+    if mf.storage != blank
+      render 'nurellea-rich', field: mf.storage
+    else
+      render 'nurellea-text', text: settings.facts_storage
+    endif
+  endcapture
+  capture warnings_html
+    if mf.warnings != blank
+      render 'nurellea-rich', field: mf.warnings
+    else
+      render 'nurellea-text', text: settings.facts_warnings
+    endif
+  endcapture
+  assign serving_size = mf.serving_size.value | default: settings.facts_serving_size
+  assign ingredients_title = 'Other ingredients'
+  if mf.ingredients_text != blank
+    assign ingredients_title = 'Full ingredient list'
+  endif
+
   assign has_any = false
-  if facts_html != blank or mf.ingredients_text != blank or mf.directions != blank or mf.warnings != blank or mf.allergens != blank
+  if facts_html != blank or ingredients_html != blank or directions_html != blank or warnings_html != blank or allergens_html != blank
     assign has_any = true
   endif
 -%}
@@ -31,35 +73,35 @@
           {%- endif -%}
         </div>
         <div class="nl-stack nl-stack--lg">
-          {%- if mf.ingredients_text != blank -%}
+          {%- if ingredients_html != blank -%}
             <div class="nl-stack nl-stack--sm" id="ingredients">
-              <h3 class="nl-h3">Full ingredient list</h3>
-              <div class="nl-prose">{% render 'nurellea-rich', field: mf.ingredients_text %}</div>
+              <h3 class="nl-h3">{{ ingredients_title }}</h3>
+              <div class="nl-prose">{{ ingredients_html }}</div>
             </div>
           {%- endif -%}
-          {%- if mf.allergens != blank -%}
+          {%- if allergens_html != blank -%}
             <div class="nl-stack nl-stack--sm">
               <h3 class="nl-h3">Allergen information</h3>
-              <div class="nl-prose">{% render 'nurellea-rich', field: mf.allergens %}</div>
+              <div class="nl-prose">{{ allergens_html }}</div>
             </div>
           {%- endif -%}
-          {%- if mf.directions != blank -%}
+          {%- if directions_html != blank -%}
             <div class="nl-stack nl-stack--sm" id="how-to-use">
               <h3 class="nl-h3">How to use</h3>
-              {%- if mf.serving_size != blank -%}<p><strong>Serving size:</strong> {{ mf.serving_size.value | escape }}</p>{%- endif -%}
-              <div class="nl-prose">{% render 'nurellea-rich', field: mf.directions %}</div>
+              {%- if serving_size != blank -%}<p><strong>Serving size:</strong> {{ serving_size | escape }}</p>{%- endif -%}
+              <div class="nl-prose">{{ directions_html }}</div>
             </div>
           {%- endif -%}
-          {%- if mf.storage != blank -%}
+          {%- if storage_html != blank -%}
             <div class="nl-stack nl-stack--sm">
               <h3 class="nl-h3">Storage</h3>
-              <div class="nl-prose">{% render 'nurellea-rich', field: mf.storage %}</div>
+              <div class="nl-prose">{{ storage_html }}</div>
             </div>
           {%- endif -%}
-          {%- if mf.warnings != blank -%}
+          {%- if warnings_html != blank -%}
             <div class="nl-card nl-card--blush nl-stack nl-stack--sm" id="warnings">
               <h3 class="nl-h4">{% render 'nurellea-icon', name: 'info' %} Warnings &amp; safety</h3>
-              <div class="nl-prose">{% render 'nurellea-rich', field: mf.warnings %}</div>
+              <div class="nl-prose">{{ warnings_html }}</div>
             </div>
           {%- endif -%}
         </div>
@@ -71,7 +113,7 @@
         <p class="nl-muted">The complete supplement facts, ingredients, directions and warnings will be published here. Until then, please refer to the label on your pack or <a href="/pages/contact">contact us</a>.</p>
       </div>
       {%- if request.design_mode -%}
-        <p class="nl-setup-note">Fill the product metafields <code>nurellea.supplement_facts</code>, <code>nurellea.ingredients_text</code>, <code>nurellea.allergens</code>, <code>nurellea.serving_size</code>, <code>nurellea.directions</code>, <code>nurellea.storage</code> and <code>nurellea.warnings</code> from the approved label.</p>
+        <p class="nl-setup-note">Fill Theme settings &gt; Nurellea product facts, or the product metafields <code>nurellea.*</code>, from the approved label.</p>
       {%- endif -%}
     {%- endif -%}
   </div>
@@ -82,7 +124,7 @@
   "name": "Nurellea label facts",
   "tag": "div",
   "settings": [
-    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product. All content comes from its nurellea.* metafields." },
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product. Content comes from its nurellea.* metafields, then Theme settings > Nurellea product facts." },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The label" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Everything on the" },

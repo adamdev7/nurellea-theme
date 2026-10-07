@@ -34,7 +34,7 @@
         "nurellea_5": {
           "type": "assurance",
           "settings": {
-            "icon": "package",
+            "icon": "truck",
             "text": "Track your order online",
             "link": "/pages/track-order"
           }
@@ -75,16 +75,270 @@
         "show_disclaimer": true
       }
     },
+    "highlights": {
+      "type": "nurellea-trust-strip",
+      "blocks": {
+        "nurellea_1": {
+          "type": "item",
+          "settings": {
+            "icon": "mushroom",
+            "text": "10 functional mushrooms"
+          }
+        },
+        "nurellea_2": {
+          "type": "item",
+          "settings": {
+            "icon": "leaf",
+            "text": "Vegan"
+          }
+        },
+        "nurellea_3": {
+          "type": "item",
+          "settings": {
+            "icon": "sparkle",
+            "text": "Non-GMO"
+          }
+        },
+        "nurellea_4": {
+          "type": "item",
+          "settings": {
+            "icon": "flask",
+            "text": "Lab tested"
+          }
+        },
+        "nurellea_5": {
+          "type": "item",
+          "settings": {
+            "icon": "heart",
+            "text": "Raspberry flavor"
+          }
+        },
+        "nurellea_6": {
+          "type": "item",
+          "settings": {
+            "icon": "flower",
+            "text": "Filler & palm oil free"
+          }
+        },
+        "nurellea_7": {
+          "type": "item",
+          "settings": {
+            "icon": "shield",
+            "text": "30-day money-back guarantee"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6",
+        "nurellea_7"
+      ],
+      "settings": {
+        "color_scheme": "scheme-4",
+        "animate": true,
+        "speed": 36
+      }
+    },
+    "benefits": {
+      "type": "nurellea-benefit-orbit",
+      "blocks": {
+        "nurellea_1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "brain",
+            "title": "Calm focus",
+            "text": "Lion's Mane, traditionally used to support focus and mental clarity."
+          }
+        },
+        "nurellea_2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "bolt",
+            "title": "Natural energy",
+            "text": "Cordyceps, traditionally used to support everyday energy and stamina."
+          }
+        },
+        "nurellea_3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "moon",
+            "title": "Balanced mood",
+            "text": "Reishi, long valued for calm, relaxation and restful sleep."
+          }
+        },
+        "nurellea_4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "leaf",
+            "title": "Gut & digestion",
+            "text": "Shiitake & White Button, traditionally used to support healthy digestion."
+          }
+        },
+        "nurellea_5": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "title": "Immune support",
+            "text": "Chaga & Royal Sun, rich in antioxidants and used to support the body's natural defences."
+          }
+        },
+        "nurellea_6": {
+          "type": "benefit",
+          "settings": {
+            "icon": "sparkle",
+            "title": "Skin & beauty",
+            "text": "Tremella, the 'snow mushroom', traditionally used to support skin hydration."
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "10 mushrooms. 1 gummy.",
+        "heading": "Elevate your",
+        "heading_accent": "everyday",
+        "text": "<p>Each mushroom in the blend was chosen for its own traditional role, so two gummies cover your whole-body routine.*</p>",
+        "button_label": "Start your ritual",
+        "show_disclaimer": true
+      }
+    },
     "ingredients": {
       "type": "nurellea-ingredients",
+      "blocks": {
+        "nurellea_1": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Focus",
+            "name": "Lion's Mane",
+            "amount": "250 mg",
+            "text": "<p>A shaggy white mushroom prized in traditional practice for the mind.</p>",
+            "bullets": "<ul><li>Calm, clear focus</li><li>Everyday brain health</li></ul>"
+          }
+        },
+        "nurellea_2": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Energy",
+            "name": "Cordyceps",
+            "amount": "250 mg",
+            "text": "<p>A traditional favourite for natural, steady energy.</p>",
+            "bullets": "<ul><li>Sustained everyday energy</li><li>Recovery after activity</li></ul>"
+          }
+        },
+        "nurellea_3": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Mood",
+            "name": "Reishi",
+            "amount": "250 mg",
+            "text": "<p>Valued for centuries as a mushroom for calm evenings.</p>",
+            "bullets": "<ul><li>A calmer wind-down</li><li>Restful sleep</li></ul>"
+          }
+        },
+        "nurellea_4": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Gut health",
+            "name": "Shiitake",
+            "amount": "250 mg",
+            "text": "<p>A kitchen staple with a long tradition in digestive wellness.</p>",
+            "bullets": "<ul><li>Healthy digestion</li><li>Gut comfort</li></ul>"
+          }
+        },
+        "nurellea_5": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Antioxidants",
+            "name": "Chaga",
+            "amount": "250 mg",
+            "text": "<p>A birch-growing mushroom naturally rich in antioxidants.</p>",
+            "bullets": "<ul><li>Antioxidant support</li><li>Overall wellness</li></ul>"
+          }
+        },
+        "nurellea_6": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Wellbeing",
+            "name": "Maitake",
+            "amount": "250 mg",
+            "text": "<p>The 'dancing mushroom', traditionally used for whole-body balance.</p>",
+            "bullets": "<ul><li>Normal immune function</li><li>Everyday balance</li></ul>"
+          }
+        },
+        "nurellea_7": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Beauty",
+            "name": "Tremella",
+            "amount": "250 mg",
+            "text": "<p>The 'snow mushroom', used in traditional beauty rituals.</p>",
+            "bullets": "<ul><li>Skin hydration</li><li>Hair, skin & nail care</li></ul>"
+          }
+        },
+        "nurellea_8": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Defences",
+            "name": "Royal Sun",
+            "amount": "250 mg",
+            "text": "<p>A sweet, almond-scented mushroom traditionally used for the body's defences.</p>",
+            "bullets": "<ul><li>Natural defences</li><li>Healthy bones</li></ul>"
+          }
+        },
+        "nurellea_9": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Digestion",
+            "name": "White Button",
+            "amount": "250 mg",
+            "text": "<p>The familiar everyday mushroom, traditionally used to support digestion.</p>",
+            "bullets": "<ul><li>Healthy digestion</li><li>Gut balance</li></ul>"
+          }
+        },
+        "nurellea_10": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Liver",
+            "name": "Black Fungus",
+            "amount": "250 mg",
+            "text": "<p>Wood ear mushroom, a staple of traditional Asian cooking and wellness.</p>",
+            "bullets": "<ul><li>Liver health</li><li>Healthy circulation</li></ul>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6",
+        "nurellea_7",
+        "nurellea_8",
+        "nurellea_9",
+        "nurellea_10"
+      ],
       "settings": {
-        "color_scheme": "scheme-3",
-        "eyebrow": "What's inside",
-        "heading": "Ingredients you can",
-        "heading_accent": "actually read",
-        "text": "<p>Each ingredient below is listed exactly as on the label. See the supplement facts above for amounts per serving.</p>",
-        "columns": "4",
-        "button_label": ""
+        "color_scheme": "scheme-1",
+        "eyebrow": "Our 10-in-1 mushroom blend",
+        "heading": "What's inside",
+        "heading_accent": "every gummy",
+        "text": "<p>250 mg of each functional mushroom extract, made from 100% fruiting body. Tap a card to see what it is traditionally used for.*</p>",
+        "layout": "tap",
+        "columns": "5",
+        "show_disclaimer": true,
+        "button_label": "See full ingredients"
       }
     },
     "ritual": {
@@ -93,22 +347,22 @@
         "nurellea_1": {
           "type": "step",
           "settings": {
-            "title": "Read the label",
-            "text": "<p>Check the serving size, directions and warnings before your first serving.</p>"
+            "title": "Take 2 gummies",
+            "text": "<p>Chew 2 raspberry gummies once a day. No water, pills or powders needed.</p>"
           }
         },
         "nurellea_2": {
           "type": "step",
           "settings": {
-            "title": "Take as directed",
-            "text": "<p>Enjoy your gummies as described in the directions below.</p>"
+            "title": "Make it a habit",
+            "text": "<p>Keep the bag next to your coffee or toothbrush so your ritual takes seconds.</p>"
           }
         },
         "nurellea_3": {
           "type": "step",
           "settings": {
-            "title": "Keep it consistent",
-            "text": "<p>Pair your gummies with something you already do every day to make the ritual stick.</p>"
+            "title": "Stay consistent",
+            "text": "<p>Functional mushrooms are made for daily use. A 3-bag bundle covers a full 90 days.</p>"
           }
         }
       },
@@ -118,11 +372,154 @@
         "nurellea_3"
       ],
       "settings": {
+        "color_scheme": "scheme-3",
+        "eyebrow": "How it works",
+        "heading": "Ready in 3",
+        "heading_accent": "simple steps",
+        "show_directions": false
+      }
+    },
+    "compare": {
+      "type": "nurellea-comparison",
+      "blocks": {
+        "nurellea_1": {
+          "type": "row",
+          "settings": {
+            "feature": "10 functional mushrooms in one",
+            "them": "varies",
+            "them_text": "Varies"
+          }
+        },
+        "nurellea_2": {
+          "type": "row",
+          "settings": {
+            "feature": "Chewable gummy — no pills or powders",
+            "them": "no"
+          }
+        },
+        "nurellea_3": {
+          "type": "row",
+          "settings": {
+            "feature": "100% fruiting body extract",
+            "them": "varies",
+            "them_text": "Varies"
+          }
+        },
+        "nurellea_4": {
+          "type": "row",
+          "settings": {
+            "feature": "Tastes like raspberry",
+            "them": "varies",
+            "them_text": "Often earthy"
+          }
+        },
+        "nurellea_5": {
+          "type": "row",
+          "settings": {
+            "feature": "Vegan & non-GMO",
+            "them": "varies",
+            "them_text": "Varies"
+          }
+        },
+        "nurellea_6": {
+          "type": "row",
+          "settings": {
+            "feature": "Third-party lab tested",
+            "them": "varies",
+            "them_text": "Varies"
+          }
+        },
+        "nurellea_7": {
+          "type": "row",
+          "settings": {
+            "feature": "30-day money-back guarantee",
+            "them": "varies",
+            "them_text": "Varies"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6",
+        "nurellea_7"
+      ],
+      "settings": {
         "color_scheme": "scheme-1",
-        "eyebrow": "How to use",
-        "heading": "Your daily",
-        "heading_accent": "ritual",
-        "show_directions": true
+        "eyebrow": "Why gummies",
+        "heading": "Nurellea vs.",
+        "heading_accent": "the rest",
+        "us_label": "Nurellea",
+        "them_label": "Typical capsules & powders",
+        "footnote": "Based on common capsule and powder formats. Individual products differ.",
+        "button_label": "Choose your bundle"
+      }
+    },
+    "timeline": {
+      "type": "nurellea-timeline",
+      "blocks": {
+        "nurellea_1": {
+          "type": "stage",
+          "settings": {
+            "label": "Day 1",
+            "title": "Start your ritual",
+            "text": "<p>Take your first 2 gummies with breakfast. A fixed time makes it easier to remember.</p>"
+          }
+        },
+        "nurellea_2": {
+          "type": "stage",
+          "settings": {
+            "label": "Week 2",
+            "title": "Build the habit",
+            "text": "<p>Your daily gummies start to feel automatic. Keep the bag where you will see it every morning.</p>"
+          }
+        },
+        "nurellea_3": {
+          "type": "stage",
+          "settings": {
+            "label": "Month 1",
+            "title": "Check in with yourself",
+            "text": "<p>Notice how your routine feels. A short note on energy, focus and digestion can help — everyone is different.</p>"
+          }
+        },
+        "nurellea_4": {
+          "type": "stage",
+          "settings": {
+            "label": "Month 3",
+            "title": "Make it yours",
+            "text": "<p>A 3-bag bundle covers the full 90 days, so you never run out mid-routine.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Your routine",
+        "heading": "Your first",
+        "heading_accent": "90 days",
+        "text": "<p>A simple guide to building the habit. Consistency is the whole idea behind a daily supplement.</p>",
+        "footnote": "Everyone is different. This is a routine guide, not a promise of results."
+      }
+    },
+    "guarantee": {
+      "type": "nurellea-guarantee",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "days": 30,
+        "seal_text": "Money-back guarantee",
+        "eyebrow": "Try it risk-free",
+        "heading": "Our 30-day",
+        "heading_accent": "money-back guarantee",
+        "text": "<p>We want you to love your ritual. If Nurellea Gut Gummies are not for you, contact us within 30 days of receiving your order and we will refund you.</p>",
+        "button_label": "Try Nurellea today"
       }
     },
     "reviews": {
@@ -148,48 +545,88 @@
         "nurellea_1": {
           "type": "question",
           "settings": {
-            "question": "How do I take them?",
-            "answer": "<p>Follow the directions on the label. The serving size and directions are also listed on the product page and the <a href=\"/pages/ingredients#how-to-use\">how to use</a> section.</p>",
+            "question": "Do they contain sugar?",
+            "answer": "<p>Yes, a little. Mushrooms are naturally bitter, so we use just enough sugar to make every gummy taste like raspberry — with no synthetic sweeteners. The full list is under Other ingredients on the product page.</p>",
             "category": "Product"
           }
         },
         "nurellea_2": {
           "type": "question",
           "settings": {
-            "question": "Can I take them if I am pregnant, breastfeeding or taking medication?",
-            "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
+            "question": "What's in Nurellea Gut Gummies?",
+            "answer": "<p>Ten functional mushroom extracts, 250 mg each: Lion's Mane, Cordyceps, Chaga, Maitake, Shiitake, Reishi, Tremella, Royal Sun, Black Fungus and White Button. The other ingredients are glucose syrup, sugar, glucose, pectin, citric acid, natural raspberry flavor, sodium citrate, fruit and vegetable juice concentrate and a glazing agent (sunflower oil, carnauba wax). Full supplement facts are on the <a href=\"/pages/ingredients\">ingredients page</a>.</p>",
             "category": "Product"
           }
         },
         "nurellea_3": {
           "type": "question",
           "settings": {
-            "question": "Are they suitable for my diet?",
-            "answer": "<p>Dietary and allergen information is listed on the product page. If you cannot find what you need, <a href=\"/pages/contact\">ask us</a> and we will check for you.</p>",
+            "question": "How do I take them?",
+            "answer": "<p>Take 2 gummies a day and chew thoroughly. Many people pair them with breakfast so the habit sticks. Do not exceed the recommended daily dose.</p>",
             "category": "Product"
           }
         },
         "nurellea_4": {
           "type": "question",
           "settings": {
-            "question": "How should I store them?",
-            "answer": "<p>Store them as directed on the label, and keep them out of reach of children.</p>",
+            "question": "Are they vegan?",
+            "answer": "<p>Yes. Nurellea Gut Gummies are vegan and non-GMO, and they are set with fruit pectin instead of gelatin.</p>",
             "category": "Product"
           }
         },
         "nurellea_5": {
           "type": "question",
           "settings": {
-            "question": "Where do you ship, and how much does shipping cost?",
-            "answer": "<p>Delivery destinations, options and costs are shown at checkout before you pay. See our <a href=\"/pages/shipping\">shipping information</a> for details.</p>",
-            "category": "Orders & shipping"
+            "question": "Are these magic mushrooms?",
+            "answer": "<p>No. Our gummies contain functional mushrooms, not psychoactive ones. There are no psychoactive compounds in them.</p>",
+            "category": "Product"
           }
         },
         "nurellea_6": {
           "type": "question",
           "settings": {
-            "question": "What is your return policy?",
-            "answer": "<p>Please see our <a href=\"/pages/returns\">returns information</a> for eligibility and how to start a return.</p>",
+            "question": "How are the mushrooms sourced?",
+            "answer": "<p>We use 100% fruiting-body extracts from reputable producers, and the gummies are third-party lab tested.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_7": {
+          "type": "question",
+          "settings": {
+            "question": "Can I take them with medication, or if I am pregnant or breastfeeding?",
+            "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_8": {
+          "type": "question",
+          "settings": {
+            "question": "Can children take them?",
+            "answer": "<p>They are made for adults. If you are thinking about them for a child, please check with the child's healthcare provider first.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_9": {
+          "type": "question",
+          "settings": {
+            "question": "Are there any side effects?",
+            "answer": "<p>These mushrooms have been eaten around the world for centuries and are generally well tolerated. If you notice any reaction, stop taking them and speak with a healthcare professional.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_10": {
+          "type": "question",
+          "settings": {
+            "question": "How long does shipping take, and how much does it cost?",
+            "answer": "<p>Orders are processed in 2–4 days, then delivered in 5–12 business days. Shipping is free on orders over $70 — that is any bundle of 2 or more bags. For a single bag, shipping costs are shown at checkout before you pay. See our <a href=\"/pages/shipping\">shipping information</a> for details.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_11": {
+          "type": "question",
+          "settings": {
+            "question": "What if they're not for me?",
+            "answer": "<p>Every order is covered by our 30-day money-back guarantee. If you are not happy, <a href=\"/pages/contact\">contact us</a> within 30 days of receiving your order and we will refund you. Full terms are in our <a href=\"/pages/returns\">returns information</a>.</p>",
             "category": "Orders & shipping"
           }
         }
@@ -200,15 +637,20 @@
         "nurellea_3",
         "nurellea_4",
         "nurellea_5",
-        "nurellea_6"
+        "nurellea_6",
+        "nurellea_7",
+        "nurellea_8",
+        "nurellea_9",
+        "nurellea_10",
+        "nurellea_11"
       ],
       "settings": {
         "source": "product",
         "color_scheme": "scheme-1",
         "layout": "split",
         "eyebrow": "FAQ",
-        "heading": "Good to",
-        "heading_accent": "know",
+        "heading": "Ask us",
+        "heading_accent": "anything",
         "contact_label": "Still have a question? Contact us",
         "contact_link": "/pages/contact"
       }
@@ -216,8 +658,13 @@
   },
   "order": [
     "main",
+    "highlights",
+    "benefits",
     "ingredients",
     "ritual",
+    "compare",
+    "timeline",
+    "guarantee",
     "reviews",
     "faq"
   ]

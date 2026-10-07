@@ -1,5 +1,6 @@
 // SAMPLE DATA for the local mock preview only, used to exercise the layout. Apart from the bag price and pouch
-// photo (copied from the live product), none of it is Nurellea product information, ingredients or reviews.
+// photo (copied from the live product), none of it is Nurellea product information or reviews; label facts
+// shown in the preview come from config/settings_data.json.
 
 const mf = (type, value) => ({ type, value });
 
@@ -30,15 +31,8 @@ const pouchMedia = { id: 5001, media_type: 'image', ...pouch, preview_image: pou
 
 // Sample values layered over theme/section settings in the preview only, so optional UI (bundle discounts,
 // free-shipping pill) can be checked. The real values are entered in the theme editor.
-export const previewThemeSettings = { free_shipping_threshold: 50 };
+export const previewThemeSettings = {};
 export const previewSectionSettings = { 'nurellea-main-product': { bundle_discounts_live: true } };
-
-const ingredient = (n) => ({
-  name: mf('single_line_text_field', `Sample ingredient ${n}`),
-  amount: mf('single_line_text_field', '— mg'),
-  summary: mf('single_line_text_field', 'Ingredient summary is entered on the ingredient metaobject.'),
-  image: undefined,
-});
 
 export const product = {
   id: 7001,
@@ -70,30 +64,8 @@ export const product = {
   media: [pouchMedia],
   images: [pouch],
   tags: [],
-  metafields: {
-    nurellea: {
-      subtitle: mf('single_line_text_field', 'Sample subtitle from the product metafield'),
-      highlights: mf('list.single_line_text_field', ['Sample highlight', 'Sample highlight']),
-      benefits: mf('list.single_line_text_field', ['Sample benefit line one', 'Sample benefit line two', 'Sample benefit line three']),
-      ingredients: mf('list.metaobject_reference', [ingredient(1), ingredient(2), ingredient(3), ingredient(4)]),
-      allergens: mf('multi_line_text_field', 'Sample allergen statement.'),
-      serving_size: mf('single_line_text_field', 'Sample serving size'),
-      servings_per_container: mf('single_line_text_field', '—'),
-      directions: mf('multi_line_text_field', 'Sample directions entered in the product metafield.'),
-      warnings: mf('multi_line_text_field', 'Sample warning text entered in the product metafield.'),
-      storage: mf('multi_line_text_field', 'Sample storage note.'),
-      supplement_facts: mf('json', {
-        serving_size: 'Sample serving',
-        servings_per_container: '—',
-        rows: [
-          { name: 'Sample ingredient 1', amount: '— mg', dv: '†' },
-          { name: 'Sample ingredient 2', amount: '— mg', dv: '†' },
-        ],
-        footnote: '† Daily value not established. Sample table only.',
-      }),
-    },
-    reviews: {},
-  },
+  // Like the live product: no nurellea.* metafields, so label facts come from Theme settings.
+  metafields: { nurellea: {}, reviews: {} },
 };
 
 export const collection = {

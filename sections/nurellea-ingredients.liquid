@@ -40,6 +40,37 @@
           </article>
         {%- endfor -%}
       </div>
+    {%- elsif section.blocks.size > 0 and section.settings.layout == 'tap' -%}
+      <div class="nl-ing-cards nl-ing-cards--{{ section.settings.columns }}">
+        {%- for block in section.blocks -%}
+          <details class="nl-ing-card" data-nl-reveal style="--nl-reveal-delay: {{ forloop.index0 | modulo: 5 | times: 60 }}ms" {{ block.shopify_attributes }}>
+            <summary>
+              <span class="nl-ing-card__top">
+                {%- if block.settings.tag != blank -%}<span class="nl-ing-card__tag">{{ block.settings.tag | escape }}</span>{%- endif -%}
+                <span class="nl-ing-card__toggle" aria-hidden="true"></span>
+              </span>
+              {%- if block.settings.image != blank -%}
+                <span class="nl-ing-card__img">{{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', width: 120, height: 120 }}</span>
+              {%- else -%}
+                <span class="nl-ing-card__icon">{% render 'nurellea-icon', name: 'mushroom' %}</span>
+              {%- endif -%}
+              <span class="nl-ing-card__name">{{ block.settings.name | escape }}</span>
+              {%- if block.settings.amount != blank -%}<span class="nl-ing-card__amount">{{ block.settings.amount | escape }}</span>{%- endif -%}
+              <span class="nl-ing-card__hint">Tap to learn more</span>
+            </summary>
+            <div class="nl-ing-card__body">
+              {%- if block.settings.text != blank -%}<div class="nl-ing-card__text">{{ block.settings.text }}</div>{%- endif -%}
+              {%- if block.settings.bullets != blank -%}
+                <p class="nl-ing-card__label">Traditionally used for</p>
+                <div class="nl-ing-card__bullets">{{ block.settings.bullets }}</div>
+              {%- endif -%}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+      {%- if section.settings.show_disclaimer and settings.supplement_disclaimer != blank -%}
+        <p class="nl-small nl-muted nl-ing-cards__note">{{ settings.supplement_disclaimer | strip_html | escape }}</p>
+      {%- endif -%}
     {%- elsif section.blocks.size > 0 -%}
       <div class="nl-grid nl-grid--{{ section.settings.columns }}">
         {%- for block in section.blocks -%}
@@ -83,15 +114,27 @@
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>We list every ingredient and amount exactly as it appears on the label, so you always know what you are taking.</p>" },
     {
       "type": "select",
+      "id": "layout",
+      "label": "Fallback block layout",
+      "default": "cards",
+      "options": [
+        { "value": "cards", "label": "Image cards" },
+        { "value": "tap", "label": "Tap-to-open cards" }
+      ]
+    },
+    {
+      "type": "select",
       "id": "columns",
       "label": "Columns",
       "default": "4",
       "options": [
         { "value": "2", "label": "2" },
         { "value": "3", "label": "3" },
-        { "value": "4", "label": "4" }
+        { "value": "4", "label": "4" },
+        { "value": "5", "label": "5" }
       ]
     },
+    { "type": "checkbox", "id": "show_disclaimer", "label": "Show supplement disclaimer under cards", "default": true },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "View full label" },
     { "type": "url", "id": "button_link", "label": "Button link", "info": "Defaults to the product page." }
   ],
@@ -102,9 +145,11 @@
       "settings": [
         { "type": "paragraph", "content": "Only used when the product has no ingredient metafield. Enter label-verified facts only." },
         { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "tag", "label": "Category tag", "info": "Tap-to-open layout. e.g. Focus" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "amount", "label": "Amount per serving" },
-        { "type": "richtext", "id": "text", "label": "Description" }
+        { "type": "richtext", "id": "text", "label": "Description" },
+        { "type": "richtext", "id": "bullets", "label": "Traditionally used for", "info": "Tap-to-open layout. Use a bulleted list." }
       ]
     }
   ],

@@ -2286,6 +2286,44 @@
     ]
   },
   {
+    "name": "Nurellea product facts",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Label facts for the Gut Gummies. Used on the product page, ingredients and label sections whenever the product's own nurellea.* metafields are empty. Must match the printed label exactly."
+      },
+      { "type": "text", "id": "facts_subtitle", "label": "Product subtitle" },
+      {
+        "type": "text",
+        "id": "facts_highlights",
+        "label": "Highlight pills",
+        "info": "Comma-separated, e.g. Vegan, Non-GMO, Lab tested"
+      },
+      {
+        "type": "textarea",
+        "id": "facts_benefits",
+        "label": "Buy box checklist",
+        "info": "One line per point. Use compliant wording (e.g. \"traditionally used to…\", \"supports…\")."
+      },
+      { "type": "header", "content": "Supplement facts" },
+      { "type": "text", "id": "facts_serving_size", "label": "Serving size", "info": "e.g. 2 gummies" },
+      { "type": "text", "id": "facts_servings", "label": "Servings per bag", "info": "e.g. 30" },
+      {
+        "type": "textarea",
+        "id": "facts_rows",
+        "label": "Facts rows",
+        "info": "One ingredient per line: Name | Amount | % Daily Value"
+      },
+      { "type": "text", "id": "facts_footnote", "label": "Facts footnote" },
+      { "type": "textarea", "id": "facts_other_ingredients", "label": "Other ingredients" },
+      { "type": "textarea", "id": "facts_allergens", "label": "Allergen information" },
+      { "type": "header", "content": "Use & safety" },
+      { "type": "textarea", "id": "facts_directions", "label": "Directions" },
+      { "type": "textarea", "id": "facts_storage", "label": "Storage" },
+      { "type": "textarea", "id": "facts_warnings", "label": "Warnings" }
+    ]
+  },
+  {
     "name": "Nurellea store",
     "settings": [
       {
@@ -2367,8 +2405,14 @@
       {
         "type": "text",
         "id": "shipping_summary",
-        "label": "Short shipping note (product page)",
-        "info": "Example: Ships from the US within 1–2 business days. Leave blank to show a link to the shipping policy only."
+        "label": "Shipping & delivery summary",
+        "info": "Shown in the product page Shipping & returns panel. Example: Orders are processed in 2–4 days, then delivered in 5–12 business days. Leave blank to show a link to the shipping policy only."
+      },
+      {
+        "type": "text",
+        "id": "shipping_eta",
+        "label": "Ship time next to Add to cart",
+        "info": "Example: Ships in 2–4 days. Must match your real processing time. Leave blank to hide."
       },
       {
         "type": "checkbox",

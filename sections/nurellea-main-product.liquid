@@ -174,16 +174,25 @@
       {%- comment -%} ——— Product info & buy box ——— {%- endcomment -%}
       <div class="nl-pdp__info">
         <div class="nl-stack nl-stack--sm">
-          {%- if mf.highlights.value.size > 0 -%}
+          {%- liquid
+            if mf.highlights.value.size > 0
+              assign highlights = mf.highlights.value
+            else
+              assign highlights = settings.facts_highlights | split: ','
+            endif
+            assign subtitle = mf.subtitle.value | default: settings.facts_subtitle
+          -%}
+          {%- if highlights.size > 0 -%}
             <div class="nl-chips">
-              {%- for h in mf.highlights.value limit: 4 -%}
-                <span class="nl-chip nl-chip--rose">{{ h | escape }}</span>
+              {%- for h in highlights limit: 4 -%}
+                {%- assign h = h | strip -%}
+                {%- if h != blank -%}<span class="nl-chip nl-chip--rose">{{ h | escape }}</span>{%- endif -%}
               {%- endfor -%}
             </div>
           {%- endif -%}
           <h1 class="nl-pdp__title">{{ p.title | escape }}</h1>
-          {%- if mf.subtitle != blank -%}
-            <p class="nl-pdp__subtitle">{{ mf.subtitle.value | escape }}</p>
+          {%- if subtitle != blank -%}
+            <p class="nl-pdp__subtitle">{{ subtitle | escape }}</p>
           {%- endif -%}
           {%- if review_count > 0 -%}
             <a class="nl-pdp__rating" href="#reviews">
@@ -232,14 +241,24 @@
           </p>
         {%- endif -%}
 
-        {%- if mf.benefits.value.size > 0 -%}
+        {%- liquid
+          if mf.benefits.value.size > 0
+            assign benefits = mf.benefits.value
+          else
+            assign benefits = settings.facts_benefits | strip | newline_to_br | split: '<br />'
+          endif
+        -%}
+        {%- if benefits.size > 0 -%}
           <ul class="nl-pdp__benefits">
-            {%- for b in mf.benefits.value -%}
-              <li>{% render 'nurellea-icon', name: 'check-circle' %}<span>{{ b | escape }}</span></li>
+            {%- for b in benefits -%}
+              {%- assign b = b | strip -%}
+              {%- if b != blank -%}
+                <li>{% render 'nurellea-icon', name: 'check-circle' %}<span>{{ b | escape }}</span></li>
+              {%- endif -%}
             {%- endfor -%}
           </ul>
         {%- elsif request.design_mode -%}
-          <p class="nl-setup-note">Add short, verified product benefit statements to <code>nurellea.benefits</code> (list of text). They are hidden until set.</p>
+          <p class="nl-setup-note">Add short, verified benefit lines in Theme settings &gt; Nurellea product facts &gt; Buy box checklist. They are hidden until set.</p>
         {%- endif -%}
 
         {%- if section.settings.show_short_description and p.description != blank -%}
@@ -610,11 +629,43 @@
           {%- endform -%}
         </product-form-component>
 
+        {%- if settings.shipping_eta != blank or settings.guarantee_text != blank -%}
+          <div class="nl-pdp__eta">
+            {%- if settings.shipping_eta != blank -%}
+              <span>{% render 'nurellea-icon', name: 'package' %}<strong>{{ settings.shipping_eta | escape }}</strong></span>
+            {%- endif -%}
+            {%- if settings.guarantee_text != blank -%}
+              <span>{% render 'nurellea-icon', name: 'shield' %}{{ settings.guarantee_text | escape }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
         {%- if settings.free_shipping_threshold > 0 -%}
-          {%- assign threshold_cents = settings.free_shipping_threshold | times: 100 -%}
+          {%- liquid
+            assign threshold_cents = settings.free_shipping_threshold | times: 100
+            assign free_qty = 0
+            if tier_mode
+              for tier in tier_blocks
+                capture tmath
+                  render 'nurellea-bundle-math', price: current_variant.price, qty: tier.settings.quantity, discount: tier.settings.discount, days: 0, live: tier_live
+                endcapture
+                assign tier_total = tmath | strip | split: '|' | first | plus: 0
+                if tier_total >= threshold_cents
+                  assign free_qty = tier.settings.quantity
+                  break
+                endif
+              endfor
+            endif
+          -%}
           <p class="nl-alert nl-alert--info nl-small">
             {% render 'nurellea-icon', name: 'truck' %}
-            <span>Free shipping on orders over {{ threshold_cents | money_without_trailing_zeros }}.</span>
+            <span>
+              {%- if free_qty > 1 -%}
+                <strong>Free shipping on {{ free_qty }}+ {{ section.settings.unit_plural | default: 'bags' | escape }}</strong> (orders over {{ threshold_cents | money_without_trailing_zeros }}). Shipping for 1 {{ section.settings.unit_singular | default: 'bag' | escape }} is shown at checkout.
+              {%- else -%}
+                Free shipping on orders over {{ threshold_cents | money_without_trailing_zeros }}.
+              {%- endif -%}
+            </span>
           </p>
         {%- endif -%}
 
@@ -647,7 +698,17 @@
             </details>
           {%- endif -%}
 
-          {%- if mf.ingredients.value.size > 0 or mf.ingredients_text != blank -%}
+          {%- liquid
+            assign other_ingredients = settings.facts_other_ingredients
+            if mf.ingredients_text != blank
+              assign other_ingredients = ''
+            endif
+            assign allergens_fallback = settings.facts_allergens
+            if mf.allergens != blank
+              assign allergens_fallback = ''
+            endif
+          -%}
+          {%- if mf.ingredients.value.size > 0 or mf.ingredients_text != blank or other_ingredients != blank -%}
             <details class="nl-accordion__item" id="ingredients">
               <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'leaf' %}Ingredients</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
               <div class="nl-accordion__body nl-prose">
@@ -658,18 +719,37 @@
                     {%- endfor -%}
                   </ul>
                 {%- endif -%}
+                {%- if mf.ingredients.value.size == 0 and mf.ingredients_text == blank and settings.facts_rows != blank -%}
+                  <p><strong>Active ingredients{% if settings.facts_serving_size != blank %} (per {{ settings.facts_serving_size | escape }}){% endif %}:</strong></p>
+                  <ul>
+                    {%- assign fact_lines = settings.facts_rows | strip | newline_to_br | split: '<br />' -%}
+                    {%- for line in fact_lines -%}
+                      {%- assign cells = line | split: '|' -%}
+                      {%- assign cell_name = cells[0] | strip -%}
+                      {%- if cell_name != blank -%}
+                        <li>{{ cell_name | escape }}{% assign cell_amount = cells[1] | strip %}{% if cell_amount != blank %} — {{ cell_amount | escape }}{% endif %}</li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
                 {%- if mf.ingredients_text != blank -%}
                   <p><strong>Full ingredient list:</strong></p>
                   {% render 'nurellea-rich', field: mf.ingredients_text %}
+                {%- elsif other_ingredients != blank -%}
+                  <p><strong>Other ingredients:</strong></p>
+                  {% render 'nurellea-text', text: other_ingredients %}
                 {%- endif -%}
                 {%- if mf.allergens != blank -%}
                   <p><strong>Allergen information:</strong></p>
                   {% render 'nurellea-rich', field: mf.allergens %}
+                {%- elsif allergens_fallback != blank -%}
+                  <p><strong>Allergen information:</strong></p>
+                  {% render 'nurellea-text', text: allergens_fallback %}
                 {%- endif -%}
               </div>
             </details>
           {%- elsif request.design_mode -%}
-            <p class="nl-setup-note">Ingredients: add <code>nurellea.ingredients</code> (ingredient entries) and/or <code>nurellea.ingredients_text</code> (full list exactly as on the label).</p>
+            <p class="nl-setup-note">Ingredients: fill Theme settings &gt; Nurellea product facts, or add <code>nurellea.ingredients</code> / <code>nurellea.ingredients_text</code> (full list exactly as on the label).</p>
           {%- endif -%}
 
           {%- capture facts_html -%}{% render 'nurellea-supplement-facts', product: p %}{%- endcapture -%}
@@ -680,28 +760,41 @@
             </details>
           {%- endif -%}
 
-          {%- if mf.directions != blank or mf.serving_size != blank -%}
+          {%- assign serving_size_text = mf.serving_size.value | default: settings.facts_serving_size -%}
+          {%- if mf.directions != blank or serving_size_text != blank or settings.facts_directions != blank -%}
             <details class="nl-accordion__item" id="how-to-use">
               <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'calendar' %}How to use</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
               <div class="nl-accordion__body nl-prose">
-                {%- if mf.serving_size != blank -%}<p><strong>Serving size:</strong> {{ mf.serving_size.value | escape }}</p>{%- endif -%}
-                {% render 'nurellea-rich', field: mf.directions %}
-                {%- if mf.storage != blank -%}<p><strong>Storage:</strong></p>{% render 'nurellea-rich', field: mf.storage %}{%- endif -%}
+                {%- if serving_size_text != blank -%}<p><strong>Serving size:</strong> {{ serving_size_text | escape }}</p>{%- endif -%}
+                {%- if mf.directions != blank -%}
+                  {% render 'nurellea-rich', field: mf.directions %}
+                {%- else -%}
+                  {% render 'nurellea-text', text: settings.facts_directions %}
+                {%- endif -%}
+                {%- if mf.storage != blank -%}
+                  <p><strong>Storage:</strong></p>{% render 'nurellea-rich', field: mf.storage %}
+                {%- elsif settings.facts_storage != blank -%}
+                  <p><strong>Storage:</strong></p>{% render 'nurellea-text', text: settings.facts_storage %}
+                {%- endif -%}
               </div>
             </details>
           {%- elsif request.design_mode -%}
-            <p class="nl-setup-note">How to use: add <code>nurellea.directions</code> and <code>nurellea.serving_size</code> from the approved label.</p>
+            <p class="nl-setup-note">How to use: fill the directions in Theme settings &gt; Nurellea product facts, or add <code>nurellea.directions</code> from the approved label.</p>
           {%- endif -%}
 
-          {%- if mf.warnings != blank -%}
+          {%- if mf.warnings != blank or settings.facts_warnings != blank -%}
             <details class="nl-accordion__item" id="warnings">
               <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'info' %}Warnings &amp; safety</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
               <div class="nl-accordion__body nl-prose">
-                {% render 'nurellea-rich', field: mf.warnings %}
+                {%- if mf.warnings != blank -%}
+                  {% render 'nurellea-rich', field: mf.warnings %}
+                {%- else -%}
+                  {% render 'nurellea-text', text: settings.facts_warnings %}
+                {%- endif -%}
               </div>
             </details>
           {%- elsif request.design_mode -%}
-            <p class="nl-setup-note">Warnings: add <code>nurellea.warnings</code> exactly as printed on the label.</p>
+            <p class="nl-setup-note">Warnings: fill Theme settings &gt; Nurellea product facts &gt; Warnings exactly as printed on the label.</p>
           {%- endif -%}
 
           <details class="nl-accordion__item" id="shipping-returns">

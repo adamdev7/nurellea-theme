@@ -1,0 +1,13 @@
+{%- doc -%}
+  Renders plain text from a theme setting (textarea) as paragraphs: blank lines split paragraphs, single newlines become <br>.
+
+  @param {string} text - The text to render
+{%- enddoc -%}
+{%- if text != blank -%}
+  {%- assign paras = text | escape | split: '
+
+' -%}
+  {%- for para in paras -%}
+    <p>{{ para | strip | newline_to_br }}</p>
+  {%- endfor -%}
+{%- endif -%}

@@ -1,6 +1,7 @@
 {%- doc -%}
-  Supplement facts panel from product metafields — never from theme defaults.
-  Sources: nurellea.supplement_facts (JSON) or nurellea.supplement_facts_image (image of the approved label).
+  Supplement facts panel. Sources, in order: product metafield nurellea.supplement_facts (JSON),
+  nurellea.supplement_facts_image (image of the approved label), then the label facts in
+  Theme settings > Nurellea product facts ("Name | Amount | %DV" per line).
   JSON shape: { "serving_size": "", "servings_per_container": "", "rows": [{ "name": "", "amount": "", "dv": "" }], "footnote": "" }
 
   @param {object} product - Product
@@ -8,10 +9,12 @@
 {%- liquid
   assign facts = product.metafields.nurellea.supplement_facts.value
   assign facts_image = product.metafields.nurellea.supplement_facts_image.value
-  assign serving_size = facts.serving_size | default: product.metafields.nurellea.serving_size.value
-  assign servings = facts.servings_per_container | default: product.metafields.nurellea.servings_per_container.value
+  assign serving_size = facts.serving_size | default: product.metafields.nurellea.serving_size.value | default: settings.facts_serving_size
+  assign servings = facts.servings_per_container | default: product.metafields.nurellea.servings_per_container.value | default: settings.facts_servings
+  assign footnote = facts.footnote | default: settings.facts_footnote
+  assign setting_rows = settings.facts_rows | strip | newline_to_br | split: '<br />'
 -%}
-{%- if facts.rows.size > 0 -%}
+{%- if facts.rows.size > 0 or facts_image == blank and settings.facts_rows != blank -%}
   <div class="nl-facts" role="region" aria-label="Supplement facts">
     <div class="nl-facts__title">Supplement Facts</div>
     <div class="nl-facts__serving">
@@ -27,17 +30,31 @@
         </tr>
       </thead>
       <tbody>
-        {%- for row in facts.rows -%}
-          <tr>
-            <th scope="row">{{ row.name | escape }}</th>
-            <td>{{ row.amount | escape }}</td>
-            <td>{{ row.dv | default: '' | escape }}</td>
-          </tr>
-        {%- endfor -%}
+        {%- if facts.rows.size > 0 -%}
+          {%- for row in facts.rows -%}
+            <tr>
+              <th scope="row">{{ row.name | escape }}</th>
+              <td>{{ row.amount | escape }}</td>
+              <td>{{ row.dv | default: '' | escape }}</td>
+            </tr>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for line in setting_rows -%}
+            {%- assign cells = line | split: '|' -%}
+            {%- assign row_name = cells[0] | strip -%}
+            {%- if row_name != blank -%}
+              <tr>
+                <th scope="row">{{ row_name | escape }}</th>
+                <td>{{ cells[1] | strip | escape }}</td>
+                <td>{{ cells[2] | strip | escape }}</td>
+              </tr>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
       </tbody>
     </table>
-    {%- if facts.footnote != blank -%}
-      <div class="nl-facts__foot">{{ facts.footnote | escape | newline_to_br }}</div>
+    {%- if footnote != blank -%}
+      <div class="nl-facts__foot">{{ footnote | escape | newline_to_br }}</div>
     {%- endif -%}
   </div>
 {%- elsif facts_image != blank -%}
@@ -53,8 +70,8 @@
   }}
 {%- elsif request.design_mode -%}
   <p class="nl-setup-note" role="note">
-    <strong>Product facts needed:</strong> add the approved supplement facts to the product metafield
-    <code>nurellea.supplement_facts</code> (JSON) or upload the label image to <code>nurellea.supplement_facts_image</code>.
+    <strong>Product facts needed:</strong> fill Theme settings &gt; Nurellea product facts, or add the product metafield
+    <code>nurellea.supplement_facts</code> (JSON) or the label image <code>nurellea.supplement_facts_image</code>.
     Nothing is shown to shoppers until it is set.
   </p>
 {%- endif -%}

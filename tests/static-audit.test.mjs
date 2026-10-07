@@ -158,12 +158,15 @@ test('Nurellea copy contains no unsupported health claims, urgency or invented s
     ...listFiles('sections', '.liquid').filter((f) => f.includes('nurellea')),
     ...listFiles('snippets', '.liquid').filter((f) => f.includes('nurellea')),
     ...jsonTemplates,
+    'config/settings_data.json',
   ];
   const banned = [
     /clinically/i, /\bproven\b/i, /\bcures?\b(?! or prevent)/i, /weight[- ]loss|lose weight|burn fat/i,
     /doctor[- ]recommended|dietitian[- ]approved/i, /selling fast|only \d+ left|hurry|limited time/i,
     /\b\d{1,3}(,\d{3})+\+?\s*(happy|customers|reviews|sold)/i, /\b#1\b|best[- ]selling/i,
     /probiotic|prebiotic|cfu\b/i, /dermatologist|as seen (in|on)/i,
+    /boosts? (your )?immun|reduces? (stress|anxiety|bloating|inflammation)|cholesterol|hormon/i,
+    /next[- ]day|1[-–]2 (business )?days|fast shipping/i,
   ];
   const problems = [];
   for (const f of files) {

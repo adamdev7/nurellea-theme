@@ -1,0 +1,54 @@
+{%- liquid
+  assign days = section.settings.days | plus: 0
+-%}
+<section class="nl-section nl-section--tight color-{{ section.settings.color_scheme }}" aria-labelledby="Guarantee-{{ section.id }}">
+  <div class="nl-container">
+    <div class="nl-guarantee" data-nl-reveal>
+      <div class="nl-guarantee__seal" aria-hidden="true">
+        <svg viewBox="0 0 200 200" class="nl-guarantee__ring">
+          <defs><path id="GuaranteeArc-{{ section.id }}" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+          <text><textPath href="#GuaranteeArc-{{ section.id }}" startOffset="0">{{ section.settings.seal_text | escape }} • {{ section.settings.seal_text | escape }} •</textPath></text>
+        </svg>
+        <span class="nl-guarantee__days">
+          {%- if days > 0 -%}<strong>{{ days }}</strong><span>days</span>{%- else -%}{% render 'nurellea-icon', name: 'shield' %}{%- endif -%}
+        </span>
+      </div>
+      <div class="nl-stack">
+        {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+        <h2 id="Guarantee-{{ section.id }}" class="nl-h2">
+          {{ section.settings.heading | escape }}
+          {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+        </h2>
+        {%- if section.settings.text != blank -%}<div class="nl-lead">{{ section.settings.text }}</div>{%- endif -%}
+        <div class="nl-actions">
+          {%- if section.settings.button_label != blank -%}
+            <a class="button nl-btn" href="{{ section.settings.button_link | default: '#MainContent' }}">{{ section.settings.button_label | escape }}</a>
+          {%- endif -%}
+          {%- if shop.refund_policy.body != blank -%}
+            <a class="nl-link" href="{{ shop.refund_policy.url }}">Read the refund policy</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea guarantee",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Must match your refund policy (Settings > Policies)." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    { "type": "number", "id": "days", "label": "Guarantee days", "default": 30 },
+    { "type": "text", "id": "seal_text", "label": "Seal text", "default": "Money-back guarantee" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Try it risk-free" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our 30-day" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "money-back guarantee" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Nurellea guarantee" }]
+}
+{% endschema %}

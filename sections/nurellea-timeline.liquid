@@ -1,0 +1,63 @@
+<section class="nl-section color-{{ section.settings.color_scheme }}" aria-labelledby="Timeline-{{ section.id }}">
+  <div class="nl-container">
+    <header class="nl-section-head nl-section-head--center" data-nl-reveal>
+      {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      <h2 id="Timeline-{{ section.id }}" class="nl-h2">
+        {{ section.settings.heading | escape }}
+        {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+      </h2>
+      {%- if section.settings.text != blank -%}<div class="nl-lead nl-muted">{{ section.settings.text }}</div>{%- endif -%}
+    </header>
+
+    {%- if section.blocks.size > 0 -%}
+      <ol class="nl-timeline" role="list" style="--nl-timeline-count: {{ section.blocks.size }}">
+        {%- for block in section.blocks -%}
+          <li class="nl-timeline__item" data-nl-reveal style="--nl-reveal-delay: {{ forloop.index0 | times: 90 }}ms" {{ block.shopify_attributes }}>
+            <span class="nl-timeline__dot" aria-hidden="true">{{ forloop.index }}</span>
+            {%- if block.settings.label != blank -%}<p class="nl-timeline__label">{{ block.settings.label | escape }}</p>{%- endif -%}
+            <h3 class="nl-timeline__title">{{ block.settings.title | escape }}</h3>
+            {%- if block.settings.text != blank -%}<div class="nl-timeline__text nl-prose">{{ block.settings.text }}</div>{%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ol>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="nl-small nl-muted nl-center" style="margin-top: 28px;">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea timeline",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Your routine" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your first" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "90 days" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    {
+      "type": "text",
+      "id": "footnote",
+      "label": "Footnote",
+      "default": "Everyone is different. This is a routine guide, not a promise of results.",
+      "info": "Do not promise specific results or timelines."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stage",
+      "name": "Stage",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Week 1" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Stage" },
+        { "type": "richtext", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Nurellea timeline" }]
+}
+{% endschema %}

@@ -13,7 +13,8 @@
       "type": "nurellea-policy",
       "settings": {
         "policy": "shipping",
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "summary": "<p><strong>Processing:</strong> orders are processed in 2–4 days.</p><p><strong>Delivery:</strong> 5–12 business days after dispatch. Tracking details are emailed when available.</p><p><strong>Free shipping</strong> on orders over $70 (any bundle of 2 or more bags). For a single bag, shipping costs are shown at checkout before you pay.</p>"
       }
     }
   },

@@ -12,13 +12,129 @@
     },
     "ingredients": {
       "type": "nurellea-ingredients",
+      "blocks": {
+        "nurellea_1": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Focus",
+            "name": "Lion's Mane",
+            "amount": "250 mg",
+            "text": "<p>A shaggy white mushroom prized in traditional practice for the mind.</p>",
+            "bullets": "<ul><li>Calm, clear focus</li><li>Everyday brain health</li></ul>"
+          }
+        },
+        "nurellea_2": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Energy",
+            "name": "Cordyceps",
+            "amount": "250 mg",
+            "text": "<p>A traditional favourite for natural, steady energy.</p>",
+            "bullets": "<ul><li>Sustained everyday energy</li><li>Recovery after activity</li></ul>"
+          }
+        },
+        "nurellea_3": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Mood",
+            "name": "Reishi",
+            "amount": "250 mg",
+            "text": "<p>Valued for centuries as a mushroom for calm evenings.</p>",
+            "bullets": "<ul><li>A calmer wind-down</li><li>Restful sleep</li></ul>"
+          }
+        },
+        "nurellea_4": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Gut health",
+            "name": "Shiitake",
+            "amount": "250 mg",
+            "text": "<p>A kitchen staple with a long tradition in digestive wellness.</p>",
+            "bullets": "<ul><li>Healthy digestion</li><li>Gut comfort</li></ul>"
+          }
+        },
+        "nurellea_5": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Antioxidants",
+            "name": "Chaga",
+            "amount": "250 mg",
+            "text": "<p>A birch-growing mushroom naturally rich in antioxidants.</p>",
+            "bullets": "<ul><li>Antioxidant support</li><li>Overall wellness</li></ul>"
+          }
+        },
+        "nurellea_6": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Wellbeing",
+            "name": "Maitake",
+            "amount": "250 mg",
+            "text": "<p>The 'dancing mushroom', traditionally used for whole-body balance.</p>",
+            "bullets": "<ul><li>Normal immune function</li><li>Everyday balance</li></ul>"
+          }
+        },
+        "nurellea_7": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Beauty",
+            "name": "Tremella",
+            "amount": "250 mg",
+            "text": "<p>The 'snow mushroom', used in traditional beauty rituals.</p>",
+            "bullets": "<ul><li>Skin hydration</li><li>Hair, skin & nail care</li></ul>"
+          }
+        },
+        "nurellea_8": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Defences",
+            "name": "Royal Sun",
+            "amount": "250 mg",
+            "text": "<p>A sweet, almond-scented mushroom traditionally used for the body's defences.</p>",
+            "bullets": "<ul><li>Natural defences</li><li>Healthy bones</li></ul>"
+          }
+        },
+        "nurellea_9": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Digestion",
+            "name": "White Button",
+            "amount": "250 mg",
+            "text": "<p>The familiar everyday mushroom, traditionally used to support digestion.</p>",
+            "bullets": "<ul><li>Healthy digestion</li><li>Gut balance</li></ul>"
+          }
+        },
+        "nurellea_10": {
+          "type": "ingredient",
+          "settings": {
+            "tag": "Liver",
+            "name": "Black Fungus",
+            "amount": "250 mg",
+            "text": "<p>Wood ear mushroom, a staple of traditional Asian cooking and wellness.</p>",
+            "bullets": "<ul><li>Liver health</li><li>Healthy circulation</li></ul>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6",
+        "nurellea_7",
+        "nurellea_8",
+        "nurellea_9",
+        "nurellea_10"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
-        "eyebrow": "Key ingredients",
+        "eyebrow": "Our 10-in-1 mushroom blend",
         "heading": "Meet the",
-        "heading_accent": "ingredients",
-        "text": "",
-        "columns": "3",
+        "heading_accent": "mushrooms",
+        "text": "<p>250 mg of each functional mushroom extract, made from 100% fruiting body. Tap a card to see what it is traditionally used for.*</p>",
+        "layout": "tap",
+        "columns": "5",
+        "show_disclaimer": true,
         "button_label": "Shop Gut Gummies"
       }
     },
@@ -75,7 +191,7 @@
         "nurellea_1": {
           "type": "question",
           "settings": {
-            "question": "Can I take them if I am pregnant, breastfeeding or taking medication?",
+            "question": "Can I take them with medication, or if I am pregnant or breastfeeding?",
             "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
             "category": "Product"
           }
@@ -83,8 +199,8 @@
         "nurellea_2": {
           "type": "question",
           "settings": {
-            "question": "Are they suitable for my diet?",
-            "answer": "<p>Dietary and allergen information is listed on the product page. If you cannot find what you need, <a href=\"/pages/contact\">ask us</a> and we will check for you.</p>",
+            "question": "Are they vegan?",
+            "answer": "<p>Yes. Nurellea Gut Gummies are vegan and non-GMO, and they are set with fruit pectin instead of gelatin.</p>",
             "category": "Product"
           }
         },
@@ -92,7 +208,7 @@
           "type": "question",
           "settings": {
             "question": "How should I store them?",
-            "answer": "<p>Store them as directed on the label, and keep them out of reach of children.</p>",
+            "answer": "<p>Store the bag in a cool, dry place away from direct sunlight, reseal it after each use and keep it out of reach of children.</p>",
             "category": "Product"
           }
         }

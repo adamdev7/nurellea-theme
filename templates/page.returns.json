@@ -13,7 +13,8 @@
       "type": "nurellea-policy",
       "settings": {
         "policy": "refund",
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "summary": "<p><strong>30-day money-back guarantee.</strong> If you are not happy with your order, <a href=\"/pages/contact\">contact us</a> within 30 days of receiving it and we will refund you. The full terms are below.</p>"
       }
     }
   },

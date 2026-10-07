@@ -1,0 +1,386 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-hero",
+      "blocks": {
+        "nurellea_1": {
+          "type": "point",
+          "settings": {
+            "icon": "list",
+            "text": "Full label on every product page"
+          }
+        },
+        "nurellea_2": {
+          "type": "point",
+          "settings": {
+            "icon": "package",
+            "text": "Online order tracking"
+          }
+        },
+        "nurellea_3": {
+          "type": "point",
+          "settings": {
+            "icon": "lock",
+            "text": "Secure checkout"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Gut gummies for women",
+        "heading": "A daily ritual that feels",
+        "heading_accent": "like self-care",
+        "text": "<p>Nurellea Gut Gummies turn your daily supplement into a moment you look forward to — chewable, simple and made to fit the way you live.</p>",
+        "button_label": "Shop Gut Gummies",
+        "button2_label": "See what's inside",
+        "button2_link": "/pages/ingredients",
+        "show_price_chip": true,
+        "chip_text": "Chewable gummy format",
+        "chip_icon": "sparkle"
+      }
+    },
+    "strip": {
+      "type": "nurellea-trust-strip",
+      "blocks": {
+        "nurellea_1": {
+          "type": "item",
+          "settings": {
+            "icon": "flower",
+            "text": "Made for women's daily routines"
+          }
+        },
+        "nurellea_2": {
+          "type": "item",
+          "settings": {
+            "icon": "gummy",
+            "text": "Chewable gummy format"
+          }
+        },
+        "nurellea_3": {
+          "type": "item",
+          "settings": {
+            "icon": "list",
+            "text": "Every ingredient listed, as on the label"
+          }
+        },
+        "nurellea_4": {
+          "type": "item",
+          "settings": {
+            "icon": "package",
+            "text": "Track your order online"
+          }
+        },
+        "nurellea_5": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "text": "Friendly customer care"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "animate": true,
+        "speed": 44
+      }
+    },
+    "why": {
+      "type": "nurellea-features",
+      "blocks": {
+        "nurellea_1": {
+          "type": "feature",
+          "settings": {
+            "icon": "gummy",
+            "title": "Easy to take",
+            "text": "<p>No capsules to swallow — just a chewable gummy you can keep on your desk, nightstand or in your bag.</p>"
+          }
+        },
+        "nurellea_2": {
+          "type": "feature",
+          "settings": {
+            "icon": "list",
+            "title": "Transparent by design",
+            "text": "<p>Every ingredient and amount is listed on the product page, exactly as it appears on the label.</p>"
+          }
+        },
+        "nurellea_3": {
+          "type": "feature",
+          "settings": {
+            "icon": "flower",
+            "title": "Made for women",
+            "text": "<p>Created with women's everyday wellness routines in mind.</p>"
+          }
+        },
+        "nurellea_4": {
+          "type": "feature",
+          "settings": {
+            "icon": "heart",
+            "title": "A ritual you enjoy",
+            "text": "<p>A treat-like format that makes showing up for yourself feel easy and pleasant.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Why Nurellea",
+        "heading": "Wellness made",
+        "heading_accent": "softer & simpler",
+        "text": "<p>We believe a daily routine should feel like a small act of care — not a chore.</p>",
+        "style": "soft",
+        "center": true
+      }
+    },
+    "spotlight": {
+      "type": "nurellea-product-spotlight",
+      "blocks": {
+        "nurellea_1": {
+          "type": "point",
+          "settings": {
+            "text": "Chewable gummy format"
+          }
+        },
+        "nurellea_2": {
+          "type": "point",
+          "settings": {
+            "text": "Full label details on the product page"
+          }
+        },
+        "nurellea_3": {
+          "type": "point",
+          "settings": {
+            "text": "Secure checkout and online order tracking"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "eyebrow": "Meet the gummies",
+        "text": "<p>Everything you need to know — ingredients, supplement facts, directions and warnings — is on the product page, straight from the label.</p>",
+        "button_label": "Shop now",
+        "link_label": "Read the FAQ",
+        "link_url": "/pages/faq"
+      }
+    },
+    "ritual": {
+      "type": "nurellea-steps",
+      "blocks": {
+        "nurellea_1": {
+          "type": "step",
+          "settings": {
+            "title": "Choose your option",
+            "text": "<p>Pick the option that suits you on the product page. Prices and availability are always shown before you add to cart.</p>"
+          }
+        },
+        "nurellea_2": {
+          "type": "step",
+          "settings": {
+            "title": "Take as directed",
+            "text": "<p>Follow the serving directions on the label — they are also listed on the product page.</p>"
+          }
+        },
+        "nurellea_3": {
+          "type": "step",
+          "settings": {
+            "title": "Make it yours",
+            "text": "<p>Keep your gummies somewhere you will see them every day, so your ritual becomes second nature.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Your daily ritual",
+        "heading": "Three simple steps,",
+        "heading_accent": "every day",
+        "show_directions": false
+      }
+    },
+    "ingredients": {
+      "type": "nurellea-ingredients",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "What's inside",
+        "heading": "Ingredients you can",
+        "heading_accent": "actually read",
+        "text": "<p>We list every ingredient and amount exactly as it appears on the label, so you always know what you are taking.</p>",
+        "columns": "4",
+        "button_label": "View full label",
+        "button_link": "/pages/ingredients"
+      }
+    },
+    "approach": {
+      "type": "nurellea-image-text",
+      "blocks": {
+        "nurellea_1": {
+          "type": "point",
+          "settings": {
+            "title": "Clear labels.",
+            "text": "What is on the pack is what we show online."
+          }
+        },
+        "nurellea_2": {
+          "type": "point",
+          "settings": {
+            "title": "Honest words.",
+            "text": "No exaggerated promises — just the facts."
+          }
+        },
+        "nurellea_3": {
+          "type": "point",
+          "settings": {
+            "title": "Real support.",
+            "text": "A team you can contact with any question."
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "placeholder_label": "Brand lifestyle photo",
+        "placeholder_art": "portrait",
+        "ratio": "4 / 5",
+        "eyebrow": "Our approach",
+        "heading": "Wellness that feels",
+        "heading_accent": "gentle",
+        "text": "<p>Nurellea was created to make daily wellness feel softer, simpler and more personal. We keep our labels clear, our communication honest and our products easy to fit into real life.</p>",
+        "button_label": "About Nurellea",
+        "button_link": "/pages/about",
+        "button_style": "secondary"
+      }
+    },
+    "reviews": {
+      "type": "nurellea-reviews",
+      "settings": {
+        "scope": "product",
+        "color_scheme": "scheme-2",
+        "eyebrow": "Reviews",
+        "heading": "In their",
+        "heading_accent": "own words",
+        "columns": "3",
+        "show_filters": false,
+        "page_size": 6,
+        "limit": 6,
+        "show_form": false,
+        "hide_when_empty": true,
+        "link_label": "Read all reviews",
+        "link_url": "/pages/reviews"
+      }
+    },
+    "faq": {
+      "type": "nurellea-faq",
+      "blocks": {
+        "nurellea_1": {
+          "type": "question",
+          "settings": {
+            "question": "What's in Nurellea Gut Gummies?",
+            "answer": "<p>The full ingredient list, supplement facts and allergen information are on our <a href=\"/pages/ingredients\">ingredients page</a> and on the product page, exactly as they appear on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_2": {
+          "type": "question",
+          "settings": {
+            "question": "How do I take them?",
+            "answer": "<p>Follow the directions on the label. The serving size and directions are also listed on the product page and the <a href=\"/pages/ingredients#how-to-use\">how to use</a> section.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_3": {
+          "type": "question",
+          "settings": {
+            "question": "Can I take them if I am pregnant, breastfeeding or taking medication?",
+            "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_4": {
+          "type": "question",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>Use our <a href=\"/pages/track-order\">order tracking page</a> with your order number and the email address you used at checkout. Shipping confirmation emails include tracking details when they are available.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_5": {
+          "type": "question",
+          "settings": {
+            "question": "Where do you ship, and how much does shipping cost?",
+            "answer": "<p>Delivery destinations, options and costs are shown at checkout before you pay. See our <a href=\"/pages/shipping\">shipping information</a> for details.</p>",
+            "category": "Orders & shipping"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5"
+      ],
+      "settings": {
+        "source": "blocks",
+        "color_scheme": "scheme-1",
+        "layout": "split",
+        "eyebrow": "FAQ",
+        "heading": "Questions,",
+        "heading_accent": "answered",
+        "contact_label": "See all questions",
+        "contact_link": "/pages/faq"
+      }
+    },
+    "cta": {
+      "type": "nurellea-cta",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_logo": true,
+        "heading": "Begin your",
+        "heading_accent": "Nurellea ritual",
+        "text": "<p>A small moment of care, every day. Make Nurellea part of yours.</p>",
+        "button_label": "Shop Gut Gummies"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "strip",
+    "why",
+    "spotlight",
+    "ritual",
+    "ingredients",
+    "approach",
+    "reviews",
+    "faq",
+    "cta"
+  ]
+}

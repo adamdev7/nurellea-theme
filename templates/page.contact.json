@@ -1,0 +1,72 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Contact",
+        "heading": "Let's",
+        "heading_accent": "talk",
+        "text": "<p>We would love to hear from you.</p>"
+      }
+    },
+    "contact": {
+      "type": "nurellea-contact",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Customer care",
+        "heading": "We're here to help",
+        "text": "<p>Questions about an order, our gummies or anything else? Send us a message and our team will get back to you by email.</p>"
+      }
+    },
+    "faq": {
+      "type": "nurellea-faq",
+      "blocks": {
+        "nurellea_1": {
+          "type": "question",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>Use our <a href=\"/pages/track-order\">order tracking page</a> with your order number and the email address you used at checkout. Shipping confirmation emails include tracking details when they are available.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change or cancel my order?",
+            "answer": "<p>Please <a href=\"/pages/contact\">contact us</a> as soon as possible with your order number. We will do our best to help if your order has not been shipped yet.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_3": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Please see our <a href=\"/pages/returns\">returns information</a> for eligibility and how to start a return.</p>",
+            "category": "Orders & shipping"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "source": "blocks",
+        "color_scheme": "scheme-2",
+        "layout": "split",
+        "eyebrow": "Quick answers",
+        "heading": "Before you",
+        "heading_accent": "write",
+        "contact_label": "See all FAQs",
+        "contact_link": "/pages/faq"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "contact",
+    "faq"
+  ]
+}

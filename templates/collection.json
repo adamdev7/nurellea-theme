@@ -1,0 +1,61 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "show_breadcrumbs": true,
+        "eyebrow": "Shop"
+      }
+    },
+    "grid": {
+      "type": "nurellea-collection",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "columns": "3",
+        "per_page": 24
+      }
+    },
+    "strip": {
+      "type": "nurellea-trust-strip",
+      "blocks": {
+        "nurellea_1": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "text": "Secure checkout"
+          }
+        },
+        "nurellea_2": {
+          "type": "item",
+          "settings": {
+            "icon": "package",
+            "text": "Track your order online"
+          }
+        },
+        "nurellea_3": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "text": "Friendly customer care"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "animate": false,
+        "speed": 40
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "grid",
+    "strip"
+  ]
+}

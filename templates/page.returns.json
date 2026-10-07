@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Help",
+        "heading": "Returns &",
+        "heading_accent": "refunds"
+      }
+    },
+    "policy": {
+      "type": "nurellea-policy",
+      "settings": {
+        "policy": "refund",
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "policy"
+  ]
+}

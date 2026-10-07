@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "nurellea-404",
+      "settings": {
+        "color_scheme": "scheme-2"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

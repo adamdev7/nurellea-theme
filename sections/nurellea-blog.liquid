@@ -1,0 +1,63 @@
+<section class="nl-section color-{{ section.settings.color_scheme }}" aria-label="Articles">
+  <div class="nl-container">
+    {%- paginate blog.articles by section.settings.per_page -%}
+      {%- if blog.all_tags.size > 0 -%}
+        <nav class="nl-filter-group" aria-label="Filter articles by topic" style="margin-block-end: 32px; justify-content: center;">
+          <a class="nl-filter" href="{{ blog.url }}" aria-pressed="{% if current_tags == blank %}true{% else %}false{% endif %}" style="text-decoration:none;">All</a>
+          {%- for tag in blog.all_tags -%}
+            <a class="nl-filter" href="{{ blog.url }}/tagged/{{ tag | handleize }}" aria-pressed="{% if current_tags contains tag %}true{% else %}false{% endif %}" style="text-decoration:none;">{{ tag | escape }}</a>
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
+
+      {%- if blog.articles.size > 0 -%}
+        <div class="nl-grid nl-grid--3">
+          {%- for article in blog.articles -%}
+            <a class="nl-article-card" href="{{ article.url }}" data-nl-reveal>
+              <div class="nl-media">
+                {%- if article.image -%}
+                  {{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw', alt: article.image.alt | default: article.title }}
+                {%- else -%}
+                  {% render 'nurellea-placeholder', label: 'Article image', art: 'botanical' %}
+                {%- endif -%}
+              </div>
+              <p class="nl-article-card__meta">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%b %d, %Y' }}</time>
+                {%- if article.tags.size > 0 %} · {{ article.tags.first | escape }}{% endif -%}
+              </p>
+              <h2 class="nl-article-card__title">{{ article.title | escape }}</h2>
+              <p class="nl-muted">{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div class="nl-empty">
+          {% render 'nurellea-icon', name: 'flower' %}
+          <p class="nl-h4">Our journal is coming soon</p>
+          <p class="nl-muted">Thoughtful reads about routines and rituals will appear here.</p>
+        </div>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="nl-pagination" aria-label="Pagination">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" aria-label="Previous page">{% render 'nurellea-icon', name: 'chevron-left' %}</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>{%- elsif part.title == paginate.current_page -%}<span class="current" aria-current="page">{{ part.title }}</span>{%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}" aria-label="Next page">{% render 'nurellea-icon', name: 'chevron-right' %}</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea blog",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 9 }
+  ]
+}
+{% endschema %}

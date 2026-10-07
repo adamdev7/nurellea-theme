@@ -1,0 +1,55 @@
+{%- doc -%}
+  Inline line icon set for Nurellea sections.
+
+  @param {string} name - Icon name
+  @param {string} [class] - Extra classes
+{%- enddoc -%}
+{%- capture paths -%}
+  {%- case name -%}
+    {%- when 'check' -%}<path d="m5 12.5 4.2 4.2L19 7"/>
+    {%- when 'check-circle' -%}<circle cx="12" cy="12" r="9"/><path d="m8.2 12.3 2.6 2.6 5-5.4"/>
+    {%- when 'leaf' -%}<path d="M5 19c0-8 5.5-13 15-14-1 9.5-6 15-14 15"/><path d="M5 19c3-4 6-6.5 10-8.5"/>
+    {%- when 'heart' -%}<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z"/>
+    {%- when 'sparkle' -%}<path d="M12 3.5 13.8 10l6.7 2-6.7 2L12 20.5 10.2 14l-6.7-2 6.7-2L12 3.5Z"/>
+    {%- when 'truck' -%}<path d="M3 6.5h11v9H3z"/><path d="M14 9.5h3.8l3.2 3.4v2.6h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>
+    {%- when 'shield' -%}<path d="M12 3.5 19 6v5.5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-2.5Z"/><path d="m9 12 2.2 2.2L15.5 10"/>
+    {%- when 'return' -%}<path d="M9 7 5 11l4 4"/><path d="M5 11h9.5a4.5 4.5 0 0 1 0 9H11"/>
+    {%- when 'gummy' -%}<path d="M12 5.5c4.4 0 7.5 2.6 7.5 6.4 0 3.9-3.3 6.6-7.5 6.6s-7.5-2.7-7.5-6.6c0-3.8 3.1-6.4 7.5-6.4Z"/><path d="M8.2 10.2c.7-1.3 2-2 3.6-2.1"/><circle cx="14.5" cy="13.5" r=".55" fill="currentColor"/><circle cx="11.5" cy="15" r=".55" fill="currentColor"/><circle cx="16.3" cy="10.9" r=".55" fill="currentColor"/><path d="M18.5 3.5v2M17.5 4.5h2"/>
+    {%- when 'calendar' -%}<rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>
+    {%- when 'clock' -%}<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>
+    {%- when 'sun' -%}<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M5.2 18.8l1.4-1.4M17.4 6.6l1.4-1.4"/>
+    {%- when 'moon' -%}<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10Z"/>
+    {%- when 'droplet' -%}<path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5Z"/>
+    {%- when 'flower' -%}<circle cx="12" cy="12" r="2.4"/><path d="M12 9.6c-1.6-2.4-1.6-4.6 0-6.1 1.6 1.5 1.6 3.7 0 6.1ZM12 14.4c1.6 2.4 1.6 4.6 0 6.1-1.6-1.5-1.6-3.7 0-6.1ZM9.6 12c-2.4 1.6-4.6 1.6-6.1 0 1.5-1.6 3.7-1.6 6.1 0ZM14.4 12c2.4-1.6 4.6-1.6 6.1 0-1.5 1.6-3.7 1.6-6.1 0Z"/>
+    {%- when 'list' -%}<path d="M9 7h11M9 12h11M9 17h11"/><circle cx="4.8" cy="7" r=".9" fill="currentColor"/><circle cx="4.8" cy="12" r=".9" fill="currentColor"/><circle cx="4.8" cy="17" r=".9" fill="currentColor"/>
+    {%- when 'flask' -%}<path d="M9.5 3.5h5M10.5 3.5v5.2L5.4 17.4A2 2 0 0 0 7.1 20.5h9.8a2 2 0 0 0 1.7-3.1l-5.1-8.7V3.5"/><path d="M7.5 14.5h9"/>
+    {%- when 'info' -%}<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".7" fill="currentColor"/>
+    {%- when 'alert' -%}<path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10v4.5"/><circle cx="12" cy="17" r=".7" fill="currentColor"/>
+    {%- when 'mail' -%}<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="m4.5 7 7.5 6 7.5-6"/>
+    {%- when 'chat' -%}<path d="M20 12a7.5 7.5 0 0 1-11 6.6L4.5 20l1.4-4A7.5 7.5 0 1 1 20 12Z"/>
+    {%- when 'phone' -%}<path d="M6.5 4h3l1.5 4-2 1.3a10 10 0 0 0 5.7 5.7l1.3-2 4 1.5v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4Z"/>
+    {%- when 'package' -%}<path d="m12 3.5 8 4.3v8.4l-8 4.3-8-4.3V7.8l8-4.3Z"/><path d="m4 7.8 8 4.3 8-4.3M12 12.1v8.4"/>
+    {%- when 'lock' -%}<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>
+    {%- when 'search' -%}<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>
+    {%- when 'arrow-right' -%}<path d="M4.5 12h15M13.5 6l6 6-6 6"/>
+    {%- when 'arrow-left' -%}<path d="M19.5 12h-15M10.5 6l-6 6 6 6"/>
+    {%- when 'chevron-right' -%}<path d="m9 5.5 6.5 6.5L9 18.5"/>
+    {%- when 'chevron-left' -%}<path d="M15 5.5 8.5 12l6.5 6.5"/>
+    {%- when 'chevron-down' -%}<path d="m5.5 9 6.5 6.5L18.5 9"/>
+    {%- when 'plus' -%}<path d="M12 5v14M5 12h14"/>
+    {%- when 'minus' -%}<path d="M5 12h14"/>
+    {%- when 'close' -%}<path d="m6 6 12 12M18 6 6 18"/>
+    {%- when 'verified' -%}<path d="m12 3 2.3 1.7 2.8-.1.9 2.7 2.3 1.6-.9 2.7.9 2.7-2.3 1.6-.9 2.7-2.8-.1L12 21l-2.3-1.7-2.8.1-.9-2.7-2.3-1.6.9-2.7-.9-2.7 2.3-1.6.9-2.7 2.8.1L12 3Z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.6"/>
+    {%- when 'user' -%}<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.8-3.6 3.8-5.8 7.5-5.8s6.7 2.2 7.5 5.8"/>
+    {%- when 'pin' -%}<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/>
+    {%- when 'refresh' -%}<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3L19.5 9"/><path d="M19.5 4v5h-5"/>
+    {%- when 'gift' -%}<rect x="4" y="9" width="16" height="11" rx="2"/><path d="M3 9h18M12 9v11M12 9c-1.5-3.5-5-4-5-1.8C7 9 12 9 12 9Zm0 0c1.5-3.5 5-4 5-1.8C17 9 12 9 12 9Z"/>
+    {%- when 'instagram' -%}<rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.8" cy="7.2" r=".8" fill="currentColor"/>
+    {%- when 'facebook' -%}<path d="M14.5 8H16V5h-1.8C11.9 5 10.5 6.6 10.5 9v1.8H8.5v3h2V20h3v-6.2h2.3l.5-3h-2.8V9.4c0-.9.3-1.4 1-1.4Z"/>
+    {%- when 'tiktok' -%}<path d="M14 4v10.2a3.3 3.3 0 1 1-3.3-3.3"/><path d="M14 4c.5 2.6 2.3 4.2 5 4.4"/>
+    {%- when 'pinterest' -%}<circle cx="12" cy="12" r="8.5"/><path d="M11 9.5c-.6 3-1.6 7.3-2.3 10M10.4 13.6c.6.6 1.5.9 2.4.9 2.4 0 4-2 4-4.6 0-2.5-2-4.3-4.6-4.3-3 0-4.8 2.1-4.8 4.4 0 1 .4 1.9 1.1 2.3"/>
+    {%- when 'youtube' -%}<rect x="3" y="6" width="18" height="12" rx="3.5"/><path d="m10.5 9.5 4 2.5-4 2.5v-5Z"/>
+    {%- else -%}<circle cx="12" cy="12" r="3"/>
+  {%- endcase -%}
+{%- endcapture -%}
+<svg class="nl-icon nl-icon--{{ name }} {{ class }}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{{ paths }}</svg>

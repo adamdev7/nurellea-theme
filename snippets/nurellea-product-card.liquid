@@ -1,0 +1,44 @@
+{%- doc -%}
+  Product card for the Nurellea shop grid. Prices, badges and stock come from Shopify data.
+
+  @param {object} product - Product
+  @param {boolean} [eager] - Load image eagerly
+{%- enddoc -%}
+{%- liquid
+  assign loading = 'lazy'
+  if eager
+    assign loading = 'eager'
+  endif
+  capture review_stats
+    render 'nurellea-review-stats', product: product
+  endcapture
+  assign review_stats = review_stats | strip | split: '|'
+  assign review_count = review_stats[0] | plus: 0
+  assign review_avg = review_stats[1] | plus: 0
+-%}
+<a class="nl-product-card" href="{{ product.url }}">
+  <div class="nl-media">
+    <div class="nl-product-card__badges">
+      {%- unless product.available -%}<span class="nl-badge nl-badge--ink">Sold out</span>{%- endunless -%}
+      {%- if product.available and product.compare_at_price_min > product.price_min -%}<span class="nl-badge">Sale</span>{%- endif -%}
+    </div>
+    {%- if product.featured_media -%}
+      {{ product.featured_media.preview_image | image_url: width: 1000 | image_tag: loading: loading, widths: '320, 480, 640, 800, 1000', sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw', alt: product.featured_media.alt | default: product.title }}
+    {%- else -%}
+      {% render 'nurellea-placeholder', label: 'Product photo', art: 'jar' %}
+    {%- endif -%}
+  </div>
+  <div class="nl-stack nl-stack--sm">
+    <h3 class="nl-product-card__title">{{ product.title | escape }}</h3>
+    {%- if product.metafields.nurellea.subtitle != blank -%}<p class="nl-small nl-muted">{{ product.metafields.nurellea.subtitle.value | escape }}</p>{%- endif -%}
+    <div class="nl-product-card__meta">
+      <span class="nl-product-card__price">
+        {%- if product.price_varies -%}From {% endif -%}{{ product.price_min | money }}
+        {%- if product.compare_at_price_min > product.price_min -%}<s>{{ product.compare_at_price_min | money }}</s>{%- endif -%}
+      </span>
+      {%- if review_count > 0 -%}
+        <span class="nl-small">{% render 'nurellea-stars', rating: review_avg, size: 14 %} ({{ review_count }})</span>
+      {%- endif -%}
+    </div>
+  </div>
+</a>

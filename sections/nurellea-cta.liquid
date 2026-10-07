@@ -1,0 +1,39 @@
+{%- assign p = section.settings.product | default: settings.nurellea_product -%}
+<section class="nl-section color-{{ section.settings.color_scheme }}" aria-labelledby="Cta-{{ section.id }}">
+  <div class="nl-container">
+    <div class="nl-cta" data-nl-reveal>
+      <span class="nl-orb" style="inline-size: 240px; block-size: 240px; inset-inline-end: 6%; inset-block-start: -90px; --nl-orb-color: #fff; --nl-orb-opacity: .6;" aria-hidden="true"></span>
+      {%- if section.settings.show_logo -%}
+        {% render 'nurellea-logo', height: 34, loading: 'lazy' %}
+      {%- endif -%}
+      <h2 id="Cta-{{ section.id }}" class="nl-h2">
+        {{ section.settings.heading | escape }}
+        {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+      </h2>
+      {%- if section.settings.text != blank -%}<div class="nl-lead">{{ section.settings.text }}</div>{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="button nl-btn nl-btn--lg" href="{{ section.settings.button_link | default: p.url | default: routes.all_products_collection_url }}">
+          {{ section.settings.button_label | escape }} {% render 'nurellea-icon', name: 'arrow-right' %}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea call to action",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Used for the button link when no link is set." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "show_logo", "label": "Show logo", "default": true },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Begin your" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "Nurellea ritual" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Small, consistent moments of care add up. Make Nurellea part of yours.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Gut Gummies" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Nurellea call to action" }]
+}
+{% endschema %}

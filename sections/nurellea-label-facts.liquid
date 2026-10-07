@@ -1,0 +1,93 @@
+{%- liquid
+  assign p = section.settings.product | default: product | default: settings.nurellea_product
+  assign mf = p.metafields.nurellea
+  capture facts_html
+    render 'nurellea-supplement-facts', product: p
+  endcapture
+  assign has_any = false
+  if facts_html != blank or mf.ingredients_text != blank or mf.directions != blank or mf.warnings != blank or mf.allergens != blank
+    assign has_any = true
+  endif
+-%}
+<section class="nl-section color-{{ section.settings.color_scheme }}" id="label" aria-labelledby="Label-{{ section.id }}">
+  <div class="nl-container">
+    <header class="nl-section-head" data-nl-reveal>
+      {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      <h2 id="Label-{{ section.id }}" class="nl-h2">
+        {{ section.settings.heading | escape }}
+        {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+      </h2>
+      {%- if p != blank -%}<p class="nl-muted">For {{ p.title | escape }}. Always read the label on your pack before use.</p>{%- endif -%}
+    </header>
+
+    {%- if has_any -%}
+      <div class="nl-pdp-details">
+        <div class="nl-stack nl-stack--lg">
+          {%- if facts_html != blank -%}
+            <div class="nl-stack nl-stack--sm" id="supplement-facts">
+              <h3 class="nl-h3">Supplement facts</h3>
+              {{ facts_html }}
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="nl-stack nl-stack--lg">
+          {%- if mf.ingredients_text != blank -%}
+            <div class="nl-stack nl-stack--sm" id="ingredients">
+              <h3 class="nl-h3">Full ingredient list</h3>
+              <div class="nl-prose">{% render 'nurellea-rich', field: mf.ingredients_text %}</div>
+            </div>
+          {%- endif -%}
+          {%- if mf.allergens != blank -%}
+            <div class="nl-stack nl-stack--sm">
+              <h3 class="nl-h3">Allergen information</h3>
+              <div class="nl-prose">{% render 'nurellea-rich', field: mf.allergens %}</div>
+            </div>
+          {%- endif -%}
+          {%- if mf.directions != blank -%}
+            <div class="nl-stack nl-stack--sm" id="how-to-use">
+              <h3 class="nl-h3">How to use</h3>
+              {%- if mf.serving_size != blank -%}<p><strong>Serving size:</strong> {{ mf.serving_size.value | escape }}</p>{%- endif -%}
+              <div class="nl-prose">{% render 'nurellea-rich', field: mf.directions %}</div>
+            </div>
+          {%- endif -%}
+          {%- if mf.storage != blank -%}
+            <div class="nl-stack nl-stack--sm">
+              <h3 class="nl-h3">Storage</h3>
+              <div class="nl-prose">{% render 'nurellea-rich', field: mf.storage %}</div>
+            </div>
+          {%- endif -%}
+          {%- if mf.warnings != blank -%}
+            <div class="nl-card nl-card--blush nl-stack nl-stack--sm" id="warnings">
+              <h3 class="nl-h4">{% render 'nurellea-icon', name: 'info' %} Warnings &amp; safety</h3>
+              <div class="nl-prose">{% render 'nurellea-rich', field: mf.warnings %}</div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      <div class="nl-empty">
+        {% render 'nurellea-icon', name: 'list' %}
+        <p class="nl-h4">Label details coming soon</p>
+        <p class="nl-muted">The complete supplement facts, ingredients, directions and warnings will be published here. Until then, please refer to the label on your pack or <a href="/pages/contact">contact us</a>.</p>
+      </div>
+      {%- if request.design_mode -%}
+        <p class="nl-setup-note">Fill the product metafields <code>nurellea.supplement_facts</code>, <code>nurellea.ingredients_text</code>, <code>nurellea.allergens</code>, <code>nurellea.serving_size</code>, <code>nurellea.directions</code>, <code>nurellea.storage</code> and <code>nurellea.warnings</code> from the approved label.</p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea label facts",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product. All content comes from its nurellea.* metafields." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The label" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Everything on the" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "label" }
+  ],
+  "presets": [{ "name": "Nurellea label facts" }]
+}
+{% endschema %}

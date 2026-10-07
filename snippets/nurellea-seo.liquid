@@ -1,0 +1,130 @@
+{%- doc -%}
+  Robots directives and site-level structured data (Organization, WebSite, BreadcrumbList).
+  Product JSON-LD is rendered by the product section so it reflects the selected variant and genuine reviews only.
+{%- enddoc -%}
+{%- liquid
+  assign robots = ''
+  assign primary_domain = settings.seo_primary_domain | strip | downcase | remove: 'https://' | remove: 'http://' | remove: '/'
+
+  if settings.seo_noindex_all
+    assign robots = 'noindex, nofollow'
+  elsif primary_domain != blank and request.host != primary_domain
+    assign robots = 'noindex, nofollow'
+  else
+    assign private_page = false
+    case request.page_type
+      when 'cart', 'search', 'captcha', 'password', 'gift_card'
+        assign private_page = true
+    endcase
+    if template.directory == 'customers' or request.path contains '/account'
+      assign private_page = true
+    endif
+    if template.suffix == 'order-status' or template.suffix == 'track-order'
+      assign private_page = true
+    endif
+    if private_page
+      assign robots = 'noindex, follow'
+    endif
+  endif
+-%}
+{%- if robots != blank -%}
+  <meta name="robots" content="{{ robots }}">
+{%- endif -%}
+
+{%- liquid
+  assign site_url = shop.url
+  if settings.logo != blank
+    assign org_logo = settings.logo | image_url: width: 600 | prepend: 'https:'
+  else
+    assign org_logo = 'nurellea-wordmark-640.png' | asset_url | prepend: 'https:'
+  endif
+  assign same_as = ''
+  assign social_keys = 'brand_instagram,brand_tiktok,brand_facebook,brand_pinterest,brand_youtube' | split: ','
+  for key in social_keys
+    if settings[key] != blank
+      assign same_as = same_as | append: settings[key] | append: '|'
+    endif
+  endfor
+  assign same_as = same_as | split: '|'
+-%}
+
+{%- if request.page_type == 'index' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": {{ site_url | append: '/#organization' | json }},
+      "name": {{ shop.name | json }},
+      {%- if settings.brand_legal_name != blank %}"legalName": {{ settings.brand_legal_name | json }},{% endif %}
+      "url": {{ site_url | json }},
+      "logo": {{ org_logo | json }}
+      {%- if same_as.size > 0 -%},
+        "sameAs": {{ same_as | json }}
+      {%- endif -%}
+      {%- if settings.brand_support_email != blank -%},
+        "contactPoint": [{
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": {{ settings.brand_support_email | json }}
+          {%- if settings.brand_support_phone != blank %}, "telephone": {{ settings.brand_support_phone | json }}{% endif %}
+        }]
+      {%- endif %}
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": {{ site_url | append: '/#website' | json }},
+      "name": {{ shop.name | json }},
+      "url": {{ site_url | json }},
+      "publisher": { "@id": {{ site_url | append: '/#organization' | json }} }
+    }
+  </script>
+{%- endif -%}
+
+{%- liquid
+  assign crumbs_names = ''
+  assign crumbs_urls = ''
+  case request.page_type
+    when 'product'
+      if collection
+        assign crumbs_names = collection.title
+        assign crumbs_urls = collection.url
+      else
+        assign crumbs_names = 'Shop'
+        assign crumbs_urls = routes.all_products_collection_url
+      endif
+      assign crumbs_names = crumbs_names | append: '|' | append: product.title
+      assign crumbs_urls = crumbs_urls | append: '|' | append: product.url
+    when 'collection'
+      assign crumbs_names = collection.title
+      assign crumbs_urls = collection.url
+    when 'page'
+      assign crumbs_names = page.title
+      assign crumbs_urls = page.url
+    when 'blog'
+      assign crumbs_names = blog.title
+      assign crumbs_urls = blog.url
+    when 'article'
+      assign crumbs_names = blog.title | append: '|' | append: article.title
+      assign crumbs_urls = blog.url | append: '|' | append: article.url
+  endcase
+  assign crumbs_names = crumbs_names | split: '|'
+  assign crumbs_urls = crumbs_urls | split: '|'
+-%}
+{%- if crumbs_names.size > 0 and robots == blank -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ site_url | json }} }
+        {%- for name in crumbs_names -%}
+          {%- assign idx = forloop.index0 -%}
+          ,{ "@type": "ListItem", "position": {{ forloop.index | plus: 1 }}, "name": {{ name | json }}, "item": {{ site_url | append: crumbs_urls[idx] | json }} }
+        {%- endfor %}
+      ]
+    }
+  </script>
+{%- endif -%}

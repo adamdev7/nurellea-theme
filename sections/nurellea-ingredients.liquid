@@ -1,0 +1,113 @@
+{%- liquid
+  assign p = section.settings.product | default: product | default: settings.nurellea_product
+  assign entries = p.metafields.nurellea.ingredients.value
+  assign has_entries = false
+  if entries.size > 0
+    assign has_entries = true
+  endif
+-%}
+<section class="nl-section color-{{ section.settings.color_scheme }}" id="key-ingredients" aria-labelledby="Ingredients-{{ section.id }}">
+  <div class="nl-container">
+    <header class="nl-section-head nl-section-head--split" data-nl-reveal>
+      <div class="nl-stack nl-stack--sm">
+        {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+        <h2 id="Ingredients-{{ section.id }}" class="nl-h2">
+          {{ section.settings.heading | escape }}
+          {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+        </h2>
+        {%- if section.settings.text != blank -%}<div class="nl-lead nl-muted" style="max-width: 620px;">{{ section.settings.text }}</div>{%- endif -%}
+      </div>
+      {%- if section.settings.button_label != blank -%}
+        <a class="button-secondary nl-btn" href="{{ section.settings.button_link | default: p.url }}#ingredients">{{ section.settings.button_label | escape }}</a>
+      {%- endif -%}
+    </header>
+
+    {%- if has_entries -%}
+      <div class="nl-grid nl-grid--{{ section.settings.columns }}">
+        {%- for ing in entries -%}
+          <article class="nl-ingredient" data-nl-reveal style="--nl-reveal-delay: {{ forloop.index0 | modulo: 4 | times: 80 }}ms">
+            <div class="nl-media">
+              {%- if ing.image != blank -%}
+                {{ ing.image.value | image_url: width: 800 | image_tag: loading: 'lazy', widths: '320, 480, 640, 800', sizes: '(min-width: 990px) 25vw, 50vw', alt: ing.image.value.alt | default: ing.name.value }}
+              {%- else -%}
+                {% render 'nurellea-placeholder', label: 'Ingredient image', art: 'botanical' %}
+              {%- endif -%}
+            </div>
+            {%- if ing.amount != blank -%}<p class="nl-ingredient__amount">{{ ing.amount.value | escape }}</p>{%- endif -%}
+            <h3 class="nl-ingredient__name">{{ ing.name.value | escape }}</h3>
+            {%- if ing.summary != blank -%}<p class="nl-muted">{{ ing.summary.value | escape }}</p>{%- endif -%}
+            {%- if ing.source_note != blank -%}<p class="nl-small nl-muted">{{ ing.source_note.value | escape }}</p>{%- endif -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- elsif section.blocks.size > 0 -%}
+      <div class="nl-grid nl-grid--{{ section.settings.columns }}">
+        {%- for block in section.blocks -%}
+          <article class="nl-ingredient" data-nl-reveal {{ block.shopify_attributes }}>
+            <div class="nl-media">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '320, 480, 640, 800', sizes: '(min-width: 990px) 25vw, 50vw', alt: block.settings.image.alt | default: block.settings.name }}
+              {%- else -%}
+                {% render 'nurellea-placeholder', label: 'Ingredient image', art: 'botanical' %}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.amount != blank -%}<p class="nl-ingredient__amount">{{ block.settings.amount | escape }}</p>{%- endif -%}
+            <h3 class="nl-ingredient__name">{{ block.settings.name | escape }}</h3>
+            {%- if block.settings.text != blank -%}<div class="nl-muted">{{ block.settings.text }}</div>{%- endif -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="nl-empty">
+        {% render 'nurellea-icon', name: 'leaf' %}
+        <p class="nl-h4">The full ingredient breakdown is coming soon.</p>
+        <p class="nl-muted">Until then, every ingredient is listed on the product label{% if p != blank %} and on the <a href="{{ p.url }}#ingredients">product page</a>{% endif %}.</p>
+        {%- if request.design_mode -%}
+          <p class="nl-setup-note">Add Ingredient entries (metaobject <code>nurellea_ingredient</code>) and reference them from the product metafield <code>nurellea.ingredients</code>. They then appear here, on the product page and on the Ingredients page.</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea ingredients",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Ingredients come from the product metafield nurellea.ingredients. Defaults to the current or primary product." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "What's inside" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Ingredients you can" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)", "default": "actually read" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>We list every ingredient and amount exactly as it appears on the label, so you always know what you are taking.</p>" },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns",
+      "default": "4",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "View full label" },
+    { "type": "url", "id": "button_link", "label": "Button link", "info": "Defaults to the product page." }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient (fallback)",
+      "settings": [
+        { "type": "paragraph", "content": "Only used when the product has no ingredient metafield. Enter label-verified facts only." },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "name", "label": "Name" },
+        { "type": "text", "id": "amount", "label": "Amount per serving" },
+        { "type": "richtext", "id": "text", "label": "Description" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Nurellea ingredients" }]
+}
+{% endschema %}

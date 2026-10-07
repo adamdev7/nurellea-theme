@@ -1,0 +1,93 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign mf = p.metafields.nurellea
+  capture review_stats
+    render 'nurellea-review-stats', product: p
+  endcapture
+  assign review_stats = review_stats | strip | split: '|'
+  assign review_count = review_stats[0] | plus: 0
+  assign review_avg = review_stats[1] | plus: 0
+-%}
+<section class="nl-section color-{{ section.settings.color_scheme }}" aria-labelledby="Spotlight-{{ section.id }}">
+  <div class="nl-container">
+    <div class="nl-split{% if section.settings.reverse %} nl-split--reverse{% endif %}">
+      <div class="nl-split__media" data-nl-reveal>
+        <a href="{{ p.url | default: routes.all_products_collection_url }}" class="nl-media" style="--nl-ratio: 1 / 1; display:block;" tabindex="-1" aria-hidden="true">
+          {%- assign img = section.settings.image | default: p.featured_media.preview_image -%}
+          {%- if img != blank -%}
+            {{ img | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '480, 720, 960, 1200, 1400', sizes: '(min-width: 990px) 50vw, 100vw', alt: '' }}
+          {%- else -%}
+            {% render 'nurellea-placeholder', label: 'Product packshot', art: 'jar' %}
+          {%- endif -%}
+        </a>
+      </div>
+      <div class="nl-split__content" data-nl-reveal>
+        {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+        <h2 id="Spotlight-{{ section.id }}" class="nl-h2">
+          {%- if section.settings.heading != blank -%}{{ section.settings.heading | escape }}{%- else -%}{{ p.title | default: 'Nurellea Gut Gummies' | escape }}{%- endif -%}
+        </h2>
+        {%- if mf.subtitle != blank -%}<p class="nl-pdp__subtitle">{{ mf.subtitle.value | escape }}</p>{%- endif -%}
+        {%- if review_count > 0 -%}
+          <a class="nl-pdp__rating" href="{{ p.url }}#reviews">{% render 'nurellea-stars', rating: review_avg %}<span>{{ review_avg }} · {{ review_count }} {{ review_count | pluralize: 'review', 'reviews' }}</span></a>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}<div class="nl-lead">{{ section.settings.text }}</div>{%- endif -%}
+
+        {%- if mf.benefits.value.size > 0 -%}
+          <ul class="nl-checklist">
+            {%- for b in mf.benefits.value limit: 5 -%}<li>{% render 'nurellea-icon', name: 'check-circle' %}<span>{{ b | escape }}</span></li>{%- endfor -%}
+          </ul>
+        {%- elsif section.blocks.size > 0 -%}
+          <ul class="nl-checklist">
+            {%- for block in section.blocks -%}<li {{ block.shopify_attributes }}>{% render 'nurellea-icon', name: 'check-circle' %}<span>{{ block.settings.text | escape }}</span></li>{%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if p != blank -%}
+          <div class="nl-price">
+            <span class="nl-price__current">{% if p.price_varies %}<span class="nl-small nl-muted">From </span>{% endif %}{{ p.price_min | money }}</span>
+            {%- if p.compare_at_price_min > p.price_min -%}<s class="nl-price__compare">{{ p.compare_at_price_min | money }}</s>{%- endif -%}
+          </div>
+        {%- elsif request.design_mode -%}
+          <p class="nl-setup-note">Choose a product (or set the primary product in Theme settings) to show live price and stock.</p>
+        {%- endif -%}
+
+        <div class="nl-actions">
+          <a class="button nl-btn nl-btn--lg" href="{{ p.url | default: routes.all_products_collection_url }}">
+            {%- if p.available == false and p != blank -%}View product{%- else -%}{{ section.settings.button_label | escape }}{%- endif -%}
+            {% render 'nurellea-icon', name: 'arrow-right' %}
+          </a>
+          {%- if section.settings.link_label != blank and section.settings.link_url != blank -%}
+            <a class="nl-link" href="{{ section.settings.link_url }}">{{ section.settings.link_label | escape }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea spotlight",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product in Theme settings." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "image_picker", "id": "image", "label": "Image override" },
+    { "type": "checkbox", "id": "reverse", "label": "Image on right", "default": false },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Meet the gummies" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to the product title." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Everything you need to know — ingredients, supplement facts, directions and warnings — is on the product page, straight from the label.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+    { "type": "text", "id": "link_label", "label": "Secondary link label", "default": "Read the FAQ" },
+    { "type": "url", "id": "link_url", "label": "Secondary link", "default": "/pages/faq" }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Fallback point",
+      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Chewable gummy format" }]
+    }
+  ],
+  "presets": [{ "name": "Nurellea spotlight" }]
+}
+{% endschema %}

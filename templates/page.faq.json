@@ -1,0 +1,149 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Help centre",
+        "heading": "Frequently asked",
+        "heading_accent": "questions",
+        "text": "<p>Find answers about our gummies, orders, shipping and more.</p>"
+      }
+    },
+    "faq": {
+      "type": "nurellea-faq",
+      "blocks": {
+        "nurellea_1": {
+          "type": "question",
+          "settings": {
+            "question": "What's in Nurellea Gut Gummies?",
+            "answer": "<p>The full ingredient list, supplement facts and allergen information are on our <a href=\"/pages/ingredients\">ingredients page</a> and on the product page, exactly as they appear on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_2": {
+          "type": "question",
+          "settings": {
+            "question": "How do I take them?",
+            "answer": "<p>Follow the directions on the label. The serving size and directions are also listed on the product page and the <a href=\"/pages/ingredients#how-to-use\">how to use</a> section.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_3": {
+          "type": "question",
+          "settings": {
+            "question": "Can I take them if I am pregnant, breastfeeding or taking medication?",
+            "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_4": {
+          "type": "question",
+          "settings": {
+            "question": "Are they suitable for my diet?",
+            "answer": "<p>Dietary and allergen information is listed on the product page. If you cannot find what you need, <a href=\"/pages/contact\">ask us</a> and we will check for you.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_5": {
+          "type": "question",
+          "settings": {
+            "question": "How should I store them?",
+            "answer": "<p>Store them as directed on the label, and keep them out of reach of children.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_6": {
+          "type": "question",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>Use our <a href=\"/pages/track-order\">order tracking page</a> with your order number and the email address you used at checkout. Shipping confirmation emails include tracking details when they are available.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_7": {
+          "type": "question",
+          "settings": {
+            "question": "Where do you ship, and how much does shipping cost?",
+            "answer": "<p>Delivery destinations, options and costs are shown at checkout before you pay. See our <a href=\"/pages/shipping\">shipping information</a> for details.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_8": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change or cancel my order?",
+            "answer": "<p>Please <a href=\"/pages/contact\">contact us</a> as soon as possible with your order number. We will do our best to help if your order has not been shipped yet.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_9": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Please see our <a href=\"/pages/returns\">returns information</a> for eligibility and how to start a return.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_10": {
+          "type": "question",
+          "settings": {
+            "question": "Which payment methods do you accept?",
+            "answer": "<p>All available payment methods are shown at checkout.</p>",
+            "category": "Payments & account"
+          }
+        },
+        "nurellea_11": {
+          "type": "question",
+          "settings": {
+            "question": "How can I contact you?",
+            "answer": "<p>Send us a message through our <a href=\"/pages/contact\">contact page</a> and our team will reply by email.</p>",
+            "category": "Payments & account"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6",
+        "nurellea_7",
+        "nurellea_8",
+        "nurellea_9",
+        "nurellea_10",
+        "nurellea_11"
+      ],
+      "settings": {
+        "source": "store",
+        "color_scheme": "scheme-1",
+        "layout": "stacked",
+        "eyebrow": "",
+        "heading": "How can we",
+        "heading_accent": "help?",
+        "contact_label": "Can't find your answer? Contact us",
+        "contact_link": "/pages/contact",
+        "show_search": true,
+        "card_style": false
+      }
+    },
+    "cta": {
+      "type": "nurellea-cta",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_logo": false,
+        "heading": "Still",
+        "heading_accent": "curious?",
+        "text": "<p>Our team is happy to help with anything not covered here.</p>",
+        "button_label": "Contact us",
+        "button_link": "/pages/contact"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "faq",
+    "cta"
+  ]
+}

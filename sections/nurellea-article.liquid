@@ -1,0 +1,109 @@
+<article class="nl-section color-{{ section.settings.color_scheme }}" aria-labelledby="Article-{{ section.id }}" style="padding-block-start: clamp(32px, 5vw, 64px);">
+  <div class="nl-container nl-container--narrow">
+    <nav class="nl-breadcrumbs" aria-label="Breadcrumb" style="margin-block-end: 24px;">
+      <ol>
+        <li><a href="{{ routes.root_url }}">Home</a></li>
+        <li><a href="{{ blog.url }}">{{ blog.title | escape }}</a></li>
+        <li><span aria-current="page">{{ article.title | truncate: 48 | escape }}</span></li>
+      </ol>
+    </nav>
+    <header class="nl-stack" style="text-align: center; justify-items: center;">
+      {%- if article.tags.size > 0 -%}<p class="nl-eyebrow">{{ article.tags.first | escape }}</p>{%- endif -%}
+      <h1 id="Article-{{ section.id }}" class="nl-h1" style="font-size: clamp(2.2rem, 4.6vw, 3.6rem);">{{ article.title | escape }}</h1>
+      <p class="nl-small nl-muted">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%B %d, %Y' }}</time>
+        {%- if section.settings.show_author and article.author != blank %} · {{ article.author | escape }}{% endif -%}
+      </p>
+    </header>
+  </div>
+
+  {%- if article.image -%}
+    <div class="nl-container nl-article-hero" style="margin-block: clamp(28px, 5vw, 56px);">
+      <div class="nl-media">
+        {{ article.image | image_url: width: 1800 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600, 900, 1200, 1500, 1800', sizes: '(min-width: 1280px) 1280px, 100vw', alt: article.image.alt | default: article.title }}
+      </div>
+    </div>
+  {%- else -%}
+    <div style="height: 40px;"></div>
+  {%- endif -%}
+
+  <div class="nl-container nl-container--narrow">
+    <div class="nl-prose">{{ article.content }}</div>
+
+    {%- if article.tags.size > 0 -%}
+      <div class="nl-chips" style="margin-top: 40px;">
+        {%- for tag in article.tags -%}<a class="nl-chip" href="{{ blog.url }}/tagged/{{ tag | handleize }}" style="text-decoration:none;">{{ tag | escape }}</a>{%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <hr class="nl-divider" style="margin-block: 40px;">
+    <div class="nl-toolbar">
+      <a class="nl-link" href="{{ blog.url }}">{% render 'nurellea-icon', name: 'arrow-left' %} Back to {{ blog.title | escape }}</a>
+      <div class="nl-filter-group">
+        {%- assign share_url = shop.url | append: article.url | url_encode -%}
+        {%- assign share_title = article.title | url_encode -%}
+        <a class="nl-filter" style="text-decoration:none;" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}">Share on Facebook</a>
+        <a class="nl-filter" style="text-decoration:none;" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/button/?url={{ share_url }}&description={{ share_title }}">Pin it</a>
+        <a class="nl-filter" style="text-decoration:none;" href="mailto:?subject={{ share_title }}&body={{ share_url }}">Email</a>
+      </div>
+    </div>
+
+    {%- if blog.comments_enabled? -%}
+      <section class="nl-stack" style="margin-top: 56px;" aria-labelledby="Comments-{{ section.id }}">
+        <h2 id="Comments-{{ section.id }}" class="nl-h3">{{ article.comments_count }} {{ article.comments_count | pluralize: 'comment', 'comments' }}</h2>
+        {%- paginate article.comments by 20 -%}
+          {%- for comment in article.comments -%}
+            <div class="nl-card nl-card--soft">
+              <p class="nl-small"><strong>{{ comment.author | escape }}</strong> · <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: '%b %d, %Y' }}</time></p>
+              <div class="nl-prose nl-small" style="margin-top:8px;">{{ comment.content }}</div>
+            </div>
+          {%- endfor -%}
+        {%- endpaginate -%}
+        {%- form 'new_comment', article, class: 'nl-form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="nl-alert nl-alert--success" role="status">
+              {% render 'nurellea-icon', name: 'check-circle' %}
+              <span>{% if blog.moderated? %}Thank you — your comment was submitted and will appear after moderation.{% else %}Thank you — your comment was posted.{% endif %}</span>
+            </div>
+          {%- elsif form.errors -%}
+            <div class="nl-alert nl-alert--error" role="alert">{% render 'nurellea-icon', name: 'alert' %}<div>Your comment could not be posted.{{ form.errors | default_errors }}</div></div>
+          {%- endif -%}
+          <h3 class="nl-h4">Leave a comment</h3>
+          <div class="nl-form__row">
+            <div class="nl-field"><label for="CommentAuthor">Name</label><input id="CommentAuthor" type="text" name="comment[author]" required value="{{ form.author }}"></div>
+            <div class="nl-field"><label for="CommentEmail">Email (not published)</label><input id="CommentEmail" type="email" name="comment[email]" required value="{{ form.email }}"></div>
+          </div>
+          <div class="nl-field"><label for="CommentBody">Comment</label><textarea id="CommentBody" name="comment[body]" required>{{ form.body }}</textarea></div>
+          {%- if blog.moderated? -%}<p class="nl-small nl-muted">Comments are moderated before they appear.</p>{%- endif -%}
+          <div><button type="submit" class="button nl-btn">Post comment</button></div>
+        {%- endform -%}
+      </section>
+    {%- endif -%}
+  </div>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": {{ article.title | json }},
+      "mainEntityOfPage": {{ shop.url | append: article.url | json }},
+      "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+      "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+      {%- if article.image %}"image": [{{ article.image | image_url: width: 1600 | prepend: 'https:' | json }}],{% endif %}
+      {%- if article.author != blank %}"author": { "@type": "Person", "name": {{ article.author | json }} },{% endif %}
+      "publisher": { "@type": "Organization", "name": {{ shop.name | json }}, "url": {{ shop.url | json }} },
+      "description": {{ article.excerpt_or_content | strip_html | strip_newlines | truncate: 200 | json }}
+    }
+  </script>
+</article>
+
+{% schema %}
+{
+  "name": "Nurellea article",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,59 @@
+{%- liquid
+  case section.settings.policy
+    when 'shipping'
+      assign policy = shop.shipping_policy
+    when 'refund'
+      assign policy = shop.refund_policy
+    when 'privacy'
+      assign policy = shop.privacy_policy
+    when 'terms'
+      assign policy = shop.terms_of_service
+    when 'subscription'
+      assign policy = shop.subscription_policy
+  endcase
+-%}
+<section class="nl-section color-{{ section.settings.color_scheme }}">
+  <div class="nl-container nl-container--narrow">
+    {%- if section.settings.summary != blank -%}
+      <div class="nl-card nl-card--blush nl-prose" style="margin-block-end: 40px;">{{ section.settings.summary }}</div>
+    {%- endif -%}
+    {%- if policy.body != blank -%}
+      <div class="nl-prose">{{ policy.body }}</div>
+      <p class="nl-small nl-muted" style="margin-top: 32px;">Also available at <a href="{{ policy.url }}">{{ policy.title | escape }}</a>.</p>
+    {%- else -%}
+      <div class="nl-empty">
+        {% render 'nurellea-icon', name: 'info' %}
+        <p class="nl-h4">This policy is being finalised</p>
+        <p class="nl-muted">If you have a question in the meantime, please <a href="/pages/contact">contact us</a>.</p>
+      </div>
+      {%- if request.design_mode -%}
+        <p class="nl-setup-note">Add this policy in Shopify admin &gt; Settings &gt; Policies. It is rendered here automatically.</p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea policy",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "select",
+      "id": "policy",
+      "label": "Policy",
+      "default": "shipping",
+      "options": [
+        { "value": "shipping", "label": "Shipping" },
+        { "value": "refund", "label": "Refund / returns" },
+        { "value": "privacy", "label": "Privacy" },
+        { "value": "terms", "label": "Terms of service" },
+        { "value": "subscription", "label": "Subscription" }
+      ]
+    },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "richtext", "id": "summary", "label": "Summary box (optional)", "info": "Only include facts that match the policy text." }
+  ],
+  "presets": [{ "name": "Nurellea policy" }]
+}
+{% endschema %}

@@ -1,0 +1,12 @@
+{
+  "dark_ink": "#2f2a27",
+  "pink_ink": "#e79698",
+  "wordmark": {
+    "width": 645,
+    "height": 148
+  },
+  "lockup": {
+    "width": 645,
+    "height": 186
+  }
+}

@@ -1,0 +1,36 @@
+{%- doc -%}
+  Outputs "count|average" for genuine, published reviews of a product (or of the whole store when product is blank).
+  Sources, in order: a review app's standard metafields (reviews.rating / reviews.rating_count),
+  then moderated Nurellea review metaobjects (only "Active" entries are visible to the storefront).
+  Use with capture: {% capture stats %}{% render 'nurellea-review-stats', product: product %}{% endcapture %}
+
+  @param {object} [product] - Product to scope reviews to
+{%- enddoc -%}
+{%- liquid
+  assign count = 0
+  assign sum = 0
+  assign app_count = product.metafields.reviews.rating_count.value | default: 0
+  if product != blank and app_count > 0
+    assign count = app_count
+    assign avg = product.metafields.reviews.rating.value.rating | default: 0
+  else
+    for review in shop.metaobjects.nurellea_review.values
+      if product != blank
+        if review.product.value == blank or review.product.value.id != product.id
+          continue
+        endif
+      endif
+      assign r = review.rating.value.rating | default: review.rating.value | default: 0 | times: 1.0
+      if r > 0
+        assign count = count | plus: 1
+        assign sum = sum | plus: r
+      endif
+    endfor
+    if count > 0
+      assign avg = sum | divided_by: count | round: 1
+    else
+      assign avg = 0
+    endif
+  endif
+-%}
+{{- count }}|{{ avg -}}

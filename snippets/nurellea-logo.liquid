@@ -1,0 +1,60 @@
+{%- doc -%}
+  Bundled Nurellea logo built from the supplied brand artwork.
+  Used whenever no logo is uploaded in Theme settings.
+
+  @param {string} [variant] - 'wordmark' (default), 'lockup' (with tagline) or 'light' (white ink for dark backgrounds)
+  @param {number} [height] - Rendered height in px (default 32)
+  @param {string} [class] - Extra classes
+  @param {string} [loading] - 'eager' or 'lazy' (default 'eager')
+{%- enddoc -%}
+{%- liquid
+  assign variant = variant | default: 'wordmark'
+  assign height = height | default: 32
+  assign loading = loading | default: 'eager'
+  case variant
+    when 'lockup'
+      assign base = 'nurellea-logo'
+      assign ratio = 3.4677
+    when 'light'
+      assign base = 'nurellea-wordmark-light'
+      assign ratio = 4.3581
+    else
+      assign base = 'nurellea-wordmark'
+      assign ratio = 4.3581
+  endcase
+  assign width = height | times: ratio | ceil
+  assign alt = 'accessibility.home_logo_alt' | t: store_name: shop.name
+-%}
+{%- if variant == 'light' -%}
+  <img
+    src="{{ 'nurellea-wordmark-light-640.png' | asset_url }}"
+    alt="{{ alt | escape }}"
+    width="{{ width }}"
+    height="{{ height }}"
+    loading="{{ loading }}"
+    decoding="async"
+    class="nl-logo {{ class }}"
+    style="--nl-logo-h: {{ height }}px; --nl-logo-w: {{ width }}px;"
+  >
+{%- else -%}
+  <picture class="nl-logo-picture">
+    <source
+      type="image/webp"
+      srcset="{{ base | append: '-320.webp' | asset_url }} 320w, {{ base | append: '-640.webp' | asset_url }} 640w"
+      sizes="{{ width }}px"
+    >
+    <img
+      src="{{ base | append: '-320.png' | asset_url }}"
+      srcset="{{ base | append: '-320.png' | asset_url }} 320w, {{ base | append: '-640.png' | asset_url }} 640w"
+      sizes="{{ width }}px"
+      alt="{{ alt | escape }}"
+      width="{{ width }}"
+      height="{{ height }}"
+      loading="{{ loading }}"
+      decoding="async"
+      {% if loading == 'eager' %}fetchpriority="high"{% endif %}
+      class="nl-logo {{ class }}"
+      style="--nl-logo-h: {{ height }}px; --nl-logo-w: {{ width }}px;"
+    >
+  </picture>
+{%- endif -%}

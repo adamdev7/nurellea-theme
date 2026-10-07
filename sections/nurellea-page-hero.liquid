@@ -1,0 +1,65 @@
+{%- liquid
+  case request.page_type
+    when 'page'
+      assign resource_title = page.title
+    when 'blog'
+      assign resource_title = blog.title
+    when 'collection'
+      assign resource_title = collection.title
+    when 'search'
+      assign resource_title = 'Search'
+    else
+      assign resource_title = page_title
+  endcase
+  assign heading = section.settings.heading | default: resource_title
+  assign crumb = resource_title | default: heading
+-%}
+<section class="nl-section nl-page-hero color-{{ section.settings.color_scheme }}" aria-labelledby="PageHero-{{ section.id }}">
+  <span class="nl-orb" style="inline-size: 420px; block-size: 420px; inset-inline-start: -160px; inset-block-start: -200px; --nl-orb-opacity: .45;" aria-hidden="true"></span>
+  <span class="nl-orb" style="inline-size: 260px; block-size: 260px; inset-inline-end: -80px; inset-block-end: -120px; --nl-orb-color: #fff; --nl-orb-opacity: .8;" aria-hidden="true"></span>
+  <div class="nl-container" style="position: relative; z-index: 1;">
+    <div class="nl-page-hero__inner">
+      {%- if section.settings.show_breadcrumbs and request.page_type != 'index' -%}
+        <nav class="nl-breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="{{ routes.root_url }}">Home</a></li>
+            <li><span aria-current="page">{{ crumb | escape }}</span></li>
+          </ol>
+        </nav>
+      {%- endif -%}
+      {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      <h1 id="PageHero-{{ section.id }}" class="nl-h1" style="font-size: clamp(2.3rem, 5vw, 3.9rem);">
+        {{ heading | escape }}
+        {%- if section.settings.heading_accent != blank %} <em class="nl-accent">{{ section.settings.heading_accent | escape }}</em>{%- endif -%}
+      </h1>
+      {%- if section.settings.text != blank -%}
+        <div class="nl-lead nl-muted">{{ section.settings.text }}</div>
+      {%- elsif request.page_type == 'collection' and collection.description != blank -%}
+        <div class="nl-lead nl-muted">{{ collection.description }}</div>
+      {%- elsif request.page_type == 'blog' and blog.metafields.nurellea.intro != blank -%}
+        <div class="nl-lead nl-muted">{{ blog.metafields.nurellea.intro.value | escape }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <div class="nl-actions"><a class="button nl-btn" href="{{ section.settings.button_link }}">{{ section.settings.button_label | escape }}</a></div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea page header",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to the page title." },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent (italic)" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Nurellea page header" }]
+}
+{% endschema %}

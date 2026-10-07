@@ -1,0 +1,35 @@
+{% comment %}
+  Meta CAPI attribution + funnel beacons.
+  Theme settings: Meta CAPI (App Manager). Token from Server-Side Tracking settings.
+{% endcomment %}
+{% assign meta_capi_api_base = settings.meta_capi_api_base | default: 'https://appmanager.store/api/v1' %}
+{% assign meta_capi_store_id = settings.meta_capi_store_id | default: settings.app_manager_store_id %}
+{% assign meta_capi_browser_token = settings.meta_capi_browser_token | default: '' %}
+{% if settings.meta_capi_enabled == nil %}
+  {% assign meta_capi_enabled = true %}
+{% else %}
+  {% assign meta_capi_enabled = settings.meta_capi_enabled %}
+{% endif %}
+{% if product and product.selected_or_first_available_variant %}
+  {% assign meta_capi_price = product.selected_or_first_available_variant.price | times: 1.0 | divided_by: 100 %}
+{% else %}
+  {% assign meta_capi_price = nil %}
+{% endif %}
+
+<script>
+  window.__META_CAPI__ = {
+    enabled: {{ meta_capi_enabled | json }},
+    apiBase: {{ meta_capi_api_base | json }},
+    storeId: {{ meta_capi_store_id | json }},
+    browserToken: {{ meta_capi_browser_token | json }},
+    currency: {{ cart.currency.iso_code | default: shop.currency | json }},
+    pageType: {{ request.page_type | json }},
+    productId: {% if product %}{{ product.id | json }}{% else %}null{% endif %},
+    variantId: {% if product.selected_or_first_available_variant %}{{ product.selected_or_first_available_variant.id | json }}{% else %}null{% endif %},
+    productPrice: {% if meta_capi_price %}{{ meta_capi_price | json }}{% else %}null{% endif %},
+    productTitle: {% if product %}{{ product.title | json }}{% else %}null{% endif %},
+    productType: {% if product %}{{ product.type | json }}{% else %}null{% endif %},
+    customerId: {% if customer %}{{ customer.id | json }}{% else %}null{% endif %}
+  };
+</script>
+<script src="{{ 'meta-capi-attribution.js' | asset_url }}" defer></script>

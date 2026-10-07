@@ -1,0 +1,192 @@
+{
+  "sections": {
+    "main": {
+      "type": "nurellea-main-product",
+      "blocks": {
+        "nurellea_1": {
+          "type": "assurance",
+          "settings": {
+            "icon": "lock",
+            "text": "Secure checkout"
+          }
+        },
+        "nurellea_2": {
+          "type": "assurance",
+          "settings": {
+            "icon": "package",
+            "text": "Track your order online",
+            "link": "/pages/track-order"
+          }
+        },
+        "nurellea_3": {
+          "type": "assurance",
+          "settings": {
+            "icon": "chat",
+            "text": "Questions? We are here to help",
+            "link": "/pages/contact"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_breadcrumbs": true,
+        "show_quantity": true,
+        "show_short_description": false,
+        "open_description": true,
+        "show_dynamic_checkout": false,
+        "show_sticky_bar": true,
+        "show_disclaimer": true
+      }
+    },
+    "ingredients": {
+      "type": "nurellea-ingredients",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "eyebrow": "What's inside",
+        "heading": "Ingredients you can",
+        "heading_accent": "actually read",
+        "text": "<p>Each ingredient below is listed exactly as on the label. See the supplement facts above for amounts per serving.</p>",
+        "columns": "4",
+        "button_label": ""
+      }
+    },
+    "ritual": {
+      "type": "nurellea-steps",
+      "blocks": {
+        "nurellea_1": {
+          "type": "step",
+          "settings": {
+            "title": "Read the label",
+            "text": "<p>Check the serving size, directions and warnings before your first serving.</p>"
+          }
+        },
+        "nurellea_2": {
+          "type": "step",
+          "settings": {
+            "title": "Take as directed",
+            "text": "<p>Enjoy your gummies as described in the directions below.</p>"
+          }
+        },
+        "nurellea_3": {
+          "type": "step",
+          "settings": {
+            "title": "Keep it consistent",
+            "text": "<p>Pair your gummies with something you already do every day to make the ritual stick.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "How to use",
+        "heading": "Your daily",
+        "heading_accent": "ritual",
+        "show_directions": true
+      }
+    },
+    "reviews": {
+      "type": "nurellea-reviews",
+      "settings": {
+        "scope": "product",
+        "color_scheme": "scheme-2",
+        "eyebrow": "Reviews",
+        "heading": "What customers",
+        "heading_accent": "are saying",
+        "columns": "3",
+        "show_filters": true,
+        "page_size": 6,
+        "limit": 0,
+        "show_form": true,
+        "form_expanded": false,
+        "hide_when_empty": false
+      }
+    },
+    "faq": {
+      "type": "nurellea-faq",
+      "blocks": {
+        "nurellea_1": {
+          "type": "question",
+          "settings": {
+            "question": "How do I take them?",
+            "answer": "<p>Follow the directions on the label. The serving size and directions are also listed on the product page and the <a href=\"/pages/ingredients#how-to-use\">how to use</a> section.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I take them if I am pregnant, breastfeeding or taking medication?",
+            "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_3": {
+          "type": "question",
+          "settings": {
+            "question": "Are they suitable for my diet?",
+            "answer": "<p>Dietary and allergen information is listed on the product page. If you cannot find what you need, <a href=\"/pages/contact\">ask us</a> and we will check for you.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_4": {
+          "type": "question",
+          "settings": {
+            "question": "How should I store them?",
+            "answer": "<p>Store them as directed on the label, and keep them out of reach of children.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_5": {
+          "type": "question",
+          "settings": {
+            "question": "Where do you ship, and how much does shipping cost?",
+            "answer": "<p>Delivery destinations, options and costs are shown at checkout before you pay. See our <a href=\"/pages/shipping\">shipping information</a> for details.</p>",
+            "category": "Orders & shipping"
+          }
+        },
+        "nurellea_6": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Please see our <a href=\"/pages/returns\">returns information</a> for eligibility and how to start a return.</p>",
+            "category": "Orders & shipping"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6"
+      ],
+      "settings": {
+        "source": "product",
+        "color_scheme": "scheme-1",
+        "layout": "split",
+        "eyebrow": "FAQ",
+        "heading": "Good to",
+        "heading_accent": "know",
+        "contact_label": "Still have a question? Contact us",
+        "contact_link": "/pages/contact"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ingredients",
+    "ritual",
+    "reviews",
+    "faq"
+  ]
+}

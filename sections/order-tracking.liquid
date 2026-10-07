@@ -1,0 +1,1061 @@
+{%- liquid
+  assign section_id = 'OrderTracking-' | append: section.id
+  assign app_manager_api_base = settings.app_manager_api_base | default: 'https://appmanager.store' | strip | replace: '/api/track-order/', '' | replace: '/api/track-order', '' | strip
+  assign app_manager_store_id = settings.app_manager_store_id | default: '' | strip
+-%}
+
+<section
+  id="{{ section_id }}"
+  class="order-tracking color-{{ section.settings.color_scheme }}"
+  data-order-tracking
+  data-active-state="form"
+  data-api-base="{{ app_manager_api_base | escape }}"
+  data-store-id="{{ app_manager_store_id | escape }}"
+  data-config-error="{{ 'track_order.config_missing' | t | escape }}"
+  data-invalid-api-error="{{ 'track_order.invalid_api_url' | t | escape }}"
+  data-service-error="{{ 'track_order.service_unreachable' | t | escape }}"
+  data-timeline-empty="{{ 'track_order.timeline_empty' | t | escape }}"
+  data-timeline-start="{{ 'track_order.timeline_start' | t | escape }}"
+  data-timeline-latest="{{ 'track_order.timeline_latest' | t | escape }}"
+  aria-labelledby="{{ section_id }}-heading"
+>
+  <div class="order-tracking__bg" aria-hidden="true"></div>
+
+  <div class="order-tracking__inner">
+    <header class="order-tracking__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="order-tracking__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h1 id="{{ section_id }}-heading" class="order-tracking__title">
+        {%- if section.settings.heading != blank -%}
+          {{ section.settings.heading }}
+        {%- else -%}
+          {{ 'track_order.heading' | t }}
+        {%- endif -%}
+      </h1>
+      {%- if section.settings.subheading != blank -%}
+        <p class="order-tracking__subtitle">{{ section.settings.subheading }}</p>
+      {%- else -%}
+        <p class="order-tracking__subtitle">{{ 'track_order.subheading' | t }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- if app_manager_store_id == blank and request.design_mode -%}
+      <p class="nl-setup-note" role="note">
+        Setup needed: add the Nurellea App Manager store ID in Theme settings &gt; Order tracking (App Manager).
+        Lookups show a configuration error until it is set. (Visible in the theme editor only.)
+      </p>
+    {%- endif -%}
+
+    <div class="order-tracking__layout">
+      {%- comment -%} ——— Lookup form ——— {%- endcomment -%}
+      <div
+        class="order-tracking__card order-tracking__panel"
+        data-tracking-state="form"
+        aria-hidden="false"
+      >
+        <form class="order-tracking__form" data-tracking-form novalidate>
+          <div class="order-tracking__field">
+            <label class="order-tracking__label" for="{{ section_id }}-order">
+              {{ 'track_order.order_number_label' | t }}
+            </label>
+            <input
+              id="{{ section_id }}-order"
+              class="order-tracking__input"
+              type="text"
+              name="order_number"
+              data-tracking-order
+              autocomplete="off"
+              inputmode="text"
+              placeholder="{{ 'track_order.order_number_placeholder' | t }}"
+              required
+            >
+          </div>
+
+          <div class="order-tracking__field">
+            <label class="order-tracking__label" for="{{ section_id }}-email">
+              {{ 'track_order.email_label' | t }}
+            </label>
+            <input
+              id="{{ section_id }}-email"
+              class="order-tracking__input"
+              type="email"
+              name="email"
+              data-tracking-email
+              autocomplete="email"
+              placeholder="{{ 'track_order.email_placeholder' | t }}"
+              required
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="order-tracking__submit"
+            data-tracking-submit
+          >
+            <span class="order-tracking__submit-text">{{ 'track_order.submit' | t }}</span>
+            <span class="order-tracking__submit-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.75 9h10.5M9.75 4.5L14.25 9l-4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+
+          <p class="order-tracking__form-hint">{{ 'track_order.form_hint' | t }}</p>
+        </form>
+
+        <ul class="order-tracking__trust" role="list">
+          <li class="order-tracking__trust-item">
+            <span class="order-tracking__trust-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.5L3 5v5c0 4.1 3 7.9 7 8.5 4-.6 7-4.4 7-8.5V5l-7-3.5z" stroke="currentColor" stroke-width="1.25"/></svg>
+            </span>
+            {{ 'track_order.trust_secure' | t }}
+          </li>
+          <li class="order-tracking__trust-item">
+            <span class="order-tracking__trust-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2.5 10h15M10 2.5v15" stroke="currentColor" stroke-width="1.25" opacity="0"/><path d="M3 10a7 7 0 1014 0 7 7 0 00-14 0z" stroke="currentColor" stroke-width="1.25"/><path d="M10 6v4l2.5 1.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
+            </span>
+            {{ 'track_order.trust_updates' | t }}
+          </li>
+        </ul>
+      </div>
+
+      {%- comment -%} ——— Loading ——— {%- endcomment -%}
+      <div
+        class="order-tracking__card order-tracking__panel order-tracking__panel--centered"
+        data-tracking-state="loading"
+        hidden
+        aria-hidden="true"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <div class="order-tracking__spinner" role="status">
+          <span class="order-tracking__spinner-ring"></span>
+        </div>
+        <p class="order-tracking__state-title">{{ 'track_order.loading_title' | t }}</p>
+        <p class="order-tracking__state-text">{{ 'track_order.loading_text' | t }}</p>
+      </div>
+
+      {%- comment -%} ——— Error ——— {%- endcomment -%}
+      <div
+        class="order-tracking__card order-tracking__panel order-tracking__panel--centered order-tracking__panel--error"
+        data-tracking-state="error"
+        hidden
+        aria-hidden="true"
+        role="alert"
+      >
+        <div class="order-tracking__state-icon order-tracking__state-icon--error" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M16 9v9M16 22h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="order-tracking__state-title">{{ 'track_order.error_title' | t }}</p>
+        <p class="order-tracking__state-text" data-tracking-error-message></p>
+        <button type="button" class="order-tracking__secondary-btn" data-tracking-reset>
+          {{ 'track_order.try_again' | t }}
+        </button>
+      </div>
+
+      {%- comment -%} ——— Results (populated by JS) ——— {%- endcomment -%}
+      <div
+        class="order-tracking__results"
+        data-tracking-state="result"
+        hidden
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        <div class="order-tracking__card order-tracking__shipment-card">
+          <div class="order-tracking__shipment-header">
+            <div class="order-tracking__status-wrap">
+              <span
+                class="order-tracking__status-badge"
+                data-tracking-status-badge
+                data-status="in_transit"
+              >
+                <span class="order-tracking__status-pulse" aria-hidden="true"></span>
+                <span data-tracking-status-label>—</span>
+              </span>
+              <p class="order-tracking__status-message" data-tracking-status-message hidden></p>
+              <p class="order-tracking__shipment-meta" data-tracking-shipment-meta>
+                {{ 'track_order.estimated_delivery' | t }}:
+                <strong data-tracking-estimated-delivery>—</strong>
+              </p>
+            </div>
+            <button type="button" class="order-tracking__text-btn" data-tracking-reset>
+              {{ 'track_order.track_another' | t }}
+            </button>
+          </div>
+
+          <dl class="order-tracking__details-grid" data-tracking-shipment-details>
+            <div class="order-tracking__detail">
+              <dt>{{ 'track_order.tracking_number' | t }}</dt>
+              <dd class="order-tracking__detail-value">
+                <span data-tracking-number>—</span>
+                <button
+                  type="button"
+                  class="order-tracking__copy-btn"
+                  data-copy-tracking
+                  aria-label="{{ 'track_order.copy_tracking' | t }}"
+                >
+                  <span data-copy-label>{{ 'track_order.copy' | t }}</span>
+                  <span data-copied-label hidden aria-hidden="true">{{ 'track_order.copied' | t }}</span>
+                </button>
+              </dd>
+            </div>
+            <div class="order-tracking__detail">
+              <dt>{{ 'track_order.carrier' | t }}</dt>
+              <dd data-tracking-carrier>—</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="order-tracking__card order-tracking__timeline-card">
+          <h2 class="order-tracking__card-title">{{ 'track_order.shipment_timeline' | t }}</h2>
+          <p class="order-tracking__timeline-hint">{{ 'track_order.timeline_hint' | t }}</p>
+          <div data-tracking-timeline></div>
+        </div>
+
+        <div class="order-tracking__card order-tracking__order-card">
+          <h2 class="order-tracking__card-title">{{ 'track_order.order_summary' | t }}</h2>
+          <dl class="order-tracking__order-meta">
+            <div>
+              <dt>{{ 'track_order.order_number' | t }}</dt>
+              <dd data-order-number>—</dd>
+            </div>
+            <div>
+              <dt>{{ 'track_order.order_date' | t }}</dt>
+              <dd data-order-date>—</dd>
+            </div>
+            <div>
+              <dt>{{ 'track_order.order_total' | t }}</dt>
+              <dd data-order-total>—</dd>
+            </div>
+          </dl>
+          <div class="order-tracking__line-items" data-order-line-items></div>
+        </div>
+      </div>
+
+      {%- if section.settings.show_help -%}
+        <aside class="order-tracking__help">
+          <h2 class="order-tracking__help-title">{{ section.settings.help_title }}</h2>
+          <p class="order-tracking__help-text">{{ section.settings.help_text }}</p>
+          {%- if section.settings.help_link != blank and section.settings.help_link_label != blank -%}
+            <a href="{{ section.settings.help_link }}" class="order-tracking__help-link">
+              {{ section.settings.help_link_label }}
+            </a>
+          {%- endif -%}
+        </aside>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'order-tracking.js' | asset_url }}" type="module" defer></script>
+
+{% stylesheet %}
+  .order-tracking {
+    --ot-accent: #a3434f;
+    --ot-accent-hover: #8c3843;
+    --ot-accent-soft: rgba(231, 150, 152, 0.18);
+    --ot-ink: #2f2a27;
+    --ot-ink-muted: rgba(47, 42, 39, 0.68);
+    --ot-surface: #ffffff;
+    --ot-surface-elevated: #fdf7f5;
+    --ot-border: rgba(47, 42, 39, 0.12);
+    --ot-radius: 12px;
+    --ot-radius-lg: 20px;
+    --ot-shadow: 0 10px 40px rgba(47, 42, 39, 0.06);
+    --ot-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    position: relative;
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 8vw, 6rem);
+    overflow: hidden;
+  }
+
+  .order-tracking__bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(227, 89, 156, 0.1), transparent 55%),
+      linear-gradient(180deg, var(--ot-surface-elevated) 0%, var(--color-background, #fff) 100%);
+    pointer-events: none;
+  }
+
+  .order-tracking__inner {
+    position: relative;
+    width: 100%;
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .order-tracking__inner {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .order-tracking__header {
+    text-align: center;
+    max-width: 36rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  .order-tracking__eyebrow {
+    margin: 0 0 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ot-accent);
+  }
+
+  .order-tracking__title {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-heading--family, inherit);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__subtitle {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__layout {
+    display: grid;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media screen and (min-width: 990px) {
+    .order-tracking__layout {
+      grid-template-columns: minmax(0, 400px) 1fr;
+      gap: 2rem;
+    }
+
+    .order-tracking[data-active-state='form'] .order-tracking__layout {
+      grid-template-columns: minmax(0, 440px);
+      justify-content: center;
+    }
+
+    .order-tracking[data-active-state='result'] .order-tracking__panel[data-tracking-state='form'] {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  .order-tracking__card {
+    background: var(--ot-surface);
+    border: 1px solid var(--ot-border);
+    border-radius: var(--ot-radius-lg);
+    box-shadow: var(--ot-shadow);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    transition: opacity 0.35s var(--ot-ease), transform 0.35s var(--ot-ease);
+  }
+
+  .order-tracking__panel[hidden] {
+    display: none !important;
+  }
+
+  .order-tracking__panel:not([hidden]) {
+    animation: order-tracking-fade-in 0.45s var(--ot-ease) both;
+  }
+
+  @keyframes order-tracking-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .order-tracking__panel--centered {
+    text-align: center;
+    padding-block: 3rem;
+  }
+
+  .order-tracking__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .order-tracking__label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: var(--ot-ink);
+    background: var(--ot-surface-elevated);
+    border: 1px solid var(--ot-border);
+    border-radius: var(--ot-radius);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .order-tracking__input:focus {
+    outline: none;
+    border-color: var(--ot-accent);
+    box-shadow: 0 0 0 3px rgba(227, 89, 156, 0.2);
+  }
+
+  .order-tracking__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 3.25rem;
+    margin-top: 0.25rem;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--ot-accent);
+    border: 1px solid var(--ot-accent);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, opacity 0.2s ease;
+  }
+
+  .order-tracking__submit:hover:not(:disabled) {
+    background: var(--ot-accent-hover);
+    border-color: var(--ot-accent-hover);
+    transform: translateY(-2px);
+  }
+
+  .order-tracking__submit:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+
+  .order-tracking__submit[aria-busy='true'] .order-tracking__submit-icon {
+    animation: order-tracking-spin 0.8s linear infinite;
+  }
+
+  @keyframes order-tracking-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .order-tracking__form-hint {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ot-ink-muted);
+    text-align: center;
+  }
+
+  .order-tracking__trust {
+    margin: 1.5rem 0 0;
+    padding: 1.25rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--ot-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .order-tracking__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__trust-icon {
+    flex-shrink: 0;
+    color: var(--ot-accent);
+  }
+
+  .order-tracking__spinner {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1.25rem;
+  }
+
+  .order-tracking__spinner-ring {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--ot-border);
+    border-top-color: var(--ot-accent);
+    border-radius: 50%;
+    animation: order-tracking-spin 0.7s linear infinite;
+  }
+
+  .order-tracking__state-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__state-text {
+    margin: 0 0 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__state-icon {
+    margin: 0 auto 1rem;
+    color: var(--ot-accent);
+  }
+
+  .order-tracking__state-icon--error {
+    color: #b42318;
+  }
+
+  .order-tracking__secondary-btn {
+    min-height: 2.75rem;
+    padding: 0.625rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ot-ink);
+    background: transparent;
+    border: 1px solid var(--ot-ink);
+    border-radius: var(--ot-radius);
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  .order-tracking__secondary-btn:hover {
+    background: var(--ot-ink);
+    color: #fff;
+  }
+
+  .order-tracking__results[hidden] {
+    display: none !important;
+  }
+
+  .order-tracking__results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .order-tracking[data-active-state='error'] .order-tracking__results,
+  .order-tracking[data-active-state='loading'] .order-tracking__results,
+  .order-tracking[data-active-state='form'] .order-tracking__results {
+    display: none !important;
+  }
+
+  .order-tracking__results:not([hidden]) {
+    animation: order-tracking-fade-in 0.5s var(--ot-ease) 0.05s both;
+  }
+
+  .order-tracking__shipment-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .order-tracking[data-shipped='false'] .order-tracking__shipment-header {
+    margin-bottom: 0;
+  }
+
+  .order-tracking__status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    background: var(--ot-accent-soft);
+    color: #b03a74;
+  }
+
+  .order-tracking__status-badge[data-status='delivered'] {
+    background: rgba(22, 120, 68, 0.12);
+    color: #167844;
+  }
+
+  .order-tracking__status-badge[data-status='exception'] {
+    background: rgba(180, 35, 24, 0.1);
+    color: #b42318;
+  }
+
+  .order-tracking__status-badge[data-status='processing'] {
+    background: rgba(10, 10, 10, 0.06);
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__status-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: order-tracking-pulse 1.5s ease infinite;
+  }
+
+  .order-tracking__status-badge[data-status='delivered'] .order-tracking__status-pulse {
+    animation: none;
+  }
+
+  @keyframes order-tracking-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(0.85);
+    }
+  }
+
+  .order-tracking__status-message {
+    margin: 0.75rem 0 0;
+    max-width: 36rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__status-message[hidden] {
+    display: none !important;
+  }
+
+  .order-tracking__shipment-meta {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__shipment-meta[hidden] {
+    display: none !important;
+  }
+
+  .order-tracking__shipment-meta strong {
+    color: var(--ot-ink);
+    font-weight: 600;
+  }
+
+  .order-tracking__text-btn {
+    padding: 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ot-ink-muted);
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .order-tracking__text-btn:hover {
+    color: var(--ot-accent);
+  }
+
+  .order-tracking__details-grid {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .order-tracking__details-grid[hidden] {
+    display: none !important;
+  }
+
+  @media screen and (min-width: 600px) {
+    .order-tracking__details-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .order-tracking__detail dt {
+    margin: 0 0 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__detail dd {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__detail-value {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .order-tracking__copy-btn {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ot-ink-muted);
+    background: var(--ot-surface-elevated);
+    border: 1px solid var(--ot-border);
+    border-radius: var(--ot-radius);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .order-tracking__copy-btn[data-copied='true'] {
+    color: #167844;
+    border-color: rgba(22, 120, 68, 0.35);
+  }
+
+  .order-tracking__card-title {
+    margin: 0 0 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__timeline-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .order-tracking__timeline-item {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    gap: 0 1rem;
+    padding-bottom: 1.5rem;
+    opacity: 0;
+    animation: order-tracking-fade-in 0.4s var(--ot-ease) calc(var(--item-index, 0) * 0.08s + 0.1s) both;
+  }
+
+  .order-tracking__timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .order-tracking__timeline-marker {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .order-tracking__timeline-marker::before {
+    content: '';
+    position: absolute;
+    top: 1.25rem;
+    bottom: -1.5rem;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--ot-border);
+  }
+
+  .order-tracking__timeline-item:last-child .order-tracking__timeline-marker::before {
+    display: none;
+  }
+
+  .order-tracking__timeline-dot {
+    width: 12px;
+    height: 12px;
+    margin-top: 0.25rem;
+    border-radius: 50%;
+    background: var(--ot-border);
+    border: 2px solid var(--ot-surface);
+    box-shadow: 0 0 0 1px var(--ot-border);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .order-tracking__timeline-item.is-completed .order-tracking__timeline-dot {
+    background: var(--ot-accent);
+    box-shadow: 0 0 0 1px var(--ot-accent);
+  }
+
+  .order-tracking__timeline-item.is-current .order-tracking__timeline-dot {
+    width: 14px;
+    height: 14px;
+    background: var(--ot-ink);
+    box-shadow: 0 0 0 4px rgba(227, 89, 156, 0.3);
+  }
+
+  .order-tracking__timeline-item.is-start .order-tracking__timeline-dot {
+    background: var(--ot-surface);
+    box-shadow: 0 0 0 2px var(--ot-accent);
+  }
+
+  .order-tracking__timeline-item[data-event-status='delivered'].is-current .order-tracking__timeline-dot {
+    background: #167844;
+    box-shadow: 0 0 0 4px rgba(22, 120, 68, 0.25);
+  }
+
+  .order-tracking__timeline-hint {
+    margin: -0.5rem 0 1rem;
+    font-size: 0.8125rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__timeline-head {
+    margin-bottom: 0.35rem;
+  }
+
+  .order-tracking__timeline-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .order-tracking__timeline-badge--latest {
+    background: rgba(10, 10, 10, 0.08);
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__timeline-badge--start {
+    background: var(--ot-accent-soft);
+    color: #b03a74;
+  }
+
+  .order-tracking__timeline-desc {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__timeline-meta {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__timeline-empty {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__order-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 0 0 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--ot-border);
+  }
+
+  .order-tracking__order-meta dt {
+    margin: 0 0 0.25rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__order-meta dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+  }
+
+  @media screen and (max-width: 549px) {
+    .order-tracking__order-meta {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .order-tracking__line-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .order-tracking__line-item {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .order-tracking__line-item-media img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: var(--ot-radius);
+    background: var(--ot-surface-elevated);
+  }
+
+  .order-tracking__line-item-title {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__line-item-variant,
+  .order-tracking__line-item-qty {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__line-item-price {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+    white-space: nowrap;
+  }
+
+  .order-tracking__help {
+    grid-column: 1 / -1;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    background: var(--ot-accent-soft);
+    border-radius: var(--ot-radius);
+    border: 1px solid rgba(227, 89, 156, 0.22);
+  }
+
+  .order-tracking__help-title {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ot-ink);
+  }
+
+  .order-tracking__help-text {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    color: var(--ot-ink-muted);
+  }
+
+  .order-tracking__help-link {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ot-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .order-tracking__help-link:hover {
+    color: var(--ot-accent);
+  }
+
+  @media screen and (max-width: 989px) {
+    .order-tracking[data-active-state='result']
+      .order-tracking__panel[data-tracking-state='form'][aria-hidden='true'] {
+      display: none !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Track your order",
+  "tag": "section",
+  "class": "section-order-tracking",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Order tracking"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Track your order"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Enter your order number and email to see the latest shipment updates."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Help section"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_help",
+      "label": "Show help section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "help_title",
+      "label": "Help title",
+      "default": "Need help with your order?"
+    },
+    {
+      "type": "textarea",
+      "id": "help_text",
+      "label": "Help text",
+      "default": "Our team is here to assist with delivery questions, changes, or gift orders."
+    },
+    {
+      "type": "url",
+      "id": "help_link",
+      "label": "Help link"
+    },
+    {
+      "type": "text",
+      "id": "help_link_label",
+      "label": "Help link label",
+      "default": "Contact support"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Track your order",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

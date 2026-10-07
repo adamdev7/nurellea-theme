@@ -1,0 +1,36 @@
+{%- liquid
+  assign body = page.content
+  if section.settings.page != blank
+    assign body = section.settings.page.content
+  endif
+-%}
+{%- if body != blank or section.settings.text != blank or request.design_mode -%}
+<section class="nl-section{% if section.settings.tight %} nl-section--tight{% endif %} color-{{ section.settings.color_scheme }}">
+  <div class="nl-container nl-container--narrow">
+    {%- if section.settings.heading != blank -%}<h2 class="nl-h2" style="margin-block-end: 24px;">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+    <div class="nl-prose">
+      {%- if section.settings.text != blank -%}{{ section.settings.text }}{%- endif -%}
+      {%- if section.settings.show_page_content -%}{{ body }}{%- endif -%}
+    </div>
+    {%- if body == blank and section.settings.text == blank and request.design_mode -%}
+      <p class="nl-setup-note">This page has no content yet. Add it in Shopify admin &gt; Online Store &gt; Pages, or type text in this section.</p>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Nurellea page content",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "tight", "label": "Reduce spacing", "default": false },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "text", "label": "Text (shown before page content)" },
+    { "type": "checkbox", "id": "show_page_content", "label": "Show page content", "default": true },
+    { "type": "page", "id": "page", "label": "Use content from another page" }
+  ],
+  "presets": [{ "name": "Nurellea page content" }]
+}
+{% endschema %}

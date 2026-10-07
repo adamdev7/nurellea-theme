@@ -1,0 +1,5 @@
+ignore:
+  - dev/**
+  - tests/**
+  - docs/**
+  - node_modules/**

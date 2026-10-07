@@ -1,0 +1,122 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Our story",
+        "heading": "About",
+        "heading_accent": "Nurellea",
+        "text": "<p>Gentle, honest wellness — made for the way women really live.</p>"
+      }
+    },
+    "content": {
+      "type": "nurellea-page-content",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_page_content": true
+      }
+    },
+    "approach": {
+      "type": "nurellea-image-text",
+      "blocks": {
+        "nurellea_1": {
+          "type": "point",
+          "settings": {
+            "title": "Transparency.",
+            "text": "Full label information is published for every product."
+          }
+        },
+        "nurellea_2": {
+          "type": "point",
+          "settings": {
+            "title": "Honesty.",
+            "text": "We do not make promises our products cannot keep."
+          }
+        },
+        "nurellea_3": {
+          "type": "point",
+          "settings": {
+            "title": "Care.",
+            "text": "Real people answer your questions."
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "placeholder_label": "Brand photo",
+        "placeholder_art": "botanical",
+        "ratio": "4 / 5",
+        "eyebrow": "What we believe",
+        "heading": "Care should feel",
+        "heading_accent": "simple",
+        "text": "<p>Nurellea exists to make a daily ritual that feels kind, clear and easy to keep. That means being upfront about what is in our products and how to use them.</p>"
+      }
+    },
+    "values": {
+      "type": "nurellea-features",
+      "blocks": {
+        "nurellea_1": {
+          "type": "feature",
+          "settings": {
+            "icon": "list",
+            "title": "Clear labels",
+            "text": "<p>Ingredients, amounts, directions and warnings — published online exactly as on the pack.</p>"
+          }
+        },
+        "nurellea_2": {
+          "type": "feature",
+          "settings": {
+            "icon": "chat",
+            "title": "Real conversations",
+            "text": "<p>Questions about your order or our products? Our team is one message away.</p>"
+          }
+        },
+        "nurellea_3": {
+          "type": "feature",
+          "settings": {
+            "icon": "shield",
+            "title": "Responsible words",
+            "text": "<p>We describe our products carefully and never use invented reviews or results.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Our promise to you",
+        "heading": "How we",
+        "heading_accent": "work",
+        "style": "card",
+        "center": true
+      }
+    },
+    "cta": {
+      "type": "nurellea-cta",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_logo": true,
+        "heading": "Ready to begin your",
+        "heading_accent": "ritual?",
+        "text": "",
+        "button_label": "Shop Gut Gummies"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "content",
+    "approach",
+    "values",
+    "cta"
+  ]
+}

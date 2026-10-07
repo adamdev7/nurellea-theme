@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Help",
+        "heading": "Shipping",
+        "heading_accent": "information"
+      }
+    },
+    "policy": {
+      "type": "nurellea-policy",
+      "settings": {
+        "policy": "shipping",
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "policy"
+  ]
+}

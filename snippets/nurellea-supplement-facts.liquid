@@ -1,0 +1,60 @@
+{%- doc -%}
+  Supplement facts panel from product metafields — never from theme defaults.
+  Sources: nurellea.supplement_facts (JSON) or nurellea.supplement_facts_image (image of the approved label).
+  JSON shape: { "serving_size": "", "servings_per_container": "", "rows": [{ "name": "", "amount": "", "dv": "" }], "footnote": "" }
+
+  @param {object} product - Product
+{%- enddoc -%}
+{%- liquid
+  assign facts = product.metafields.nurellea.supplement_facts.value
+  assign facts_image = product.metafields.nurellea.supplement_facts_image.value
+  assign serving_size = facts.serving_size | default: product.metafields.nurellea.serving_size.value
+  assign servings = facts.servings_per_container | default: product.metafields.nurellea.servings_per_container.value
+-%}
+{%- if facts.rows.size > 0 -%}
+  <div class="nl-facts" role="region" aria-label="Supplement facts">
+    <div class="nl-facts__title">Supplement Facts</div>
+    <div class="nl-facts__serving">
+      {%- if serving_size != blank -%}<div>Serving size: <strong>{{ serving_size | escape }}</strong></div>{%- endif -%}
+      {%- if servings != blank -%}<div>Servings per container: <strong>{{ servings | escape }}</strong></div>{%- endif -%}
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col"><span class="visually-hidden">Ingredient</span></th>
+          <th scope="col">Amount per serving</th>
+          <th scope="col">% Daily Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in facts.rows -%}
+          <tr>
+            <th scope="row">{{ row.name | escape }}</th>
+            <td>{{ row.amount | escape }}</td>
+            <td>{{ row.dv | default: '' | escape }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+    {%- if facts.footnote != blank -%}
+      <div class="nl-facts__foot">{{ facts.footnote | escape | newline_to_br }}</div>
+    {%- endif -%}
+  </div>
+{%- elsif facts_image != blank -%}
+  {{
+    facts_image
+    | image_url: width: 900
+    | image_tag:
+      class: 'nl-facts-image',
+      loading: 'lazy',
+      widths: '420, 640, 900',
+      sizes: '(min-width: 990px) 420px, 100vw',
+      alt: facts_image.alt | default: 'Supplement facts label'
+  }}
+{%- elsif request.design_mode -%}
+  <p class="nl-setup-note" role="note">
+    <strong>Product facts needed:</strong> add the approved supplement facts to the product metafield
+    <code>nurellea.supplement_facts</code> (JSON) or upload the label image to <code>nurellea.supplement_facts_image</code>.
+    Nothing is shown to shoppers until it is set.
+  </p>
+{%- endif -%}

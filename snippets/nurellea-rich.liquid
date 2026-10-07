@@ -1,0 +1,28 @@
+{%- doc -%}
+  Renders a metafield (rich text, multi-line text, list or single line) as HTML.
+
+  @param {object} field - The metafield
+{%- enddoc -%}
+{%- if field != blank -%}
+  {%- liquid
+    assign ftype = field.type | default: ''
+  -%}
+  {%- if ftype == 'rich_text_field' -%}
+    {{ field | metafield_tag }}
+  {%- elsif ftype contains 'list.' -%}
+    <ul>
+      {%- for item in field.value -%}
+        <li>{{ item | escape }}</li>
+      {%- endfor -%}
+    </ul>
+  {%- elsif ftype == 'multi_line_text_field' -%}
+    {%- assign paras = field.value | escape | split: '
+
+' -%}
+    {%- for para in paras -%}
+      <p>{{ para | strip | newline_to_br }}</p>
+    {%- endfor -%}
+  {%- else -%}
+    <p>{{ field.value | default: field | escape }}</p>
+  {%- endif -%}
+{%- endif -%}

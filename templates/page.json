@@ -1,0 +1,22 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "show_breadcrumbs": true
+      }
+    },
+    "content": {
+      "type": "nurellea-page-content",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_page_content": true
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "content"
+  ]
+}

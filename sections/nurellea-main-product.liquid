@@ -1,0 +1,701 @@
+{%- liquid
+  assign p = product | default: section.settings.product | default: settings.nurellea_product
+  assign current_variant = p.selected_or_first_available_variant
+  assign mf = p.metafields.nurellea
+  assign form_id = 'NurelleaProductForm-' | append: section.id
+  assign subscriptions_on = false
+  if settings.subscriptions_enabled and p.selling_plan_groups.size > 0
+    assign subscriptions_on = true
+  endif
+  assign selected_plan = p.selected_selling_plan
+  if subscriptions_on == false
+    assign selected_plan = nil
+  endif
+
+  capture review_stats
+    render 'nurellea-review-stats', product: p
+  endcapture
+  assign review_stats = review_stats | strip | split: '|'
+  assign review_count = review_stats[0] | plus: 0
+  assign review_avg = review_stats[1] | plus: 0
+-%}
+
+{%- if p == blank -%}
+  <section class="nl-section color-{{ section.settings.color_scheme }}">
+    <div class="nl-container">
+      <p class="nl-setup-note">Select a product for this section or set the primary product in Theme settings &gt; Nurellea store.</p>
+    </div>
+  </section>
+{%- else -%}
+<section
+  id="Product-{{ section.id }}"
+  class="nl-section nl-pdp color-{{ section.settings.color_scheme }}"
+  data-nl-product
+  data-section-id="{{ section.id }}"
+  data-product-id="{{ p.id }}"
+>
+  <div class="nl-container nl-container--wide">
+    {%- if section.settings.show_breadcrumbs -%}
+      <nav class="nl-breadcrumbs" aria-label="Breadcrumb" style="margin-block-end: 20px;">
+        <ol>
+          <li><a href="{{ routes.root_url }}">Home</a></li>
+          {%- if collection -%}
+            <li><a href="{{ collection.url }}">{{ collection.title | escape }}</a></li>
+          {%- else -%}
+            <li><a href="{{ routes.all_products_collection_url }}">Shop</a></li>
+          {%- endif -%}
+          <li><span aria-current="page">{{ p.title | escape }}</span></li>
+        </ol>
+      </nav>
+    {%- endif -%}
+
+    <div class="nl-pdp__grid">
+      {%- comment -%} ——— Gallery ——— {%- endcomment -%}
+      <div class="nl-pdp__gallery">
+        <div class="nl-gallery" data-nl-gallery>
+          <div class="nl-gallery__frame">
+            <div
+              class="nl-gallery__viewport"
+              data-nl-gallery-viewport
+              tabindex="0"
+              role="region"
+              aria-roledescription="carousel"
+              aria-label="{{ p.title | escape }} media gallery"
+            >
+              {%- if p.media.size > 0 -%}
+                {%- for media in p.media -%}
+                  <figure
+                    class="nl-gallery__slide"
+                    data-nl-gallery-slide
+                    data-media-id="{{ media.id }}"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="{{ forloop.index }} of {{ p.media.size }}"
+                  >
+                    {%- case media.media_type -%}
+                      {%- when 'image' -%}
+                        {%- liquid
+                          if forloop.first
+                            assign loading = 'eager'
+                            assign priority = 'high'
+                          else
+                            assign loading = 'lazy'
+                            assign priority = 'auto'
+                          endif
+                        -%}
+                        {{
+                          media
+                          | image_url: width: 1600
+                          | image_tag:
+                            widths: '480, 720, 960, 1200, 1600',
+                            sizes: '(min-width: 990px) 55vw, 100vw',
+                            loading: loading,
+                            fetchpriority: priority,
+                            alt: media.alt | default: p.title
+                        }}
+                      {%- when 'video' -%}
+                        {{ media | video_tag: controls: true, playsinline: true, muted: true, preload: 'none', image_size: '1200x' }}
+                      {%- when 'external_video' -%}
+                        {{ media | external_video_tag: loading: 'lazy' }}
+                      {%- when 'model' -%}
+                        {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true }}
+                    {%- endcase -%}
+                  </figure>
+                {%- endfor -%}
+              {%- else -%}
+                <figure class="nl-gallery__slide" data-nl-gallery-slide>
+                  {% render 'nurellea-placeholder', label: 'Product photo — upload product media in Shopify', art: 'jar' %}
+                </figure>
+                <figure class="nl-gallery__slide" data-nl-gallery-slide>
+                  {% render 'nurellea-placeholder', label: 'Gummy close-up — upload product media', art: 'gummy' %}
+                </figure>
+              {%- endif -%}
+            </div>
+            {%- liquid
+              assign slide_count = p.media.size
+              if slide_count == 0
+                assign slide_count = 2
+              endif
+            -%}
+            {%- if slide_count > 1 -%}
+              <button type="button" class="nl-gallery__nav nl-gallery__nav--prev" data-nl-gallery-prev aria-label="Previous image">
+                {% render 'nurellea-icon', name: 'chevron-left' %}
+              </button>
+              <button type="button" class="nl-gallery__nav nl-gallery__nav--next" data-nl-gallery-next aria-label="Next image">
+                {% render 'nurellea-icon', name: 'chevron-right' %}
+              </button>
+              <span class="nl-gallery__counter" data-nl-gallery-counter aria-hidden="true">1 / {{ slide_count }}</span>
+            {%- endif -%}
+          </div>
+
+          {%- if p.media.size > 1 -%}
+            <div class="nl-gallery__thumbs" role="list">
+              {%- for media in p.media -%}
+                <button
+                  type="button"
+                  class="nl-gallery__thumb"
+                  data-nl-gallery-thumb
+                  role="listitem"
+                  aria-label="Show media {{ forloop.index }}"
+                  aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                >
+                  {{ media.preview_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 90, height: 90 }}
+                </button>
+              {%- endfor -%}
+            </div>
+            <div class="nl-gallery__dots">
+              {%- for media in p.media -%}
+                <button type="button" class="nl-gallery__dot" data-nl-gallery-dot aria-label="Show media {{ forloop.index }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} ——— Product info & buy box ——— {%- endcomment -%}
+      <div class="nl-pdp__info">
+        <div class="nl-stack nl-stack--sm">
+          {%- if mf.highlights.value.size > 0 -%}
+            <div class="nl-chips">
+              {%- for h in mf.highlights.value limit: 4 -%}
+                <span class="nl-chip nl-chip--rose">{{ h | escape }}</span>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          <h1 class="nl-pdp__title">{{ p.title | escape }}</h1>
+          {%- if mf.subtitle != blank -%}
+            <p class="nl-pdp__subtitle">{{ mf.subtitle.value | escape }}</p>
+          {%- endif -%}
+          {%- if review_count > 0 -%}
+            <a class="nl-pdp__rating" href="#reviews">
+              {% render 'nurellea-stars', rating: review_avg, size: 17 %}
+              <span>{{ review_avg }} · {{ review_count }} {{ review_count | pluralize: 'review', 'reviews' }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="nl-price" aria-live="polite">
+          {%- liquid
+            assign display_price = current_variant.price
+            assign display_compare = current_variant.compare_at_price
+            if selected_plan
+              assign alloc = current_variant.selected_selling_plan_allocation
+              assign display_price = alloc.price
+              assign display_compare = alloc.compare_at_price
+            endif
+          -%}
+          <span class="visually-hidden">Price</span>
+          <span class="nl-price__current" data-nl-price>{{ display_price | money }}</span>
+          <s class="nl-price__compare" data-nl-compare {% unless display_compare > display_price %}hidden{% endunless %}>
+            {%- if display_compare > display_price -%}{{ display_compare | money }}{%- endif -%}
+          </s>
+          <span class="nl-badge nl-badge--soft nl-price__save" data-nl-save {% unless display_compare > display_price %}hidden{% endunless %}>
+            {%- if display_compare > display_price -%}Save {{ display_compare | minus: display_price | money }}{%- endif -%}
+          </span>
+          <span class="nl-price__unit" data-nl-unit {% unless current_variant.unit_price_measurement %}hidden{% endunless %}>
+            {%- if current_variant.unit_price_measurement -%}
+              {{ current_variant.unit_price | money }}/{% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }}{% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
+            {%- endif -%}
+          </span>
+        </div>
+        {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+          <p class="nl-pdp__tax">
+            {%- if cart.taxes_included -%}Taxes included.{% else %}Taxes calculated at checkout.{% endif %}
+            {% if shop.shipping_policy.body != blank %}<a href="{{ shop.shipping_policy.url }}">Shipping</a> calculated at checkout.{% endif %}
+          </p>
+        {%- endif -%}
+
+        {%- if mf.benefits.value.size > 0 -%}
+          <ul class="nl-pdp__benefits">
+            {%- for b in mf.benefits.value -%}
+              <li>{% render 'nurellea-icon', name: 'check-circle' %}<span>{{ b | escape }}</span></li>
+            {%- endfor -%}
+          </ul>
+        {%- elsif request.design_mode -%}
+          <p class="nl-setup-note">Add short, verified product benefit statements to <code>nurellea.benefits</code> (list of text). They are hidden until set.</p>
+        {%- endif -%}
+
+        {%- if section.settings.show_short_description and p.description != blank -%}
+          <div class="nl-prose nl-small">{{ p.description | strip_html | truncatewords: 40 }}</div>
+        {%- endif -%}
+
+        <product-form-component
+          data-section-id="{{ section.id }}"
+          data-product-id="{{ p.id }}"
+          data-product-url="{{ p.url }}"
+          on:submit="/handleSubmit"
+          data-quantity-default="{{ current_variant.quantity_rule.min | default: 1 }}"
+          data-quantity-error-max="{{ 'products.product.quantity_error_max' | t }}"
+          class="nl-stack"
+        >
+          <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
+          {%- form 'product', p, id: form_id, data-type: 'add-to-cart-form' -%}
+            <input type="hidden" name="id" ref="variantId" value="{{ current_variant.id }}">
+            {%- if subscriptions_on -%}
+              <input type="hidden" name="selling_plan" value="{{ selected_plan.id }}" {% unless selected_plan %}disabled{% endunless %}>
+            {%- endif -%}
+
+            <div class="nl-stack">
+              {%- unless p.has_only_default_variant -%}
+                <fieldset class="nl-options">
+                  <legend class="nl-options__legend">
+                    <span>{{ section.settings.variant_heading | default: p.options.first }}</span>
+                  </legend>
+                  {%- for variant in p.variants -%}
+                    {%- liquid
+                      assign v_badge = variant.metafields.nurellea.badge.value
+                      assign v_caption = variant.metafields.nurellea.caption.value
+                    -%}
+                    <label class="nl-option-card">
+                      <input
+                        type="radio"
+                        name="nl-variant-{{ section.id }}"
+                        value="{{ variant.id }}"
+                        data-nl-variant-input
+                        {% if variant.id == current_variant.id %}checked{% endif %}
+                      >
+                      <span class="nl-option-card__body">
+                        <span class="nl-option-card__radio" aria-hidden="true"></span>
+                        <span>
+                          <span class="nl-option-card__title">
+                            {{ variant.title | escape }}
+                            {%- unless variant.available -%}<span class="nl-badge nl-badge--ink">Sold out</span>{%- endunless -%}
+                          </span>
+                          {%- if v_caption != blank -%}
+                            <span class="nl-option-card__sub">{{ v_caption | escape }}</span>
+                          {%- elsif variant.unit_price_measurement -%}
+                            <span class="nl-option-card__sub">{{ variant.unit_price | money }}/{% if variant.unit_price_measurement.reference_value != 1 %}{{ variant.unit_price_measurement.reference_value }}{% endif %}{{ variant.unit_price_measurement.reference_unit }}</span>
+                          {%- endif -%}
+                        </span>
+                        <span class="nl-option-card__price">
+                          <strong>{{ variant.price | money }}</strong>
+                          {%- if variant.compare_at_price > variant.price -%}
+                            <s>{{ variant.compare_at_price | money }}</s>
+                          {%- endif -%}
+                        </span>
+                      </span>
+                      {%- if v_badge != blank -%}
+                        <span class="nl-badge nl-option-card__flag">{{ v_badge | escape }}</span>
+                      {%- elsif variant.compare_at_price > variant.price -%}
+                        <span class="nl-badge nl-option-card__flag">Save {{ variant.compare_at_price | minus: variant.price | money_without_trailing_zeros }}</span>
+                      {%- endif -%}
+                    </label>
+                  {%- endfor -%}
+                </fieldset>
+              {%- endunless -%}
+
+              {%- if subscriptions_on -%}
+                <fieldset class="nl-options">
+                  <legend class="nl-options__legend"><span>Purchase option</span></legend>
+                  {%- unless p.requires_selling_plan -%}
+                    <label class="nl-option-card">
+                      <input type="radio" name="nl-plan-{{ section.id }}" value="" data-nl-plan-input {% unless selected_plan %}checked{% endunless %}>
+                      <span class="nl-option-card__body">
+                        <span class="nl-option-card__radio" aria-hidden="true"></span>
+                        <span class="nl-option-card__title">One-time purchase</span>
+                        <span class="nl-option-card__price"><strong data-nl-plan-price="">{{ current_variant.price | money }}</strong></span>
+                      </span>
+                    </label>
+                  {%- endunless -%}
+                  {%- for group in p.selling_plan_groups -%}
+                    {%- for plan in group.selling_plans -%}
+                      {%- assign plan_alloc = nil -%}
+                      {%- for a in current_variant.selling_plan_allocations -%}
+                        {%- if a.selling_plan.id == plan.id -%}{%- assign plan_alloc = a -%}{%- endif -%}
+                      {%- endfor -%}
+                      <label class="nl-option-card">
+                        <input type="radio" name="nl-plan-{{ section.id }}" value="{{ plan.id }}" data-nl-plan-input {% if selected_plan.id == plan.id %}checked{% endif %}>
+                        <span class="nl-option-card__body">
+                          <span class="nl-option-card__radio" aria-hidden="true"></span>
+                          <span>
+                            <span class="nl-option-card__title">{{ plan.name | escape }}</span>
+                            {%- if plan.description != blank -%}<span class="nl-option-card__sub">{{ plan.description | escape }}</span>{%- endif -%}
+                          </span>
+                          <span class="nl-option-card__price">
+                            {%- if plan_alloc -%}<strong data-nl-plan-price="{{ plan.id }}">{{ plan_alloc.price | money }}</strong>{%- endif -%}
+                          </span>
+                        </span>
+                      </label>
+                    {%- endfor -%}
+                  {%- endfor -%}
+                  {%- if settings.subscription_portal_url != blank -%}
+                    <p class="nl-small nl-muted">Manage or cancel subscriptions any time from <a href="{{ settings.subscription_portal_url }}">your subscription portal</a>.</p>
+                  {%- endif -%}
+                </fieldset>
+              {%- elsif p.requires_selling_plan and request.design_mode -%}
+                <p class="nl-setup-note">This product requires a selling plan, but subscriptions are disabled in Theme settings. Shoppers will not be able to add it to the cart.</p>
+              {%- endif -%}
+
+              <div class="nl-stack nl-stack--sm" data-nl-buy-area>
+                <span class="nl-stock" data-nl-stock data-available="{{ current_variant.available }}">
+                  {%- if current_variant.available -%}In stock{%- else -%}Sold out{%- endif -%}
+                </span>
+                <span class="product-form-text__error hidden" ref="addToCartTextError">
+                  <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+                </span>
+                <div class="nl-buy-row">
+                  {%- if section.settings.show_quantity -%}
+                    <div class="nl-qty" data-nl-qty>
+                      <button type="button" data-nl-qty-minus aria-label="Decrease quantity">{% render 'nurellea-icon', name: 'minus' %}</button>
+                      <label class="visually-hidden" for="Quantity-{{ section.id }}">Quantity</label>
+                      <input
+                        id="Quantity-{{ section.id }}"
+                        type="number"
+                        name="quantity"
+                        inputmode="numeric"
+                        value="{{ current_variant.quantity_rule.min | default: 1 }}"
+                        min="{{ current_variant.quantity_rule.min | default: 1 }}"
+                        step="{{ current_variant.quantity_rule.increment | default: 1 }}"
+                        {% if current_variant.quantity_rule.max != null %}max="{{ current_variant.quantity_rule.max }}"{% endif %}
+                      >
+                      <button type="button" data-nl-qty-plus aria-label="Increase quantity">{% render 'nurellea-icon', name: 'plus' %}</button>
+                    </div>
+                  {%- else -%}
+                    <input type="hidden" name="quantity" value="{{ current_variant.quantity_rule.min | default: 1 }}">
+                  {%- endif -%}
+                  <div{% unless section.settings.show_quantity %} style="grid-column: 1 / -1"{% endunless %}>
+                    {%- liquid
+                      assign atc_label = 'Add to cart'
+                      unless current_variant.available
+                        assign atc_label = 'Sold out'
+                      endunless
+                      assign atc_id = 'AddToCart-' | append: section.id
+                    -%}
+                    {% render 'add-to-cart-button',
+                      can_add_to_cart: current_variant.available,
+                      add_to_cart_text: atc_label,
+                      product: p,
+                      class: 'nl-btn nl-atc',
+                      id: atc_id
+                    %}
+                  </div>
+                </div>
+                {%- if section.settings.show_dynamic_checkout -%}
+                  <div ref="acceleratedCheckoutButtonContainer">{{ form | payment_button }}</div>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endform -%}
+        </product-form-component>
+
+        {%- if settings.free_shipping_threshold > 0 -%}
+          {%- assign threshold_cents = settings.free_shipping_threshold | times: 100 -%}
+          <p class="nl-alert nl-alert--info nl-small">
+            {% render 'nurellea-icon', name: 'truck' %}
+            <span>Free shipping on orders over {{ threshold_cents | money_without_trailing_zeros }}.</span>
+          </p>
+        {%- endif -%}
+
+        {%- assign assurance_blocks = section.blocks | where: 'type', 'assurance' -%}
+        {%- if assurance_blocks.size > 0 -%}
+          <div class="nl-pdp__assurances">
+            {%- for block in assurance_blocks -%}
+              <div class="nl-pdp__assurance" {{ block.shopify_attributes }}>
+                {% render 'nurellea-icon', name: block.settings.icon %}
+                <span>
+                  {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}">{{ block.settings.text | escape }}</a>{%- else -%}{{ block.settings.text | escape }}{%- endif -%}
+                </span>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}
+            <div {{ block.shopify_attributes }}>{% render block %}</div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- comment -%} ——— Product facts ——— {%- endcomment -%}
+        <div class="nl-accordion">
+          {%- if p.description != blank -%}
+            <details class="nl-accordion__item" {% if section.settings.open_description %}open{% endif %}>
+              <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'sparkle' %}About this product</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+              <div class="nl-accordion__body nl-prose">{{ p.description }}</div>
+            </details>
+          {%- endif -%}
+
+          {%- if mf.ingredients.value.size > 0 or mf.ingredients_text != blank -%}
+            <details class="nl-accordion__item" id="ingredients">
+              <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'leaf' %}Ingredients</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+              <div class="nl-accordion__body nl-prose">
+                {%- if mf.ingredients.value.size > 0 -%}
+                  <ul>
+                    {%- for ing in mf.ingredients.value -%}
+                      <li><strong>{{ ing.name.value | escape }}</strong>{% if ing.amount != blank %} — {{ ing.amount.value | escape }}{% endif %}{% if ing.summary != blank %}<br><span class="nl-muted">{{ ing.summary.value | escape }}</span>{% endif %}</li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+                {%- if mf.ingredients_text != blank -%}
+                  <p><strong>Full ingredient list:</strong></p>
+                  {% render 'nurellea-rich', field: mf.ingredients_text %}
+                {%- endif -%}
+                {%- if mf.allergens != blank -%}
+                  <p><strong>Allergen information:</strong></p>
+                  {% render 'nurellea-rich', field: mf.allergens %}
+                {%- endif -%}
+              </div>
+            </details>
+          {%- elsif request.design_mode -%}
+            <p class="nl-setup-note">Ingredients: add <code>nurellea.ingredients</code> (ingredient entries) and/or <code>nurellea.ingredients_text</code> (full list exactly as on the label).</p>
+          {%- endif -%}
+
+          {%- capture facts_html -%}{% render 'nurellea-supplement-facts', product: p %}{%- endcapture -%}
+          {%- if facts_html != blank -%}
+            <details class="nl-accordion__item" id="supplement-facts">
+              <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'list' %}Supplement facts</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+              <div class="nl-accordion__body">{{ facts_html }}</div>
+            </details>
+          {%- endif -%}
+
+          {%- if mf.directions != blank or mf.serving_size != blank -%}
+            <details class="nl-accordion__item" id="how-to-use">
+              <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'calendar' %}How to use</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+              <div class="nl-accordion__body nl-prose">
+                {%- if mf.serving_size != blank -%}<p><strong>Serving size:</strong> {{ mf.serving_size.value | escape }}</p>{%- endif -%}
+                {% render 'nurellea-rich', field: mf.directions %}
+                {%- if mf.storage != blank -%}<p><strong>Storage:</strong></p>{% render 'nurellea-rich', field: mf.storage %}{%- endif -%}
+              </div>
+            </details>
+          {%- elsif request.design_mode -%}
+            <p class="nl-setup-note">How to use: add <code>nurellea.directions</code> and <code>nurellea.serving_size</code> from the approved label.</p>
+          {%- endif -%}
+
+          {%- if mf.warnings != blank -%}
+            <details class="nl-accordion__item" id="warnings">
+              <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'info' %}Warnings &amp; safety</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+              <div class="nl-accordion__body nl-prose">
+                {% render 'nurellea-rich', field: mf.warnings %}
+              </div>
+            </details>
+          {%- elsif request.design_mode -%}
+            <p class="nl-setup-note">Warnings: add <code>nurellea.warnings</code> exactly as printed on the label.</p>
+          {%- endif -%}
+
+          <details class="nl-accordion__item" id="shipping-returns">
+            <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: 'truck' %}Shipping &amp; returns</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+            <div class="nl-accordion__body nl-prose">
+              {%- if settings.shipping_summary != blank -%}<p>{{ settings.shipping_summary | escape }}</p>{%- endif -%}
+              {%- if settings.guarantee_text != blank -%}<p>{{ settings.guarantee_text | escape }}</p>{%- endif -%}
+              <p>
+                {%- if shop.shipping_policy.body != blank -%}<a href="{{ shop.shipping_policy.url }}">Shipping policy</a>{%- endif -%}
+                {%- if shop.shipping_policy.body != blank and shop.refund_policy.body != blank %} · {% endif -%}
+                {%- if shop.refund_policy.body != blank -%}<a href="{{ shop.refund_policy.url }}">Returns &amp; refunds</a>{%- endif -%}
+              </p>
+              {%- if shop.shipping_policy.body == blank and shop.refund_policy.body == blank and settings.shipping_summary == blank -%}
+                <p>Shipping options and costs are shown at checkout. <a href="{{ routes.root_url }}pages/contact">Contact us</a> with any questions.</p>
+              {%- endif -%}
+            </div>
+          </details>
+
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'accordion' and block.settings.title != blank -%}
+              <details class="nl-accordion__item" {{ block.shopify_attributes }}>
+                <summary><span class="nl-accordion__summary-label">{% render 'nurellea-icon', name: block.settings.icon %}{{ block.settings.title | escape }}</span><span class="nl-accordion__icon" aria-hidden="true"></span></summary>
+                <div class="nl-accordion__body nl-prose">
+                  {{ block.settings.content }}
+                  {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
+                </div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if settings.supplement_disclaimer != blank and section.settings.show_disclaimer -%}
+          <p class="nl-small nl-muted">{{ settings.supplement_disclaimer | escape }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.show_sticky_bar -%}
+    <div class="nl-sticky-atc" data-nl-sticky-atc aria-hidden="true">
+      <div class="nl-sticky-atc__inner">
+        <div class="nl-sticky-atc__media">
+          {%- if p.featured_media -%}
+            {{ p.featured_media.preview_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', width: 48, height: 48 }}
+          {%- endif -%}
+        </div>
+        <div class="nl-sticky-atc__text">
+          <span class="nl-sticky-atc__title">{{ p.title | escape }}</span>
+          <span class="nl-sticky-atc__price">
+            <span data-nl-price>{{ display_price | money }}</span>
+            <span class="nl-sticky-atc__variant nl-muted" data-nl-variant-title {% if p.has_only_default_variant %}hidden{% endif %}>{{ current_variant.title | escape }}</span>
+          </span>
+        </div>
+        <button type="button" class="button nl-btn" data-nl-sticky-submit tabindex="-1" {% unless current_variant.available %}disabled{% endunless %}>
+          <span data-nl-atc-label>{% if current_variant.available %}Add to cart{% else %}Sold out{% endif %}</span>
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Variant data for client-side price/stock updates. Money strings are formatted by Shopify. {%- endcomment -%}
+  <script type="application/json" data-nl-product-json>
+    {
+      "strings": {
+        "add_to_cart": "Add to cart",
+        "sold_out": "Sold out",
+        "in_stock": "In stock",
+        "save": "Save"
+      },
+      "variants": [
+        {%- for variant in p.variants -%}
+          {
+            "id": {{ variant.id }},
+            "title": {{ variant.title | json }},
+            "available": {{ variant.available | json }},
+            "price_cents": {{ variant.price }},
+            "price": {{ variant.price | money | json }},
+            "compare_at": {% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+            "savings": {% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | minus: variant.price | money | json }}{% else %}null{% endif %},
+            "unit_price": {% if variant.unit_price_measurement %}{% capture up %}{{ variant.unit_price | money }}/{% if variant.unit_price_measurement.reference_value != 1 %}{{ variant.unit_price_measurement.reference_value }}{% endif %}{{ variant.unit_price_measurement.reference_unit }}{% endcapture %}{{ up | strip | json }}{% else %}null{% endif %},
+            "featured_media_id": {% if variant.featured_media %}{{ variant.featured_media.id }}{% else %}null{% endif %},
+            "plans": {
+              {%- if subscriptions_on -%}
+                {%- for a in variant.selling_plan_allocations -%}
+                  "{{ a.selling_plan.id }}": {
+                    "price": {{ a.price | money | json }},
+                    "compare_at": {% if a.compare_at_price > a.price %}{{ a.compare_at_price | money | json }}{% else %}null{% endif %},
+                    "savings": {% if a.compare_at_price > a.price %}{{ a.compare_at_price | minus: a.price | money | json }}{% else %}null{% endif %}
+                  }{% unless forloop.last %},{% endunless %}
+                {%- endfor -%}
+              {%- endif -%}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  {%- comment -%} Product structured data — prices/stock from Shopify, rating only from genuine published reviews. {%- endcomment -%}
+  {%- if template.name == 'product' -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "@id": {{ shop.url | append: p.url | append: '#product' | json }},
+        "name": {{ p.title | json }},
+        "url": {{ shop.url | append: p.url | json }},
+        {%- if p.description != blank %}"description": {{ p.description | strip_html | strip_newlines | truncate: 500 | json }},{% endif %}
+        {%- if p.media.size > 0 %}
+        "image": [
+          {%- for media in p.media limit: 6 -%}
+            {{ media.preview_image | image_url: width: 1600 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ],
+        {%- endif %}
+        "brand": { "@type": "Brand", "name": {{ p.vendor | default: shop.name | json }} },
+        {%- if current_variant.sku != blank %}"sku": {{ current_variant.sku | json }},{% endif %}
+        {%- assign barcode_len = current_variant.barcode | size -%}
+        {%- if barcode_len == 8 or barcode_len == 12 or barcode_len == 13 or barcode_len == 14 %}"gtin": {{ current_variant.barcode | json }},{% endif %}
+        {%- if review_count > 0 %}
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": {{ review_avg | json }},
+          "reviewCount": {{ review_count | json }},
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        {%- endif %}
+        "offers": [
+          {%- for variant in p.variants -%}
+            {
+              "@type": "Offer",
+              {%- if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
+              "name": {{ variant.title | json }},
+              "price": {{ variant.price | divided_by: 100.0 | json }},
+              "priceCurrency": {{ cart.currency.iso_code | json }},
+              "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+              "itemCondition": "https://schema.org/NewCondition",
+              "url": {{ shop.url | append: variant.url | json }},
+              "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+  {%- endif -%}
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Nurellea product",
+  "tag": "div",
+  "class": "nl-main-product-section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Used outside product pages. On product pages the current product is always used."
+    },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "text", "id": "variant_heading", "label": "Variant picker heading", "info": "Defaults to the product's first option name." },
+    { "type": "checkbox", "id": "show_quantity", "label": "Show quantity selector", "default": true },
+    { "type": "checkbox", "id": "show_short_description", "label": "Show short description above buy box", "default": false },
+    { "type": "checkbox", "id": "open_description", "label": "Open description by default", "default": true },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "info": "Buy-now buttons are routed by the checkout integration when it is enabled.",
+      "default": false
+    },
+    { "type": "checkbox", "id": "show_sticky_bar", "label": "Show sticky add-to-cart bar", "default": true },
+    { "type": "checkbox", "id": "show_disclaimer", "label": "Show supplement disclaimer", "default": true }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    {
+      "type": "assurance",
+      "name": "Assurance",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "lock",
+          "options": [
+            { "value": "lock", "label": "Lock" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "return", "label": "Return" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "package", "label": "Package" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "heart", "label": "Heart" }
+          ]
+        },
+        { "type": "text", "id": "text", "label": "Text", "default": "Secure checkout" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Extra accordion",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "info",
+          "options": [
+            { "value": "info", "label": "Info" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "flask", "label": "Flask" },
+            { "value": "package", "label": "Package" }
+          ]
+        },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "richtext", "id": "content", "label": "Content" },
+        { "type": "page", "id": "page", "label": "Or show page content" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "order_tracking": {
+      "type": "order-tracking",
+      "settings": {
+        "eyebrow": "Order tracking",
+        "heading": "Track your order",
+        "subheading": "Enter your order number and the email used at checkout to view shipment status and delivery updates.",
+        "color_scheme": "scheme-2",
+        "show_help": true,
+        "help_title": "Need help with your order?",
+        "help_text": "Our team can help with delivery questions and order changes.",
+        "help_link": "/pages/contact",
+        "help_link_label": "Contact support"
+      }
+    }
+  },
+  "order": [
+    "order_tracking"
+  ]
+}

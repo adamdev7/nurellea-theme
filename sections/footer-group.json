@@ -1,0 +1,25 @@
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "nurellea_footer": {
+      "type": "nurellea-footer",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "logo_variant": "lockup",
+        "newsletter_heading": "Join the Nurellea list",
+        "newsletter_text": "<p>News, rituals and first access to launches — straight to your inbox.</p>",
+        "menu_1_heading": "Shop",
+        "menu_1": "",
+        "menu_2_heading": "Help",
+        "menu_2": "",
+        "menu_3_heading": "Nurellea",
+        "menu_3": "",
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": [
+    "nurellea_footer"
+  ]
+}

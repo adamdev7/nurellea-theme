@@ -1,0 +1,139 @@
+{%- liquid
+  assign product_url = settings.nurellea_product.url | default: routes.all_products_collection_url
+  assign fallback_shop = 'Shop all|' | append: routes.all_products_collection_url | append: ';Gut Gummies|' | append: product_url | append: ';Ingredients|/pages/ingredients;Reviews|/pages/reviews'
+  assign fallback_help = 'FAQ|/pages/faq;Track your order|/pages/track-order;Shipping|/pages/shipping;Returns|/pages/returns;Contact us|/pages/contact'
+  assign fallback_about = 'About Nurellea|/pages/about;Journal|/blogs/news'
+-%}
+<footer class="nl-section nl-footer color-{{ section.settings.color_scheme }}" aria-label="Footer">
+  <div class="nl-container">
+    <div class="nl-footer__top">
+      <div class="nl-footer__brand">
+        <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} home" style="display:inline-block;">
+          {%- if settings.logo != blank -%}
+            {{ settings.logo | image_url: height: 72 | image_tag: height: 36, loading: 'lazy', alt: shop.name, style: 'height:36px;width:auto;' }}
+          {%- else -%}
+            {% render 'nurellea-logo', variant: section.settings.logo_variant, height: 40, loading: 'lazy' %}
+          {%- endif -%}
+        </a>
+        {%- if section.settings.newsletter_heading != blank -%}
+          <h2 class="nl-h4" style="margin-top: 8px;">{{ section.settings.newsletter_heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.newsletter_text != blank -%}<div class="nl-small nl-muted">{{ section.settings.newsletter_text }}</div>{%- endif -%}
+        {%- form 'customer', id: 'FooterNewsletter', class: 'nl-stack nl-stack--sm' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="nl-alert nl-alert--success nl-small" role="status" tabindex="-1" autofocus>{% render 'nurellea-icon', name: 'check-circle' %}<span>Thanks — you're subscribed. Look out for our emails.</span></p>
+          {%- else -%}
+            {%- if form.errors -%}
+              <p class="nl-alert nl-alert--error nl-small" role="alert" tabindex="-1" autofocus>{% render 'nurellea-icon', name: 'alert' %}<span>{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</span></p>
+            {%- endif -%}
+            <div class="nl-newsletter">
+              <label class="visually-hidden" for="FooterNewsletterEmail">Email address</label>
+              <input id="FooterNewsletterEmail" type="email" name="contact[email]" autocomplete="email" placeholder="Your email" required value="{{ form.email }}">
+              <button type="submit" class="button nl-btn">Subscribe</button>
+            </div>
+            <p class="nl-small nl-muted" style="font-size: .78rem;">You can unsubscribe at any time.{% if shop.privacy_policy.body != blank %} <a href="{{ shop.privacy_policy.url }}">Privacy policy</a>.{% endif %}</p>
+          {%- endif -%}
+        {%- endform -%}
+
+        {%- liquid
+          assign socials = 'instagram:brand_instagram,tiktok:brand_tiktok,facebook:brand_facebook,pinterest:brand_pinterest,youtube:brand_youtube' | split: ','
+        -%}
+        <ul class="nl-footer__social" aria-label="Social media">
+          {%- for s in socials -%}
+            {%- assign parts = s | split: ':' -%}
+            {%- assign url = settings[parts[1]] -%}
+            {%- if url != blank -%}
+              <li><a href="{{ url }}" target="_blank" rel="noopener me" aria-label="{{ shop.name | escape }} on {{ parts[0] | capitalize }}">{% render 'nurellea-icon', name: parts[0] %}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      {%- assign columns = 'menu_1,menu_2,menu_3' | split: ',' -%}
+      {%- for col in columns -%}
+        {%- liquid
+          assign heading_key = col | append: '_heading'
+          assign menu = linklists[section.settings[col]]
+          case forloop.index
+            when 1
+              assign fallback = fallback_shop
+            when 2
+              assign fallback = fallback_help
+            else
+              assign fallback = fallback_about
+          endcase
+        -%}
+        <nav class="nl-footer__col" aria-label="{{ section.settings[heading_key] | escape }}">
+          <h2>{{ section.settings[heading_key] | escape }}</h2>
+          <ul>
+            {%- if menu.links.size > 0 -%}
+              {%- for link in menu.links -%}
+                <li><a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            {%- else -%}
+              {%- assign items = fallback | split: ';' -%}
+              {%- for item in items -%}
+                {%- assign bits = item | split: '|' -%}
+                <li><a href="{{ bits[1] }}">{{ bits[0] }}</a></li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endfor -%}
+    </div>
+
+    {%- if settings.supplement_disclaimer != blank -%}
+      <p class="nl-footer__disclaimer">{{ settings.supplement_disclaimer | escape }}</p>
+    {%- endif -%}
+
+    <div class="nl-footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ settings.brand_legal_name | default: shop.name | escape }}. All rights reserved.</p>
+      <ul class="nl-footer__legal">
+        {%- for policy in shop.policies -%}
+          <li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+        {%- endfor -%}
+        <li><a href="/pages/contact">Contact</a></li>
+      </ul>
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="nl-footer__payments" aria-label="Payment methods">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Nurellea footer",
+  "tag": "div",
+  "enabled_on": { "groups": ["footer"] },
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    {
+      "type": "select",
+      "id": "logo_variant",
+      "label": "Bundled logo",
+      "default": "lockup",
+      "options": [
+        { "value": "lockup", "label": "With tagline" },
+        { "value": "wordmark", "label": "Wordmark" },
+        { "value": "light", "label": "Light (dark backgrounds)" }
+      ]
+    },
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Join the Nurellea list" },
+    { "type": "richtext", "id": "newsletter_text", "label": "Newsletter text", "default": "<p>News, rituals and first access to launches — straight to your inbox.</p>" },
+    { "type": "header", "content": "Menus", "info": "If a menu is empty or missing, the column shows default links to the standard Nurellea pages." },
+    { "type": "text", "id": "menu_1_heading", "label": "Column 1 heading", "default": "Shop" },
+    { "type": "link_list", "id": "menu_1", "label": "Column 1 menu" },
+    { "type": "text", "id": "menu_2_heading", "label": "Column 2 heading", "default": "Help" },
+    { "type": "link_list", "id": "menu_2", "label": "Column 2 menu" },
+    { "type": "text", "id": "menu_3_heading", "label": "Column 3 heading", "default": "Nurellea" },
+    { "type": "link_list", "id": "menu_3", "label": "Column 3 menu" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true }
+  ]
+}
+{% endschema %}

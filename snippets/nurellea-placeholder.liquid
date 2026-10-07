@@ -1,0 +1,50 @@
+{%- doc -%}
+  Clearly-labelled artwork placeholder used until real, licensed photography is uploaded.
+  The label is shown when "Show placeholder labels" is on (Theme settings > Nurellea store > Development)
+  or in the theme editor, so placeholders are never mistaken for product photography.
+
+  @param {string} [label] - What should replace this placeholder, e.g. "Product photo"
+  @param {string} [art] - 'jar' (default), 'gummy', 'botanical', 'routine', 'portrait'
+  @param {string} [class] - Extra classes
+{%- enddoc -%}
+{%- assign art = art | default: 'jar' -%}
+<div class="nl-placeholder {{ class }}" data-nl-placeholder="{{ label | default: 'image' | escape }}">
+  <svg class="nl-placeholder__art" viewBox="0 0 200 200" fill="none" aria-hidden="true" focusable="false">
+    {%- case art -%}
+      {%- when 'gummy' -%}
+        <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" opacity=".75">
+          <path d="M62 92c0-16 12-27 26-27s26 11 26 27v6c8 3 13 11 13 20 0 14-12 25-27 25H76c-15 0-27-11-27-25 0-9 5-17 13-20v-6Z" fill="#fff" fill-opacity=".55"/>
+          <path d="M108 70c0-12 9-20 20-20s20 8 20 20v5c6 2 10 8 10 15 0 11-9 19-21 19h-17" fill="#fff" fill-opacity=".35"/>
+        </g>
+      {%- when 'botanical' -%}
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".75">
+          <path d="M100 165V70"/>
+          <path d="M100 120c-26-2-40-18-42-42 24 1 40 16 42 42Z" fill="#fff" fill-opacity=".5"/>
+          <path d="M100 98c24-2 37-16 39-38-22 1-37 15-39 38Z" fill="#fff" fill-opacity=".5"/>
+          <circle cx="100" cy="58" r="10" fill="#fff" fill-opacity=".6"/>
+        </g>
+      {%- when 'routine' -%}
+        <g stroke="currentColor" stroke-width="2" opacity=".75">
+          <circle cx="100" cy="100" r="52" fill="#fff" fill-opacity=".45"/>
+          <path d="M100 66v34l22 14" stroke-linecap="round"/>
+        </g>
+      {%- when 'portrait' -%}
+        <g stroke="currentColor" stroke-width="2" opacity=".7">
+          <circle cx="100" cy="80" r="26" fill="#fff" fill-opacity=".5"/>
+          <path d="M52 165c4-30 24-48 48-48s44 18 48 48" fill="#fff" fill-opacity=".4"/>
+        </g>
+      {%- else -%}
+        <g stroke="currentColor" stroke-width="2" stroke-linejoin="round" opacity=".75">
+          <rect x="66" y="40" width="68" height="22" rx="7" fill="#fff" fill-opacity=".7"/>
+          <path d="M62 70c0-4 3-8 8-8h60c5 0 8 4 8 8v86c0 6-5 10-10 10H72c-5 0-10-4-10-10V70Z" fill="#fff" fill-opacity=".5"/>
+          <rect x="74" y="92" width="52" height="40" rx="6"/>
+          <circle cx="100" cy="112" r="3" fill="currentColor"/>
+        </g>
+    {%- endcase -%}
+  </svg>
+  {%- if settings.show_placeholder_labels or request.design_mode -%}
+    <div class="nl-placeholder__label"><span>Placeholder · {{ label | default: 'Replace with licensed image' }}</span></div>
+  {%- else -%}
+    <span class="visually-hidden">{{ label | default: 'Image coming soon' }}</span>
+  {%- endif -%}
+</div>

@@ -1,0 +1,70 @@
+{%- assign source = collection -%}
+<section class="nl-section color-{{ section.settings.color_scheme }}" aria-label="Products">
+  <div class="nl-container">
+    {%- paginate source.products by section.settings.per_page -%}
+      <div class="nl-toolbar">
+        <p class="nl-small nl-muted">{{ source.products_count }} {{ source.products_count | pluralize: 'product', 'products' }}</p>
+        {%- if source.products_count > 1 -%}
+          <form method="get" action="{{ source.url }}" class="nl-small" style="display:flex;gap:10px;align-items:center;">
+            <label for="SortBy-{{ section.id }}">Sort by</label>
+            <select id="SortBy-{{ section.id }}" name="sort_by" class="nl-select" onchange="this.form.submit()">
+              {%- assign sort_by = source.sort_by | default: source.default_sort_by -%}
+              {%- for option in source.sort_options -%}
+                <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+            <noscript><button type="submit" class="button-secondary nl-btn" style="min-height:40px;">Apply</button></noscript>
+          </form>
+        {%- endif -%}
+      </div>
+
+      {%- if source.products.size > 0 -%}
+        <div class="nl-grid nl-grid--{{ section.settings.columns }}">
+          {%- for p in source.products -%}
+            <div data-nl-reveal style="--nl-reveal-delay: {{ forloop.index0 | modulo: 3 | times: 80 }}ms">
+              {% render 'nurellea-product-card', product: p, eager: forloop.first %}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div class="nl-empty">
+          {% render 'nurellea-icon', name: 'gummy' %}
+          <p class="nl-h4">No products here yet</p>
+          <p class="nl-muted">Check back soon, or <a href="{{ routes.root_url }}">return to the homepage</a>.</p>
+        </div>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="nl-pagination" aria-label="Pagination">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" aria-label="Previous page">{% render 'nurellea-icon', name: 'chevron-left' %}</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>{%- elsif part.title == paginate.current_page -%}<span class="current" aria-current="page">{{ part.title }}</span>{%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}" aria-label="Next page">{% render 'nurellea-icon', name: 'chevron-right' %}</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nurellea product grid",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 6, "max": 48, "step": 6, "default": 24 }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Journal",
+        "heading_accent": "",
+        "text": ""
+      }
+    },
+    "blog": {
+      "type": "nurellea-blog",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "per_page": 9
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "blog"
+  ]
+}

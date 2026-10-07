@@ -1,0 +1,47 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Reviews",
+        "heading": "Customer",
+        "heading_accent": "reviews",
+        "text": "<p>Reviews are checked by our team before they are published. Reviews marked \"Verified purchase\" have been matched to an order.</p>"
+      }
+    },
+    "reviews": {
+      "type": "nurellea-reviews",
+      "settings": {
+        "scope": "all",
+        "color_scheme": "scheme-1",
+        "eyebrow": "",
+        "heading": "All",
+        "heading_accent": "reviews",
+        "columns": "3",
+        "show_filters": true,
+        "page_size": 9,
+        "limit": 0,
+        "show_form": true,
+        "form_expanded": true,
+        "hide_when_empty": false
+      }
+    },
+    "cta": {
+      "type": "nurellea-cta",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_logo": false,
+        "heading": "Try it for",
+        "heading_accent": "yourself",
+        "text": "",
+        "button_label": "Shop Gut Gummies"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "reviews",
+    "cta"
+  ]
+}

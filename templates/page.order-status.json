@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "status": {
+      "type": "nurellea-order-status",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "clear_cart_on_success": false
+      }
+    }
+  },
+  "order": [
+    "status"
+  ]
+}

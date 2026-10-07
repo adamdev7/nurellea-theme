@@ -1,0 +1,37 @@
+{%- doc -%}
+  Star rating display. Purely presentational — only pass genuine rating values.
+
+  @param {number} rating - Rating value (0–5, decimals allowed)
+  @param {number} [size] - Star size in px (default 16)
+  @param {string} [label] - Accessible label override
+{%- enddoc -%}
+{%- liquid
+  assign size = size | default: 16
+  assign rounded = rating | times: 2 | round | divided_by: 2.0
+  assign label_text = label | default: ''
+  if label_text == blank
+    assign label_text = rating | round: 1 | append: ' out of 5 stars'
+  endif
+-%}
+<span class="nl-stars" role="img" aria-label="{{ label_text | escape }}" style="--nl-star-size: {{ size }}px;">
+  {%- for i in (1..5) -%}
+    {%- liquid
+      assign half_point = i | minus: 0.5
+      if rounded >= i
+        assign state = 'full'
+      elsif rounded >= half_point
+        assign state = 'half'
+      else
+        assign state = 'empty'
+      endif
+    -%}
+    <svg viewBox="0 0 24 24" width="{{ size }}" height="{{ size }}" aria-hidden="true" focusable="false" class="{% if state == 'empty' %}is-empty{% endif %}">
+      {%- if state == 'half' -%}
+        <defs><linearGradient id="nl-half-{{ i }}-{{ rating | replace: '.', '-' }}"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="currentColor" stop-opacity=".2"/></linearGradient></defs>
+        <path fill="url(#nl-half-{{ i }}-{{ rating | replace: '.', '-' }})" d="m12 3.3 2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.6l-5.4 2.9 1.2-5.9-4.4-4.1 6-.7L12 3.3Z"/>
+      {%- else -%}
+        <path fill="currentColor" d="m12 3.3 2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.6l-5.4 2.9 1.2-5.9-4.4-4.1 6-.7L12 3.3Z"/>
+      {%- endif -%}
+    </svg>
+  {%- endfor -%}
+</span>

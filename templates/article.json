@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "article": {
+      "type": "nurellea-article",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_author": true
+      }
+    },
+    "spotlight": {
+      "type": "nurellea-product-spotlight",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Shop the ritual",
+        "text": "",
+        "button_label": "Shop now",
+        "link_label": "Ingredients & how to use",
+        "link_url": "/pages/ingredients"
+      }
+    }
+  },
+  "order": [
+    "article",
+    "spotlight"
+  ]
+}

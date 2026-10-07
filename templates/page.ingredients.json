@@ -1,0 +1,136 @@
+{
+  "sections": {
+    "hero": {
+      "type": "nurellea-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Ingredients & how to use",
+        "heading": "What's inside",
+        "heading_accent": "Nurellea",
+        "text": "<p>The complete label — ingredients, supplement facts, directions and warnings — in one place.</p>"
+      }
+    },
+    "ingredients": {
+      "type": "nurellea-ingredients",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Key ingredients",
+        "heading": "Meet the",
+        "heading_accent": "ingredients",
+        "text": "",
+        "columns": "3",
+        "button_label": "Shop Gut Gummies"
+      }
+    },
+    "label": {
+      "type": "nurellea-label-facts",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "eyebrow": "The label",
+        "heading": "Everything on the",
+        "heading_accent": "label"
+      }
+    },
+    "ritual": {
+      "type": "nurellea-steps",
+      "blocks": {
+        "nurellea_1": {
+          "type": "step",
+          "settings": {
+            "title": "Read the label",
+            "text": "<p>Check the serving size, directions and warnings before your first serving.</p>"
+          }
+        },
+        "nurellea_2": {
+          "type": "step",
+          "settings": {
+            "title": "Take as directed",
+            "text": "<p>Follow the directions on the label — never exceed the recommended serving.</p>"
+          }
+        },
+        "nurellea_3": {
+          "type": "step",
+          "settings": {
+            "title": "Store it well",
+            "text": "<p>Store as directed on the label and keep out of reach of children.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "How to use",
+        "heading": "Make it a",
+        "heading_accent": "daily ritual",
+        "show_directions": false
+      }
+    },
+    "faq": {
+      "type": "nurellea-faq",
+      "blocks": {
+        "nurellea_1": {
+          "type": "question",
+          "settings": {
+            "question": "Can I take them if I am pregnant, breastfeeding or taking medication?",
+            "answer": "<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_2": {
+          "type": "question",
+          "settings": {
+            "question": "Are they suitable for my diet?",
+            "answer": "<p>Dietary and allergen information is listed on the product page. If you cannot find what you need, <a href=\"/pages/contact\">ask us</a> and we will check for you.</p>",
+            "category": "Product"
+          }
+        },
+        "nurellea_3": {
+          "type": "question",
+          "settings": {
+            "question": "How should I store them?",
+            "answer": "<p>Store them as directed on the label, and keep them out of reach of children.</p>",
+            "category": "Product"
+          }
+        }
+      },
+      "block_order": [
+        "nurellea_1",
+        "nurellea_2",
+        "nurellea_3"
+      ],
+      "settings": {
+        "source": "blocks",
+        "color_scheme": "scheme-2",
+        "layout": "split",
+        "eyebrow": "FAQ",
+        "heading": "Ingredient",
+        "heading_accent": "questions",
+        "contact_label": "Ask us anything",
+        "contact_link": "/pages/contact"
+      }
+    },
+    "cta": {
+      "type": "nurellea-cta",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_logo": false,
+        "heading": "Ready to try",
+        "heading_accent": "Nurellea?",
+        "text": "",
+        "button_label": "Shop Gut Gummies"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "ingredients",
+    "label",
+    "ritual",
+    "faq",
+    "cta"
+  ]
+}

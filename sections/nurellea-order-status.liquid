@@ -1,0 +1,100 @@
+{%- comment -%}
+  Landing page for the external checkout's return URLs:
+    /pages/order-status?state=success | failed | cancelled
+  This page is informational only. It never fires purchase events — purchases are reported server-side
+  from confirmed order webhooks by App Manager.
+{%- endcomment -%}
+<section class="nl-section color-{{ section.settings.color_scheme }}" data-nl-order-status data-clear-cart="{{ section.settings.clear_cart_on_success }}">
+  <div class="nl-container nl-container--narrow">
+    <div class="nl-status" data-state-panel="default">
+      <span class="nl-status__icon">{% render 'nurellea-icon', name: 'package' %}</span>
+      <h1 class="nl-h2">{{ section.settings.default_heading | escape }}</h1>
+      <div class="nl-lead nl-muted">{{ section.settings.default_text }}</div>
+      <div class="nl-actions">
+        <a class="button nl-btn" href="/pages/track-order">Track an order</a>
+        <a class="button-secondary nl-btn" href="{{ routes.root_url }}">Back to home</a>
+      </div>
+    </div>
+
+    <div class="nl-status nl-status--success" data-state-panel="success" hidden>
+      <span class="nl-status__icon">{% render 'nurellea-icon', name: 'check' %}</span>
+      <h1 class="nl-h2">{{ section.settings.success_heading | escape }}</h1>
+      <div class="nl-lead nl-muted">{{ section.settings.success_text }}</div>
+      <div class="nl-actions">
+        <a class="button nl-btn" href="/pages/track-order">Track your order</a>
+        <a class="button-secondary nl-btn" href="{{ routes.root_url }}">Continue browsing</a>
+      </div>
+    </div>
+
+    <div class="nl-status nl-status--failed" data-state-panel="failed" hidden>
+      <span class="nl-status__icon">{% render 'nurellea-icon', name: 'alert' %}</span>
+      <h1 class="nl-h2">{{ section.settings.failed_heading | escape }}</h1>
+      <div class="nl-lead nl-muted">{{ section.settings.failed_text }}</div>
+      <div class="nl-actions">
+        <a class="button nl-btn" href="{{ routes.cart_url }}">Return to cart</a>
+        <a class="button-secondary nl-btn" href="/pages/contact">Contact support</a>
+      </div>
+    </div>
+
+    <div class="nl-status" data-state-panel="cancelled" hidden>
+      <span class="nl-status__icon">{% render 'nurellea-icon', name: 'return' %}</span>
+      <h1 class="nl-h2">{{ section.settings.cancelled_heading | escape }}</h1>
+      <div class="nl-lead nl-muted">{{ section.settings.cancelled_text }}</div>
+      <div class="nl-actions">
+        <a class="button nl-btn" href="{{ routes.cart_url }}">Return to cart</a>
+        <a class="button-secondary nl-btn" href="{{ routes.all_products_collection_url }}">Keep shopping</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('[data-nl-order-status]');
+    if (!root) return;
+    var params = new URLSearchParams(window.location.search);
+    var raw = String(params.get('state') || params.get('status') || '').toLowerCase();
+    var map = {
+      success: 'success', paid: 'success', complete: 'success', completed: 'success', confirmed: 'success',
+      failed: 'failed', failure: 'failed', declined: 'failed', error: 'failed',
+      cancelled: 'cancelled', canceled: 'cancelled', cancel: 'cancelled', abandoned: 'cancelled'
+    };
+    var state = map[raw] || 'default';
+    root.querySelectorAll('[data-state-panel]').forEach(function (panel) {
+      panel.hidden = panel.getAttribute('data-state-panel') !== state;
+    });
+    if (state === 'success' && root.getAttribute('data-clear-cart') === 'true') {
+      fetch('{{ routes.cart_clear_url }}.js', { method: 'POST', headers: { Accept: 'application/json' } }).catch(function () {});
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Nurellea order status",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Reads ?state=success|failed|cancelled from the checkout return URL. Informational only — no purchase tracking happens here." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    {
+      "type": "checkbox",
+      "id": "clear_cart_on_success",
+      "label": "Empty the storefront cart on success",
+      "info": "Enable only if the external checkout does not clear the Shopify cart itself.",
+      "default": false
+    },
+    { "type": "header", "content": "Default (no status)" },
+    { "type": "text", "id": "default_heading", "label": "Heading", "default": "Order status" },
+    { "type": "richtext", "id": "default_text", "label": "Text", "default": "<p>Looking for an update? Track your order with your order number and the email used at checkout.</p>" },
+    { "type": "header", "content": "Success" },
+    { "type": "text", "id": "success_heading", "label": "Heading", "default": "Thank you for your order" },
+    { "type": "richtext", "id": "success_text", "label": "Text", "default": "<p>Your order has been received. A confirmation email is on its way with your order details — please check your inbox (and spam folder).</p>" },
+    { "type": "header", "content": "Payment failed" },
+    { "type": "text", "id": "failed_heading", "label": "Heading", "default": "Your payment didn't go through" },
+    { "type": "richtext", "id": "failed_text", "label": "Text", "default": "<p>No order was placed. Your cart has been kept so you can try again with another payment method, or contact us if the problem continues.</p>" },
+    { "type": "header", "content": "Cancelled" },
+    { "type": "text", "id": "cancelled_heading", "label": "Heading", "default": "Checkout cancelled" },
+    { "type": "richtext", "id": "cancelled_text", "label": "Text", "default": "<p>No order was placed and you have not been charged. Your items are still in your cart whenever you're ready.</p>" }
+  ]
+}
+{% endschema %}

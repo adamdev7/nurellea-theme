@@ -1,0 +1,6 @@
+{%- comment -%} Preview stand-in for Horizon's add-to-cart-button snippet (same button contract). {%- endcomment -%}
+<add-to-cart-component ref="addToCartButtonContainer">
+  <button type="submit" name="add" ref="addToCartButton" id="{{ id }}" class="button {{ class }}" {% unless can_add_to_cart %}disabled{% endunless %}>
+    <span class="add-to-cart-text__content"><span><span data-nl-atc-label>{{ add_to_cart_text }}</span></span></span>
+  </button>
+</add-to-cart-component>

@@ -1,0 +1,60 @@
+{%- if section.blocks.size > 0 -%}
+<section class="nl-section nl-trust{% unless section.settings.animate %} nl-trust--static{% endunless %} color-{{ section.settings.color_scheme }}" aria-label="Highlights" style="padding-block: 18px;">
+  <div class="nl-trust__track" style="--nl-marquee-speed: {{ section.settings.speed }}s;">
+    {%- assign loops = 1 -%}
+    {%- if section.settings.animate -%}{%- assign loops = 2 -%}{%- endif -%}
+    {%- for i in (1..loops) -%}
+      {%- for block in section.blocks -%}
+        <span class="nl-trust__item" {% if i > 1 %}aria-hidden="true"{% else %}{{ block.shopify_attributes }}{% endif %}>
+          {% render 'nurellea-icon', name: block.settings.icon %}{{ block.settings.text | escape }}
+        </span>
+      {%- endfor -%}
+      {%- if section.settings.animate -%}
+        {%- for block in section.blocks -%}
+          <span class="nl-trust__item" aria-hidden="true">{% render 'nurellea-icon', name: block.settings.icon %}{{ block.settings.text | escape }}</span>
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Nurellea highlights strip",
+  "tag": "div",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "animate", "label": "Scrolling marquee", "default": true },
+    { "type": "range", "id": "speed", "label": "Marquee duration", "min": 20, "max": 80, "step": 2, "unit": "s", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "sparkle",
+          "options": [
+            { "value": "sparkle", "label": "Sparkle" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "gummy", "label": "Gummy" },
+            { "value": "list", "label": "List" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "package", "label": "Package" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "lock", "label": "Lock" },
+            { "value": "flower", "label": "Flower" }
+          ]
+        },
+        { "type": "text", "id": "text", "label": "Text", "default": "Made for women's daily routines" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Nurellea highlights strip" }]
+}
+{% endschema %}

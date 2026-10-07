@@ -4,13 +4,34 @@
       "type": "nurellea-main-product",
       "blocks": {
         "nurellea_1": {
+          "type": "bundle_tier",
+          "settings": {
+            "quantity": 1,
+            "discount": 0
+          }
+        },
+        "nurellea_2": {
+          "type": "bundle_tier",
+          "settings": {
+            "quantity": 2,
+            "discount": 10
+          }
+        },
+        "nurellea_3": {
+          "type": "bundle_tier",
+          "settings": {
+            "quantity": 3,
+            "discount": 15
+          }
+        },
+        "nurellea_4": {
           "type": "assurance",
           "settings": {
             "icon": "lock",
             "text": "Secure checkout"
           }
         },
-        "nurellea_2": {
+        "nurellea_5": {
           "type": "assurance",
           "settings": {
             "icon": "package",
@@ -18,7 +39,7 @@
             "link": "/pages/track-order"
           }
         },
-        "nurellea_3": {
+        "nurellea_6": {
           "type": "assurance",
           "settings": {
             "icon": "chat",
@@ -30,11 +51,22 @@
       "block_order": [
         "nurellea_1",
         "nurellea_2",
-        "nurellea_3"
+        "nurellea_3",
+        "nurellea_4",
+        "nurellea_5",
+        "nurellea_6"
       ],
       "settings": {
         "color_scheme": "scheme-1",
         "show_breadcrumbs": true,
+        "variant_heading": "Choose your supply",
+        "default_variant_position": 3,
+        "bundle_discounts_live": false,
+        "unit_singular": "bag",
+        "unit_plural": "bags",
+        "supply_days_per_unit": 30,
+        "show_best_value": true,
+        "best_value_label": "Best value",
         "show_quantity": true,
         "show_short_description": false,
         "open_description": true,

@@ -94,6 +94,88 @@ test('quantity stepper respects the minimum', async () => {
   assert.equal(input.value, '2');
 });
 
+const tierJson = {
+  strings: { save: 'Save', in_stock: 'In stock', sold_out: 'Sold out', add_to_cart: 'Add to cart', per_day: 'Just [amount]/day' },
+  variants: [
+    {
+      id: 11, title: 'Default Title', available: true, price: '$40.19', price_cents: 4019, compare_at: null, savings: null, featured_media_id: null,
+      tiers: [
+        { total: '$40.19', full: null, each: '$40.19', each_cents: 4019, per_day: '$1.34', save: null, free_shipping: false },
+        { total: '$72.34', full: '$80.38', each: '$36.17', each_cents: 3617, per_day: '$1.21', save: '$8.04', free_shipping: false },
+        { total: '$102.48', full: '$120.57', each: '$34.16', each_cents: 3416, per_day: '$1.14', save: '$18.09', free_shipping: true },
+      ],
+    },
+  ],
+};
+
+const tierCard = (i, qty, title, checked) => `<label data-nl-tier="${i}">
+  <input type="radio" name="nl-tier" value="${i}" data-nl-tier-input data-qty="${qty}" data-title="${title}" ${checked ? 'checked' : ''}>
+  <span data-nl-tier-free hidden>Free shipping</span><span data-nl-tier-perday></span><span data-nl-tier-save></span>
+  <span data-nl-tier-each></span><s data-nl-tier-full></s><span data-nl-tier-total></span>
+</label>`;
+
+const TIER_PDP = `<!doctype html><html><body>
+<div data-nl-product>
+  <script type="application/json" data-nl-product-json>${JSON.stringify(tierJson)}</script>
+  <span data-nl-price>$102.48</span><s data-nl-compare></s><span data-nl-save></span><span data-nl-stock></span>
+  <product-form-component data-quantity-default="3">
+    <form data-type="add-to-cart-form" action="/cart/add" method="post">
+      <input type="hidden" name="id" value="11">
+      ${tierCard(0, 1, '1 bag')}${tierCard(1, 2, '2 bags')}${tierCard(2, 3, '3 bags', true)}
+      <div data-nl-buy-area><input type="hidden" name="quantity" value="3" data-nl-tier-qty>
+      <button type="submit" name="add"><span data-nl-atc-label>Add to cart</span></button></div>
+    </form>
+  </product-form-component>
+</div>
+<div data-nl-sticky-atc><span data-nl-price></span><span data-nl-variant-title></span><button type="button" data-nl-sticky-submit><span data-nl-atc-label>Add to cart</span></button></div>
+</body></html>`;
+
+async function bootTierPdp() {
+  const env = createWindow({ url: 'https://nurellea.test/products/gut-gummies', html: TIER_PDP });
+  env.window.__META_CAPI__ = { variantId: 11, productPrice: 40.19 };
+  env.window.eval(SCRIPT);
+  await ready(env.window);
+  return env;
+}
+
+const chooseTier = (window, index) => {
+  const input = window.document.querySelector(`input[data-nl-tier-input][value="${index}"]`);
+  input.checked = true;
+  input.dispatchEvent(new window.Event('change', { bubbles: true }));
+};
+
+test('bundle options: the pre-selected tier sets cart quantity, prices and the per-unit AddToCart price', async () => {
+  const { window } = await bootTierPdp();
+  const doc = window.document;
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '3');
+  assert.equal(doc.querySelector('[data-nl-price]').textContent, '$102.48');
+  assert.equal(doc.querySelector('[data-nl-compare]').textContent, '$120.57');
+  assert.equal(doc.querySelector('[data-nl-save]').textContent, 'Save $18.09');
+  assert.equal(doc.querySelector('[data-nl-sticky-atc] [data-nl-variant-title]').textContent, '3 bags');
+  assert.equal(window.__META_CAPI__.productPrice, 34.16, 'AddToCart value = 3 × $34.16, the discounted bundle');
+  const third = doc.querySelector('[data-nl-tier="2"]');
+  assert.equal(third.querySelector('[data-nl-tier-perday]').textContent, 'Just $1.14/day');
+  assert.equal(third.querySelector('[data-nl-tier-free]').hidden, false);
+  assert.equal(doc.querySelector('[data-nl-tier="0"] [data-nl-tier-save]').hidden, true);
+});
+
+test('bundle options: switching tiers updates quantity, Horizon quantity default, prices and attribution', async () => {
+  const { window } = await bootTierPdp();
+  const doc = window.document;
+  chooseTier(window, 0);
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '1');
+  assert.equal(doc.querySelector('product-form-component').dataset.quantityDefault, '1');
+  assert.equal(doc.querySelector('[data-nl-price]').textContent, '$40.19');
+  assert.equal(doc.querySelector('[data-nl-compare]').hidden, true);
+  assert.equal(doc.querySelector('[data-nl-save]').hidden, true);
+  assert.equal(window.__META_CAPI__.productPrice, 40.19);
+  chooseTier(window, 1);
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '2');
+  assert.equal(doc.querySelector('[data-nl-sticky-atc] [data-nl-price]').textContent, '$72.34');
+  assert.equal(window.__META_CAPI__.productPrice, 36.17);
+  assert.equal(window.__META_CAPI__.variantId, 11);
+});
+
 const REVIEWS = `<!doctype html><html><body>
 <div data-nl-reviews data-page-size="2">
   <select data-nl-reviews-sort><option value="newest">n</option><option value="lowest">l</option></select>

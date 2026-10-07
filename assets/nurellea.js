@@ -130,11 +130,48 @@
         input.addEventListener('change', () => input.checked && this.selectPlan(input.value))
       );
 
+      // Bundle options add N units of the selected variant; the matching Shopify automatic discount prices them.
+      this.tierInputs = $$('input[data-nl-tier-input]', root);
+      this.tierQtyInput = this.form ? $('input[data-nl-tier-qty]', this.form) : null;
+      this.formComponent = root.querySelector('product-form-component');
+      this.tierInputs.forEach((input) =>
+        input.addEventListener('change', () => input.checked && this.selectTier(Number(input.value)))
+      );
+      const checkedTier = this.tierInputs.find((input) => input.checked);
+      this.tierIndex = checkedTier ? Number(checkedTier.value) : 0;
+
       const initial = this.idInput?.value;
       this.current = this.variants.find((v) => String(v.id) === String(initial)) || this.variants[0];
       this.currentPlan = this.planInput?.value || '';
-      this.render();
+      if (this.tierInputs.length) this.selectTier(this.tierIndex);
+      else this.render();
       this.initSticky();
+    }
+
+    tier(variant = this.current) {
+      if (!this.tierInputs.length || !variant || !Array.isArray(variant.tiers)) return null;
+      return variant.tiers[this.tierIndex] || null;
+    }
+
+    selectTier(index) {
+      const input = this.tierInputs[index];
+      if (!input) return;
+      this.tierIndex = index;
+      const qty = String(Math.max(1, parseInt(input.dataset.qty, 10) || 1));
+      if (this.tierQtyInput) this.tierQtyInput.value = qty;
+      if (this.formComponent) this.formComponent.dataset.quantityDefault = qty;
+      this.syncAttribution();
+      this.render();
+    }
+
+    syncAttribution() {
+      // Keep the attribution config in sync so AddToCart beacons carry the real per-unit price of what is added.
+      const capi = window.__META_CAPI__;
+      const v = this.current;
+      if (!v || !capi || typeof capi !== 'object') return;
+      const tier = this.tier(v);
+      capi.variantId = v.id;
+      capi.productPrice = (tier && typeof tier.each_cents === 'number' ? tier.each_cents : v.price_cents) / 100;
     }
 
     selectVariant(id, userInitiated) {
@@ -151,12 +188,7 @@
         window.history.replaceState(window.history.state, '', url.toString());
         if (variant.featured_media_id) this.gallery?.goToMedia(variant.featured_media_id);
       }
-      // Keep the attribution config in sync so AddToCart/ViewContent beacons carry the selected variant's real price.
-      const capi = window.__META_CAPI__;
-      if (capi && typeof capi === 'object') {
-        capi.variantId = variant.id;
-        capi.productPrice = variant.price_cents / 100;
-      }
+      this.syncAttribution();
       this.render();
     }
 
@@ -189,11 +221,21 @@
           el.hidden = true;
         }
       });
-      set('[data-nl-price]', p.price);
-      set('[data-nl-compare]', p.compare_at || '');
-      set('[data-nl-save]', p.savings ? `${this.data.strings.save} ${p.savings}` : '');
+      const tier = this.currentPlan ? null : this.tier(v);
+      const tierTitle = this.tierInputs.length ? this.tierInputs[this.tierIndex]?.dataset.title || '' : '';
+      const variantTitle = this.variants.length > 1 ? v.title : '';
+      if (tier) {
+        set('[data-nl-price]', tier.total);
+        set('[data-nl-compare]', tier.full || '');
+        set('[data-nl-save]', tier.save ? `${this.data.strings.save} ${tier.save}` : '');
+      } else {
+        set('[data-nl-price]', p.price);
+        set('[data-nl-compare]', p.compare_at || '');
+        set('[data-nl-save]', p.savings ? `${this.data.strings.save} ${p.savings}` : '');
+      }
       set('[data-nl-unit]', v.unit_price || '');
-      set('[data-nl-variant-title]', this.variants.length > 1 ? v.title : '');
+      set('[data-nl-variant-title]', [variantTitle, tierTitle].filter(Boolean).join(' · '));
+      this.renderTiers(v);
 
       $$('[data-nl-stock]', this.root).forEach((el) => {
         el.dataset.available = String(v.available);
@@ -211,6 +253,25 @@
         const plan = el.dataset.nlPlanPrice;
         const src = plan && v.plans ? v.plans[plan] : v;
         if (src) el.textContent = src.price;
+      });
+    }
+
+    renderTiers(v) {
+      if (!this.tierInputs.length || !Array.isArray(v.tiers)) return;
+      const perDay = this.data.strings.per_day || '[amount]/day';
+      $$('[data-nl-tier]', this.root).forEach((card) => {
+        const t = v.tiers[Number(card.dataset.nlTier)];
+        if (!t) return;
+        const put = (sel, text) => $$(sel, card).forEach((el) => {
+          el.textContent = text || '';
+          el.hidden = !text;
+        });
+        put('[data-nl-tier-total]', t.total);
+        put('[data-nl-tier-each]', t.each);
+        put('[data-nl-tier-full]', t.full);
+        put('[data-nl-tier-perday]', t.per_day ? perDay.replace('[amount]', t.per_day) : '');
+        put('[data-nl-tier-save]', t.save ? `${this.data.strings.save} ${t.save}` : '');
+        $$('[data-nl-tier-free]', card).forEach((el) => (el.hidden = !t.free_shipping));
       });
     }
 

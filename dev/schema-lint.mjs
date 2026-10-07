@@ -103,8 +103,10 @@ for (const f of [...list('templates', '.json'), ...list('sections', '.json')]) {
       if (local?.limit && blocks.filter(([, x]) => x.type === b.type).length > local.limit) problems.push(`${f} > ${id}: too many "${b.type}" blocks (limit ${local.limit})`);
     }
     if (s.block_order && s.block_order.some((bid) => !s.blocks?.[bid])) problems.push(`${f} > ${id}: block_order references a missing block`);
+    if (s.block_order && new Set(s.block_order).size !== s.block_order.length) problems.push(`${f} > ${id}: block_order lists a block twice`);
   }
   if (data.order && data.order.some((sid) => !data.sections?.[sid])) problems.push(`${f}: order references a missing section`);
+  if (data.order && new Set(data.order).size !== data.order.length) problems.push(`${f}: order lists a section twice`);
 }
 
 console.log(problems.length ? problems.join('\n') : 'no problems');

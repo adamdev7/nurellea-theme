@@ -1,5 +1,5 @@
-// SAMPLE DATA for the local mock preview only. Every value here is a placeholder used to exercise the layout;
-// none of it is Nurellea product information, pricing, ingredients or reviews.
+// SAMPLE DATA for the local mock preview only, used to exercise the layout. Apart from the bag price and pouch
+// photo (copied from the live product), none of it is Nurellea product information, ingredients or reviews.
 
 const mf = (type, value) => ({ type, value });
 
@@ -22,17 +22,16 @@ const variant = (id, title, price, compare, available, badge, caption) => ({
   option1: title,
 });
 
-const variants = [
-  variant(9001, '1 jar', 2900, null, true, null, null),
-  variant(9002, '2 jars', 5400, null, true, 'Sample badge', null),
-  variant(9003, '3 jars', 7500, null, true, null, null),
-  variant(9004, '6 jars', 14400, null, false, null, null),
-];
+// One variant, like the live product; bundle options are quantity-based theme blocks.
+const variants = [variant(9001, 'Default Title', 4019, null, true, null, null)];
 
-// Sample values layered over theme/section settings in the preview only, so optional UI (per-day price,
+const pouch = { src: '/assets/nurellea-gut-gummies-pouch.webp', alt: 'Nurellea Gut Gummies pouch', width: 819, height: 819 };
+const pouchMedia = { id: 5001, media_type: 'image', ...pouch, preview_image: pouch };
+
+// Sample values layered over theme/section settings in the preview only, so optional UI (bundle discounts,
 // free-shipping pill) can be checked. The real values are entered in the theme editor.
 export const previewThemeSettings = { free_shipping_threshold: 50 };
-export const previewSectionSettings = { 'nurellea-main-product': { supply_days_per_unit: 30 } };
+export const previewSectionSettings = { 'nurellea-main-product': { bundle_discounts_live: true } };
 
 const ingredient = (n) => ({
   name: mf('single_line_text_field', `Sample ingredient ${n}`),
@@ -51,25 +50,25 @@ export const product = {
   available: true,
   description: '<p>Sample product description. The real description is written in Shopify admin → Products.</p>',
   content: '<p>Sample product description. The real description is written in Shopify admin → Products.</p>',
-  price: 2900,
-  price_min: 2900,
-  price_max: 7500,
+  price: 4019,
+  price_min: 4019,
+  price_max: 4019,
   compare_at_price: null,
-  compare_at_price_max: 8700,
-  price_varies: true,
-  has_only_default_variant: false,
+  compare_at_price_max: null,
+  price_varies: false,
+  has_only_default_variant: true,
   requires_selling_plan: false,
   selling_plan_groups: [],
-  options: ['Bundle'],
-  options_with_values: [{ name: 'Bundle', position: 1, values: variants.map((v) => v.title), selected_value: '1 jar' }],
+  options: ['Title'],
+  options_with_values: [{ name: 'Title', position: 1, values: ['Default Title'], selected_value: 'Default Title' }],
   variants,
   selected_or_first_available_variant: variants[0],
   first_available_variant: variants[0],
   selected_variant: null,
-  featured_image: null,
-  featured_media: null,
-  media: [],
-  images: [],
+  featured_image: pouch,
+  featured_media: pouchMedia,
+  media: [pouchMedia],
+  images: [pouch],
   tags: [],
   metafields: {
     nurellea: {

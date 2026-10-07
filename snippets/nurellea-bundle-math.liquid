@@ -1,0 +1,29 @@
+{%- comment -%}
+  Bundle tier pricing, in cents: "total|full|each|per_day|save".
+  The discount is only applied when `live` is true, i.e. the matching Shopify automatic discount exists,
+  so the page never shows a price that checkout will not charge.
+
+  Accepts:
+  - price {number}: variant price in cents
+  - qty {number}: bags in the bundle
+  - discount {number}: percent off the bundle
+  - days {number}: days of supply per bag (0 hides per-day)
+  - live {boolean}: bundle discounts are active in Shopify
+{%- endcomment -%}
+{%- liquid
+  assign q = qty | at_least: 1
+  assign full = price | times: q
+  assign total = full
+  if live and discount > 0
+    assign off = full | times: discount | divided_by: 100.0 | round
+    assign total = full | minus: off
+  endif
+  assign each = total | times: 1.0 | divided_by: q | round
+  assign per_day = 0
+  if days > 0
+    assign total_days = q | times: days
+    assign per_day = total | times: 1.0 | divided_by: total_days | round
+  endif
+  assign save = full | minus: total
+  echo total | append: '|' | append: full | append: '|' | append: each | append: '|' | append: per_day | append: '|' | append: save
+-%}

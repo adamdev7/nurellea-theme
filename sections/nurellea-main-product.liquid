@@ -1,7 +1,19 @@
 {%- liquid
   assign p = product | default: section.settings.product | default: settings.nurellea_product
+  assign tier_blocks = section.blocks | where: 'type', 'bundle_tier'
+  assign tier_mode = false
+  if tier_blocks.size > 0
+    assign tier_mode = true
+  endif
+  assign tier_live = section.settings.bundle_discounts_live
+  assign supply_days = section.settings.supply_days_per_unit | plus: 0
+  assign selected_tier = section.settings.default_variant_position | minus: 1 | at_least: 0
+  if selected_tier >= tier_blocks.size
+    assign selected_tier = tier_blocks.size | minus: 1 | at_least: 0
+  endif
+
   assign current_variant = p.selected_or_first_available_variant
-  if p.selected_variant == blank and p.has_only_default_variant == false
+  if tier_mode == false and p.selected_variant == blank and p.has_only_default_variant == false
     assign preferred_index = section.settings.default_variant_position | minus: 1
     assign preferred_variant = p.variants[preferred_index]
     if preferred_variant and preferred_variant.available
@@ -189,6 +201,14 @@
               assign alloc = current_variant.selected_selling_plan_allocation
               assign display_price = alloc.price
               assign display_compare = alloc.compare_at_price
+            elsif tier_mode
+              assign tier = tier_blocks[selected_tier]
+              capture tier_math
+                render 'nurellea-bundle-math', price: current_variant.price, qty: tier.settings.quantity, discount: tier.settings.discount, days: 0, live: tier_live
+              endcapture
+              assign tier_math = tier_math | strip | split: '|'
+              assign display_price = tier_math[0] | plus: 0
+              assign display_compare = tier_math[1] | plus: 0
             endif
           -%}
           <span class="visually-hidden">Price</span>
@@ -231,7 +251,7 @@
           data-product-id="{{ p.id }}"
           data-product-url="{{ p.url }}"
           on:submit="/handleSubmit"
-          data-quantity-default="{{ current_variant.quantity_rule.min | default: 1 }}"
+          data-quantity-default="{% if tier_mode %}{{ tier_blocks[selected_tier].settings.quantity | at_least: 1 }}{% else %}{{ current_variant.quantity_rule.min | default: 1 }}{% endif %}"
           data-quantity-error-max="{{ 'products.product.quantity_error_max' | t }}"
           class="nl-stack"
         >
@@ -243,7 +263,128 @@
             {%- endif -%}
 
             <div class="nl-stack">
-              {%- unless p.has_only_default_variant -%}
+              {%- if tier_mode -%}
+                {%- unless p.has_only_default_variant -%}
+                  <fieldset class="nl-options">
+                    <legend class="nl-options__legend"><span>{{ p.options.first | escape }}</span></legend>
+                    <div class="nl-variant-pills">
+                      {%- for variant in p.variants -%}
+                        <label class="nl-variant-pill">
+                          <input
+                            type="radio"
+                            name="nl-variant-{{ section.id }}"
+                            value="{{ variant.id }}"
+                            data-nl-variant-input
+                            {% if variant.id == current_variant.id %}checked{% endif %}
+                          >
+                          <span>{{ variant.title | escape }}{% unless variant.available %} · Sold out{% endunless %}</span>
+                        </label>
+                      {%- endfor -%}
+                    </div>
+                  </fieldset>
+                {%- endunless -%}
+
+                {%- liquid
+                  assign best_tier = -1
+                  assign best_discount = 0
+                  if tier_live and section.settings.show_best_value
+                    for tier in tier_blocks
+                      if tier.settings.discount > best_discount
+                        assign best_discount = tier.settings.discount
+                        assign best_tier = forloop.index0
+                      endif
+                    endfor
+                  endif
+                  assign free_ship_cents = settings.free_shipping_threshold | plus: 0 | times: 100
+                  assign tier_image = current_variant.featured_image | default: p.featured_image
+                -%}
+                {%- if request.design_mode and tier_live == false -%}
+                  <p class="nl-setup-note">
+                    Bundle discounts are hidden, so every option shows the full price. Create one automatic discount per discounted option in Shopify admin → Discounts (Amount off products, this product, minimum quantity = bags), then tick “Bundle discounts are active” in this section.
+                  </p>
+                {%- endif -%}
+                <fieldset class="nl-options nl-tiers">
+                  <legend class="nl-options__legend">
+                    <span>{{ section.settings.variant_heading | default: 'Choose your supply' | escape }}</span>
+                  </legend>
+                  {%- for tier in tier_blocks -%}
+                    {%- liquid
+                      assign qty = tier.settings.quantity | at_least: 1
+                      capture tier_math
+                        render 'nurellea-bundle-math', price: current_variant.price, qty: qty, discount: tier.settings.discount, days: supply_days, live: tier_live
+                      endcapture
+                      assign tier_math = tier_math | strip | split: '|'
+                      assign t_total = tier_math[0] | plus: 0
+                      assign t_full = tier_math[1] | plus: 0
+                      assign t_each = tier_math[2] | plus: 0
+                      assign t_per_day = tier_math[3] | plus: 0
+                      assign t_save = tier_math[4] | plus: 0
+
+                      assign t_title = tier.settings.title
+                      if t_title == blank
+                        if qty == 1
+                          assign t_title = '1 ' | append: section.settings.unit_singular
+                        else
+                          assign t_title = qty | append: ' ' | append: section.settings.unit_plural
+                        endif
+                      endif
+                      assign t_sub = tier.settings.subtitle
+                      if t_sub == blank and supply_days > 0
+                        assign t_sub = qty | times: supply_days | append: '-day supply'
+                      endif
+
+                      assign ribbon = tier.settings.badge
+                      if ribbon == blank and forloop.index0 == best_tier
+                        assign ribbon = section.settings.best_value_label
+                      endif
+                      assign stack = qty | at_most: 3
+                    -%}
+                    <label class="nl-option-card nl-tier{% if ribbon != blank %} nl-tier--flagged{% endif %}" data-nl-tier="{{ forloop.index0 }}" {{ tier.shopify_attributes }}>
+                      <input
+                        type="radio"
+                        name="nl-tier-{{ section.id }}"
+                        value="{{ forloop.index0 }}"
+                        data-nl-tier-input
+                        data-qty="{{ qty }}"
+                        data-title="{{ t_title | escape }}"
+                        {% if forloop.index0 == selected_tier %}checked{% endif %}
+                      >
+                      <span class="nl-option-card__body nl-tier__body">
+                        <span class="nl-option-card__radio" aria-hidden="true"></span>
+                        <span class="nl-tier__media" aria-hidden="true">
+                          {%- if tier_image != blank -%}
+                            {%- for i in (1..stack) -%}
+                              {{ tier_image | image_url: width: 160 | image_tag: width: 64, height: 64, alt: '', loading: 'lazy', class: 'nl-tier__img' }}
+                            {%- endfor -%}
+                          {%- else -%}
+                            <span class="nl-tier__img nl-tier__img--empty">{% render 'nurellea-icon', name: 'gummy' %}</span>
+                          {%- endif -%}
+                        </span>
+                        <span class="nl-tier__info">
+                          <span class="nl-option-card__title">{{ t_title | escape }}</span>
+                          {%- if t_sub != blank -%}<span class="nl-option-card__sub">{{ t_sub | escape }}</span>{%- endif -%}
+                          <span class="nl-tier__chips">
+                            <span class="nl-tier__chip nl-tier__chip--outline" data-nl-tier-free {% unless free_ship_cents > 0 and t_total >= free_ship_cents %}hidden{% endunless %}>Free shipping</span>
+                            <span class="nl-tier__chip" data-nl-tier-perday {% unless t_per_day > 0 %}hidden{% endunless %}>{% if t_per_day > 0 %}Just {{ t_per_day | money }}/day{% endif %}</span>
+                            <span class="nl-tier__save" data-nl-tier-save {% unless t_save > 0 %}hidden{% endunless %}>{% if t_save > 0 %}Save {{ t_save | money }}{% endif %}</span>
+                          </span>
+                        </span>
+                        <span class="nl-option-card__price nl-tier__price">
+                          {%- if qty > 1 -%}
+                            <strong><span data-nl-tier-each>{{ t_each | money }}</span><small>/{{ section.settings.unit_singular | escape }}</small></strong>
+                            <span class="nl-tier__total"><s data-nl-tier-full {% unless t_save > 0 %}hidden{% endunless %}>{% if t_save > 0 %}{{ t_full | money }}{% endif %}</s> <span data-nl-tier-total>{{ t_total | money }}</span> total</span>
+                          {%- else -%}
+                            <strong data-nl-tier-total>{{ t_total | money }}</strong>
+                          {%- endif -%}
+                        </span>
+                      </span>
+                      {%- if ribbon != blank -%}
+                        <span class="nl-tier__ribbon">{{ ribbon | escape }}</span>
+                      {%- endif -%}
+                    </label>
+                  {%- endfor -%}
+                </fieldset>
+              {%- elsif p.has_only_default_variant == false -%}
                 {%- liquid
                   # Pack count per variant: nurellea.units metafield, else the leading number of the first option value ("3 Pouches" → 3).
                   assign single_price = 0
@@ -371,7 +512,7 @@
                     </label>
                   {%- endfor -%}
                 </fieldset>
-              {%- endunless -%}
+              {%- endif -%}
 
               {%- if subscriptions_on -%}
                 <fieldset class="nl-options">
@@ -423,7 +564,9 @@
                   <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
                 </span>
                 <div class="nl-buy-row">
-                  {%- if section.settings.show_quantity -%}
+                  {%- if tier_mode -%}
+                    <input type="hidden" name="quantity" value="{{ tier_blocks[selected_tier].settings.quantity | at_least: 1 }}" data-nl-tier-qty>
+                  {%- elsif section.settings.show_quantity -%}
                     <div class="nl-qty" data-nl-qty>
                       <button type="button" data-nl-qty-minus aria-label="Decrease quantity">{% render 'nurellea-icon', name: 'minus' %}</button>
                       <label class="visually-hidden" for="Quantity-{{ section.id }}">Quantity</label>
@@ -442,7 +585,7 @@
                   {%- else -%}
                     <input type="hidden" name="quantity" value="{{ current_variant.quantity_rule.min | default: 1 }}">
                   {%- endif -%}
-                  <div{% unless section.settings.show_quantity %} style="grid-column: 1 / -1"{% endunless %}>
+                  <div{% if tier_mode or section.settings.show_quantity == false %} style="grid-column: 1 / -1"{% endif %}>
                     {%- liquid
                       assign atc_label = 'Add to cart'
                       unless current_variant.available
@@ -609,7 +752,29 @@
           <span class="nl-sticky-atc__title">{{ p.title | escape }}</span>
           <span class="nl-sticky-atc__price">
             <span data-nl-price>{{ display_price | money }}</span>
-            <span class="nl-sticky-atc__variant nl-muted" data-nl-variant-title {% if p.has_only_default_variant %}hidden{% endif %}>{{ current_variant.title | escape }}</span>
+            {%- liquid
+              assign sticky_label = ''
+              unless p.has_only_default_variant
+                assign sticky_label = current_variant.title
+              endunless
+              if tier_mode
+                assign sticky_qty = tier_blocks[selected_tier].settings.quantity | at_least: 1
+                assign sticky_tier = tier_blocks[selected_tier].settings.title
+                if sticky_tier == blank
+                  if sticky_qty == 1
+                    assign sticky_tier = '1 ' | append: section.settings.unit_singular
+                  else
+                    assign sticky_tier = sticky_qty | append: ' ' | append: section.settings.unit_plural
+                  endif
+                endif
+                if sticky_label != blank
+                  assign sticky_label = sticky_label | append: ' · ' | append: sticky_tier
+                else
+                  assign sticky_label = sticky_tier
+                endif
+              endif
+            -%}
+            <span class="nl-sticky-atc__variant nl-muted" data-nl-variant-title {% if sticky_label == blank %}hidden{% endif %}>{{ sticky_label | escape }}</span>
           </span>
         </div>
         <button type="button" class="button nl-btn" data-nl-sticky-submit tabindex="-1" {% unless current_variant.available %}disabled{% endunless %}>
@@ -626,7 +791,8 @@
         "add_to_cart": "Add to cart",
         "sold_out": "Sold out",
         "in_stock": "In stock",
-        "save": "Save"
+        "save": "Save",
+        "per_day": "Just [amount]/day"
       },
       "variants": [
         {%- for variant in p.variants -%}
@@ -640,6 +806,33 @@
             "savings": {% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | minus: variant.price | money | json }}{% else %}null{% endif %},
             "unit_price": {% if variant.unit_price_measurement %}{% capture up %}{{ variant.unit_price | money }}/{% if variant.unit_price_measurement.reference_value != 1 %}{{ variant.unit_price_measurement.reference_value }}{% endif %}{{ variant.unit_price_measurement.reference_unit }}{% endcapture %}{{ up | strip | json }}{% else %}null{% endif %},
             "featured_media_id": {% if variant.featured_media %}{{ variant.featured_media.id }}{% else %}null{% endif %},
+            "tiers": [
+              {%- if tier_mode -%}
+                {%- for tier in tier_blocks -%}
+                  {%- liquid
+                    capture tier_math
+                      render 'nurellea-bundle-math', price: variant.price, qty: tier.settings.quantity, discount: tier.settings.discount, days: supply_days, live: tier_live
+                    endcapture
+                    assign tier_math = tier_math | strip | split: '|'
+                    assign t_total = tier_math[0] | plus: 0
+                    assign t_full = tier_math[1] | plus: 0
+                    assign t_each = tier_math[2] | plus: 0
+                    assign t_per_day = tier_math[3] | plus: 0
+                    assign t_save = tier_math[4] | plus: 0
+                    assign free_ship_cents = settings.free_shipping_threshold | plus: 0 | times: 100
+                  -%}
+                  {
+                    "total": {{ t_total | money | json }},
+                    "full": {% if t_save > 0 %}{{ t_full | money | json }}{% else %}null{% endif %},
+                    "each": {{ t_each | money | json }},
+                    "each_cents": {{ t_each }},
+                    "per_day": {% if t_per_day > 0 %}{{ t_per_day | money | json }}{% else %}null{% endif %},
+                    "save": {% if t_save > 0 %}{{ t_save | money | json }}{% else %}null{% endif %},
+                    "free_shipping": {% if free_ship_cents > 0 and t_total >= free_ship_cents %}true{% else %}false{% endif %}
+                  }{% unless forloop.last %},{% endunless %}
+                {%- endfor -%}
+              {%- endif -%}
+            ],
             "plans": {
               {%- if subscriptions_on -%}
                 {%- for a in variant.selling_plan_allocations -%}
@@ -723,26 +916,35 @@
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
     { "type": "header", "content": "Bundle options" },
-    { "type": "paragraph", "content": "Each variant shows as a supply card. Pack count comes from the variant metafield nurellea.units, or from the leading number of the option value (e.g. \"3 Pouches\"). Savings use the compare-at price, or the single-pack price × pack count." },
+    { "type": "paragraph", "content": "Add \"Bundle option\" blocks (e.g. 1 bag, 2 bags −10%, 3 bags −15%). Each option adds that many bags to the cart. Without bundle blocks, each variant shows as a supply card instead." },
     { "type": "text", "id": "variant_heading", "label": "Heading", "default": "Choose your supply" },
     {
       "type": "range",
       "id": "default_variant_position",
       "label": "Pre-selected option",
-      "info": "Position in the variant list. Falls back to the first available option if it is sold out.",
+      "info": "Position of the option selected when the page loads.",
       "min": 1,
       "max": 10,
       "step": 1,
       "default": 3
     },
     {
+      "type": "checkbox",
+      "id": "bundle_discounts_live",
+      "label": "Bundle discounts are active",
+      "default": false,
+      "info": "Tick only after creating the matching automatic discounts in Shopify admin > Discounts. Until then every option shows the full price."
+    },
+    { "type": "text", "id": "unit_singular", "label": "Unit name", "default": "bag" },
+    { "type": "text", "id": "unit_plural", "label": "Unit name (plural)", "default": "bags" },
+    {
       "type": "number",
       "id": "supply_days_per_unit",
-      "label": "Days of supply per pack",
-      "info": "From the label (servings per pack ÷ servings per day). Shows the \"Just $X/day\" price. Leave blank to hide."
+      "label": "Days of supply per bag",
+      "info": "From the label (servings per bag ÷ servings per day). Shows \"Just $X/day\" and \"60-day supply\". Leave blank to hide."
     },
-    { "type": "checkbox", "id": "show_best_value", "label": "Label the lowest price per pack", "default": true },
-    { "type": "text", "id": "best_value_label", "label": "Lowest price label", "default": "Best value", "info": "A variant's nurellea.badge metafield (e.g. \"Most popular\") replaces this when set — only use claims you can back up." },
+    { "type": "checkbox", "id": "show_best_value", "label": "Label the biggest saving", "default": true },
+    { "type": "text", "id": "best_value_label", "label": "Biggest saving label", "default": "Best value" },
     { "type": "header", "content": "Buy box" },
     { "type": "checkbox", "id": "show_quantity", "label": "Show quantity selector", "default": true },
     { "type": "checkbox", "id": "show_short_description", "label": "Show short description above buy box", "default": false },
@@ -759,6 +961,28 @@
   ],
   "blocks": [
     { "type": "@app" },
+    {
+      "type": "bundle_tier",
+      "name": "Bundle option",
+      "limit": 4,
+      "settings": [
+        { "type": "range", "id": "quantity", "label": "Bags", "min": 1, "max": 12, "step": 1, "default": 1 },
+        {
+          "type": "range",
+          "id": "discount",
+          "label": "Discount",
+          "unit": "%",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "default": 0,
+          "info": "Must match the automatic discount in Shopify for this many bags."
+        },
+        { "type": "text", "id": "title", "label": "Title", "info": "Leave blank for \"2 bags\"." },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "info": "Leave blank for \"60-day supply\" (needs days of supply)." },
+        { "type": "text", "id": "badge", "label": "Ribbon", "info": "Replaces the automatic best-value label. Only use claims you can back up." }
+      ]
+    },
     {
       "type": "assurance",
       "name": "Assurance",

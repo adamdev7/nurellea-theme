@@ -375,6 +375,16 @@
 .nl-hero__meta-item svg { width: 18px; height: 18px; color: var(--nl-rose-deep); }
 .nl-hero__visual { position: relative; }
 .nl-hero__visual .nl-media { --nl-ratio: 1 / 1.08; box-shadow: var(--nl-shadow-lg); }
+.nl-hero__visual .nl-hero__packshot {
+  background:
+    radial-gradient(circle at 50% 58%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 55%),
+    linear-gradient(160deg, var(--nl-blush), var(--nl-rose-soft));
+}
+.nl-hero__packshot > img {
+  object-fit: contain;
+  padding: 7% 8% 9%;
+  filter: drop-shadow(0 24px 28px rgb(163 67 79 / 0.22));
+}
 .nl-hero__float {
   position: absolute;
   z-index: 2;
@@ -405,6 +415,7 @@
   .nl-hero__float { padding: 10px 12px; font-size: 0.8rem; }
   .nl-hero__float--a { inset-block: 12px auto; }
   .nl-hero__float--b { display: none; }
+  .nl-hero__packshot > img { padding-block-start: 19%; padding-block-end: 5%; }
   .nl-hero__actions .nl-btn { flex: 1 1 100%; }
 }
 
@@ -918,6 +929,22 @@
 .nl-tier__price strong { font-size: 1.3rem; font-weight: 600; white-space: nowrap; }
 .nl-tier__price small { font-size: 0.68rem; font-weight: 400; color: var(--nl-muted); margin-inline-start: 2px; }
 .nl-tier__total { font-size: 0.76rem; color: var(--nl-muted); white-space: nowrap; }
+.nl-tier__total s { margin-inline-end: 2px; }
+.nl-variant-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.nl-variant-pill { position: relative; cursor: pointer; }
+.nl-variant-pill input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.nl-variant-pill span {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 40px;
+  padding: 6px 16px;
+  border: 1px solid var(--nl-line);
+  border-radius: var(--nl-radius-pill);
+  background: #fff;
+  font-size: 0.9rem;
+}
+.nl-variant-pill input:checked + span { border-color: var(--nl-rose-deep); box-shadow: 0 0 0 1px var(--nl-rose-deep); background: var(--nl-petal); }
+.nl-variant-pill input:focus-visible + span { outline: 2px solid var(--nl-rose-deep); outline-offset: 2px; }
 .nl-tier__ribbon {
   position: absolute;
   inset-block-start: -11px;

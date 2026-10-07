@@ -184,6 +184,14 @@ write(
     ['main', section('nurellea-main-product', {
       color_scheme: 'scheme-1',
       show_breadcrumbs: true,
+      variant_heading: 'Choose your supply',
+      default_variant_position: 3,
+      bundle_discounts_live: false,
+      unit_singular: 'bag',
+      unit_plural: 'bags',
+      supply_days_per_unit: 30,
+      show_best_value: true,
+      best_value_label: 'Best value',
       show_quantity: true,
       show_short_description: false,
       open_description: true,
@@ -191,6 +199,9 @@ write(
       show_sticky_bar: true,
       show_disclaimer: true,
     }, [
+      { type: 'bundle_tier', settings: { quantity: 1, discount: 0 } },
+      { type: 'bundle_tier', settings: { quantity: 2, discount: 10 } },
+      { type: 'bundle_tier', settings: { quantity: 3, discount: 15 } },
       { type: 'assurance', settings: { icon: 'lock', text: 'Secure checkout' } },
       { type: 'assurance', settings: { icon: 'package', text: 'Track your order online', link: '/pages/track-order' } },
       { type: 'assurance', settings: { icon: 'chat', text: 'Questions? We are here to help', link: '/pages/contact' } },
@@ -493,7 +504,7 @@ cart.sections.cart_assurance = section('nurellea-trust-strip', { color_scheme: '
   { type: 'item', settings: { icon: 'package', text: 'Track your order online' } },
   { type: 'item', settings: { icon: 'chat', text: 'Questions? Our team is here to help' } },
 ]);
-cart.order.push('cart_assurance');
+cart.order = [...new Set([...cart.order, 'cart_assurance'])];
 write('templates/cart.json', cart);
 
 const pw = readJsonc('templates/password.json');

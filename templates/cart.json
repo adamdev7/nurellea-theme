@@ -94,9 +94,6 @@
   },
   "order": [
     "cart-section",
-    "cart_assurance",
-    "cart_assurance",
-    "cart_assurance",
     "cart_assurance"
   ]
 }

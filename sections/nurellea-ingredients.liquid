@@ -61,7 +61,7 @@
       <div class="nl-empty">
         {% render 'nurellea-icon', name: 'leaf' %}
         <p class="nl-h4">The full ingredient breakdown is coming soon.</p>
-        <p class="nl-muted">Until then, every ingredient is listed on the product label{% if p != blank %} and on the <a href="{{ p.url }}#ingredients">product page</a>{% endif %}.</p>
+        <p class="nl-muted">Until then, every ingredient is listed on the product label{% if p != blank and request.page_type != 'product' %} and on the <a href="{{ p.url }}#ingredients">product page</a>{% endif %}.</p>
         {%- if request.design_mode -%}
           <p class="nl-setup-note">Add Ingredient entries (metaobject <code>nurellea_ingredient</code>) and reference them from the product metafield <code>nurellea.ingredients</code>. They then appear here, on the product page and on the Ingredients page.</p>
         {%- endif -%}

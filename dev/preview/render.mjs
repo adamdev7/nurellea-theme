@@ -75,6 +75,7 @@ function buildSettings() {
     id,
     settings: Object.fromEntries(Object.entries(s.settings).map(([k, v]) => [k, typeof v === 'string' && /^(#|rgb)/.test(v) ? new ColorDrop(v) : v])),
   }));
+  Object.assign(settings, mock.previewThemeSettings);
   settings.nurellea_product = mock.product;
   settings.logo = null;
   return settings;
@@ -229,6 +230,7 @@ function sectionObject(id, data) {
   const settings = {};
   for (const [k, d] of Object.entries(defs)) settings[k] = resolveSetting(d, 'default' in d ? d.default : undefined);
   for (const [k, v] of Object.entries(data.settings || {})) settings[k] = resolveSetting(defs[k], v);
+  Object.assign(settings, mock.previewSectionSettings?.[data.type]);
   const blockDefs = Object.fromEntries((schema.blocks || []).map((b) => [b.type, b]));
   const order = data.block_order || Object.keys(data.blocks || {});
   const blocks = order

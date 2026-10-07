@@ -1,6 +1,13 @@
 {%- liquid
   assign p = product | default: section.settings.product | default: settings.nurellea_product
   assign current_variant = p.selected_or_first_available_variant
+  if p.selected_variant == blank and p.has_only_default_variant == false
+    assign preferred_index = section.settings.default_variant_position | minus: 1
+    assign preferred_variant = p.variants[preferred_index]
+    if preferred_variant and preferred_variant.available
+      assign current_variant = preferred_variant
+    endif
+  endif
   assign mf = p.metafields.nurellea
   assign form_id = 'NurelleaProductForm-' | append: section.id
   assign subscriptions_on = false
@@ -237,7 +244,37 @@
 
             <div class="nl-stack">
               {%- unless p.has_only_default_variant -%}
-                <fieldset class="nl-options">
+                {%- liquid
+                  # Pack count per variant: nurellea.units metafield, else the leading number of the first option value ("3 Pouches" → 3).
+                  assign single_price = 0
+                  assign best_unit_price = 0
+                  assign best_variant_id = 0
+                  for variant in p.variants
+                    assign units = variant.metafields.nurellea.units.value | default: 0 | plus: 0
+                    if units < 1
+                      assign units = variant.option1 | split: ' ' | first | plus: 0
+                    endif
+                    if units < 1
+                      assign units = 1
+                    endif
+                    if units == 1 and single_price == 0
+                      assign single_price = variant.price
+                    endif
+                    if units > 1 and variant.available
+                      assign unit_price = variant.price | times: 1.0 | divided_by: units
+                      if best_unit_price == 0 or unit_price < best_unit_price
+                        assign best_unit_price = unit_price
+                        assign best_variant_id = variant.id
+                      endif
+                    endif
+                  endfor
+                  if single_price > 0 and best_unit_price >= single_price
+                    assign best_variant_id = 0
+                  endif
+                  assign supply_days = section.settings.supply_days_per_unit | plus: 0
+                  assign free_ship_cents = settings.free_shipping_threshold | plus: 0 | times: 100
+                -%}
+                <fieldset class="nl-options nl-tiers">
                   <legend class="nl-options__legend">
                     <span>{{ section.settings.variant_heading | default: p.options.first }}</span>
                   </legend>
@@ -245,8 +282,43 @@
                     {%- liquid
                       assign v_badge = variant.metafields.nurellea.badge.value
                       assign v_caption = variant.metafields.nurellea.caption.value
+                      assign units = variant.metafields.nurellea.units.value | default: 0 | plus: 0
+                      if units < 1
+                        assign units = variant.option1 | split: ' ' | first | plus: 0
+                      endif
+                      if units < 1
+                        assign units = 1
+                      endif
+                      assign per_unit = variant.price | times: 1.0 | divided_by: units | round
+                      assign per_day = 0
+                      if supply_days > 0
+                        assign total_days = units | times: supply_days
+                        assign per_day = variant.price | times: 1.0 | divided_by: total_days | round
+                      endif
+                      assign save = 0
+                      if variant.compare_at_price > variant.price
+                        assign save = variant.compare_at_price | minus: variant.price
+                      elsif single_price > 0 and units > 1
+                        assign full_price = single_price | times: units
+                        if full_price > variant.price
+                          assign save = full_price | minus: variant.price
+                        endif
+                      endif
+                      assign free_ship = false
+                      if free_ship_cents > 0 and variant.price >= free_ship_cents
+                        assign free_ship = true
+                      endif
+                      assign ribbon = v_badge
+                      if ribbon == blank and section.settings.show_best_value and variant.id == best_variant_id
+                        assign ribbon = section.settings.best_value_label
+                      endif
+                      assign tier_image = variant.featured_image | default: p.featured_image
+                      assign stack = units
+                      if stack > 3
+                        assign stack = 3
+                      endif
                     -%}
-                    <label class="nl-option-card">
+                    <label class="nl-option-card nl-tier{% if ribbon != blank %} nl-tier--flagged{% endif %}">
                       <input
                         type="radio"
                         name="nl-variant-{{ section.id }}"
@@ -254,30 +326,47 @@
                         data-nl-variant-input
                         {% if variant.id == current_variant.id %}checked{% endif %}
                       >
-                      <span class="nl-option-card__body">
+                      <span class="nl-option-card__body nl-tier__body">
                         <span class="nl-option-card__radio" aria-hidden="true"></span>
-                        <span>
+                        <span class="nl-tier__media" aria-hidden="true">
+                          {%- if tier_image != blank -%}
+                            {%- for i in (1..stack) -%}
+                              {{ tier_image | image_url: width: 160 | image_tag: width: 64, height: 64, alt: '', loading: 'lazy', class: 'nl-tier__img' }}
+                            {%- endfor -%}
+                          {%- else -%}
+                            <span class="nl-tier__img nl-tier__img--empty">{% render 'nurellea-icon', name: 'gummy' %}</span>
+                          {%- endif -%}
+                        </span>
+                        <span class="nl-tier__info">
                           <span class="nl-option-card__title">
                             {{ variant.title | escape }}
                             {%- unless variant.available -%}<span class="nl-badge nl-badge--ink">Sold out</span>{%- endunless -%}
                           </span>
                           {%- if v_caption != blank -%}
                             <span class="nl-option-card__sub">{{ v_caption | escape }}</span>
-                          {%- elsif variant.unit_price_measurement -%}
-                            <span class="nl-option-card__sub">{{ variant.unit_price | money }}/{% if variant.unit_price_measurement.reference_value != 1 %}{{ variant.unit_price_measurement.reference_value }}{% endif %}{{ variant.unit_price_measurement.reference_unit }}</span>
+                          {%- endif -%}
+                          {%- if free_ship or per_day > 0 or save > 0 -%}
+                            <span class="nl-tier__chips">
+                              {%- if free_ship -%}<span class="nl-tier__chip nl-tier__chip--outline">Free shipping</span>{%- endif -%}
+                              {%- if per_day > 0 -%}<span class="nl-tier__chip">Just {{ per_day | money }}/day</span>{%- endif -%}
+                              {%- if save > 0 -%}<span class="nl-tier__save">Save {{ save | money_without_trailing_zeros }}</span>{%- endif -%}
+                            </span>
                           {%- endif -%}
                         </span>
-                        <span class="nl-option-card__price">
-                          <strong>{{ variant.price | money }}</strong>
+                        <span class="nl-option-card__price nl-tier__price">
+                          {%- if units > 1 -%}
+                            <strong>{{ per_unit | money }}<small>/each</small></strong>
+                            <span class="nl-tier__total">{{ variant.price | money }} total</span>
+                          {%- else -%}
+                            <strong>{{ variant.price | money }}</strong>
+                          {%- endif -%}
                           {%- if variant.compare_at_price > variant.price -%}
                             <s>{{ variant.compare_at_price | money }}</s>
                           {%- endif -%}
                         </span>
                       </span>
-                      {%- if v_badge != blank -%}
-                        <span class="nl-badge nl-option-card__flag">{{ v_badge | escape }}</span>
-                      {%- elsif variant.compare_at_price > variant.price -%}
-                        <span class="nl-badge nl-option-card__flag">Save {{ variant.compare_at_price | minus: variant.price | money_without_trailing_zeros }}</span>
+                      {%- if ribbon != blank -%}
+                        <span class="nl-tier__ribbon">{{ ribbon | escape }}</span>
                       {%- endif -%}
                     </label>
                   {%- endfor -%}
@@ -633,7 +722,28 @@
     },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
-    { "type": "text", "id": "variant_heading", "label": "Variant picker heading", "info": "Defaults to the product's first option name." },
+    { "type": "header", "content": "Bundle options" },
+    { "type": "paragraph", "content": "Each variant shows as a supply card. Pack count comes from the variant metafield nurellea.units, or from the leading number of the option value (e.g. \"3 Pouches\"). Savings use the compare-at price, or the single-pack price × pack count." },
+    { "type": "text", "id": "variant_heading", "label": "Heading", "default": "Choose your supply" },
+    {
+      "type": "range",
+      "id": "default_variant_position",
+      "label": "Pre-selected option",
+      "info": "Position in the variant list. Falls back to the first available option if it is sold out.",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "number",
+      "id": "supply_days_per_unit",
+      "label": "Days of supply per pack",
+      "info": "From the label (servings per pack ÷ servings per day). Shows the \"Just $X/day\" price. Leave blank to hide."
+    },
+    { "type": "checkbox", "id": "show_best_value", "label": "Label the lowest price per pack", "default": true },
+    { "type": "text", "id": "best_value_label", "label": "Lowest price label", "default": "Best value", "info": "A variant's nurellea.badge metafield (e.g. \"Most popular\") replaces this when set — only use claims you can back up." },
+    { "type": "header", "content": "Buy box" },
     { "type": "checkbox", "id": "show_quantity", "label": "Show quantity selector", "default": true },
     { "type": "checkbox", "id": "show_short_description", "label": "Show short description above buy box", "default": false },
     { "type": "checkbox", "id": "open_description", "label": "Open description by default", "default": true },

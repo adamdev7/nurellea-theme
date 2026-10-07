@@ -23,10 +23,16 @@ const variant = (id, title, price, compare, available, badge, caption) => ({
 });
 
 const variants = [
-  variant(9001, '1 jar', 2900, null, true, null, 'Sample caption'),
-  variant(9002, '2 jars', 5400, 5800, true, 'Sample badge', 'Sample caption'),
-  variant(9003, '3 jars', 7500, 8700, false, null, 'Sample caption'),
+  variant(9001, '1 jar', 2900, null, true, null, null),
+  variant(9002, '2 jars', 5400, null, true, 'Sample badge', null),
+  variant(9003, '3 jars', 7500, null, true, null, null),
+  variant(9004, '6 jars', 14400, null, false, null, null),
 ];
+
+// Sample values layered over theme/section settings in the preview only, so optional UI (per-day price,
+// free-shipping pill) can be checked. The real values are entered in the theme editor.
+export const previewThemeSettings = { free_shipping_threshold: 50 };
+export const previewSectionSettings = { 'nurellea-main-product': { supply_days_per_unit: 30 } };
 
 const ingredient = (n) => ({
   name: mf('single_line_text_field', `Sample ingredient ${n}`),

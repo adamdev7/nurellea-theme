@@ -377,7 +377,8 @@
         "layout": "tap",
         "columns": "5",
         "show_disclaimer": true,
-        "button_label": "See full ingredients"
+        "button_label": "See full ingredients",
+        "button_link": "/pages/ingredients"
       }
     },
     "ritual": {

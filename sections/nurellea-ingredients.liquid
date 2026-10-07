@@ -43,6 +43,33 @@
     {%- elsif section.blocks.size > 0 and section.settings.layout == 'tap' -%}
       <div class="nl-ing-cards nl-ing-cards--{{ section.settings.columns }}">
         {%- for block in section.blocks -%}
+          {%- liquid
+            assign mush_asset = block.settings.asset
+            if mush_asset == blank
+              case block.settings.name
+                when "Lion's Mane"
+                  assign mush_asset = 'nl-mush-lions-mane.webp'
+                when 'Cordyceps'
+                  assign mush_asset = 'nl-mush-cordyceps.webp'
+                when 'Reishi'
+                  assign mush_asset = 'nl-mush-reishi.webp'
+                when 'Shiitake'
+                  assign mush_asset = 'nl-mush-shiitake.webp'
+                when 'Chaga'
+                  assign mush_asset = 'nl-mush-chaga.webp'
+                when 'Maitake'
+                  assign mush_asset = 'nl-mush-maitake.webp'
+                when 'Tremella'
+                  assign mush_asset = 'nl-mush-tremella.webp'
+                when 'Royal Sun'
+                  assign mush_asset = 'nl-mush-royal-sun.webp'
+                when 'White Button'
+                  assign mush_asset = 'nl-mush-white-button.webp'
+                when 'Black Fungus'
+                  assign mush_asset = 'nl-mush-black-fungus.webp'
+              endcase
+            endif
+          -%}
           <details class="nl-ing-card" data-nl-reveal style="--nl-reveal-delay: {{ forloop.index0 | modulo: 5 | times: 60 }}ms" {{ block.shopify_attributes }}>
             <summary>
               <span class="nl-ing-card__top">
@@ -50,7 +77,9 @@
                 <span class="nl-ing-card__toggle" aria-hidden="true"></span>
               </span>
               {%- if block.settings.image != blank -%}
-                <span class="nl-ing-card__img">{{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', width: 120, height: 120 }}</span>
+                <span class="nl-ing-card__photo">{{ block.settings.image | image_url: width: 320 | image_tag: loading: 'lazy', alt: block.settings.name, width: 160, height: 160 }}</span>
+              {%- elsif mush_asset != blank -%}
+                <span class="nl-ing-card__photo"><img src="{{ mush_asset | asset_url }}" alt="{{ block.settings.name | escape }}" width="160" height="160" loading="lazy"></span>
               {%- else -%}
                 <span class="nl-ing-card__icon">{% render 'nurellea-icon', name: 'mushroom' %}</span>
               {%- endif -%}
@@ -145,6 +174,7 @@
       "settings": [
         { "type": "paragraph", "content": "Only used when the product has no ingredient metafield. Enter label-verified facts only." },
         { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "info": "Used when no image is picked. Known mushrooms use the homepage photos automatically." },
         { "type": "text", "id": "tag", "label": "Category tag", "info": "Tap-to-open layout. e.g. Focus" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "amount", "label": "Amount per serving" },

@@ -1076,7 +1076,8 @@ body:has(.nl-sticky-atc.is-visible) { padding-bottom: 76px; }
 .nl-ing-card[open] .nl-ing-card__toggle::after { transform: translate(-50%, -50%) rotate(0deg); }
 .nl-ing-card__icon { inline-size: 76px; block-size: 76px; border-radius: 50%; background: linear-gradient(145deg, var(--nl-rose-soft), var(--nl-blush)); color: var(--nl-rose-deep); display: grid; place-items: center; }
 .nl-ing-card__icon svg { width: 38px; height: 38px; }
-.nl-ing-card__img img { width: 96px; height: 96px; object-fit: cover; border-radius: 50%; }
+.nl-ing-card__photo { inline-size: 108px; block-size: 108px; border-radius: 50%; background: linear-gradient(165deg, #fff 0%, var(--nl-blush) 62%, var(--nl-rose-soft) 100%); display: grid; place-items: center; box-shadow: inset 0 0 0 1px rgb(163 67 79 / 0.1); }
+.nl-ing-card__photo img { width: 86px; height: 86px; object-fit: contain; filter: drop-shadow(0 8px 8px rgb(74 29 46 / 0.14)); }
 .nl-ing-card__name { font-family: var(--nl-font-heading); font-size: 1.18rem; font-weight: 600; line-height: 1.2; color: var(--nl-ink); }
 .nl-ing-card__amount { font-size: 0.8rem; font-weight: 600; color: var(--nl-text); }
 .nl-ing-card__hint { font-size: 0.72rem; color: var(--nl-muted); text-decoration: underline; text-underline-offset: 3px; }

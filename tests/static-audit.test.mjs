@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { ROOT, read, listFiles, parseThemeJson } from './helpers.mjs';
 
@@ -38,6 +39,11 @@ test('output tags survive Shopify\'s tokenizer (a lone "}" inside {{ }} ends the
     }
   }
   assert.deepEqual(broken, []);
+});
+
+test('schemas and templates follow Shopify upload rules (dev/schema-lint.mjs)', () => {
+  const out = spawnSync(process.execPath, [join(ROOT, 'dev', 'schema-lint.mjs')], { encoding: 'utf8' });
+  assert.equal(out.status, 0, out.stdout + out.stderr);
 });
 
 test('every section schema parses as JSON', () => {

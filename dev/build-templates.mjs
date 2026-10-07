@@ -530,6 +530,9 @@ write(
       help_text: 'Our team can help with delivery questions and order changes.',
       help_link: '/pages/contact',
       help_link_label: 'Contact support',
+      show_shipping_summary: true,
+      fallback_heading: "Where's my order?",
+      fallback_text: "As soon as your order ships, we email you a shipping confirmation with your tracking details. Can't find it? Check your spam folder or get in touch and we'll look it up for you.",
     })],
   ])
 );

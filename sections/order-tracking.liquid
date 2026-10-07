@@ -2,12 +2,18 @@
   assign section_id = 'OrderTracking-' | append: section.id
   assign app_manager_api_base = settings.app_manager_api_base | default: 'https://appmanager.store' | strip | replace: '/api/track-order/', '' | replace: '/api/track-order', '' | strip
   assign app_manager_store_id = settings.app_manager_store_id | default: '' | strip
+  assign tracking_ready = false
+  if app_manager_store_id != blank and app_manager_api_base contains 'https://'
+    assign tracking_ready = true
+  endif
+  assign shipping_summary = settings.shipping_summary | strip
+  assign help_link = section.settings.help_link | default: '/pages/contact'
 -%}
 
 <section
   id="{{ section_id }}"
   class="order-tracking color-{{ section.settings.color_scheme }}"
-  data-order-tracking
+  {% if tracking_ready %}data-order-tracking{% endif %}
   data-active-state="form"
   data-api-base="{{ app_manager_api_base | escape }}"
   data-store-id="{{ app_manager_store_id | escape }}"
@@ -33,21 +39,39 @@
           {{ 'track_order.heading' | t }}
         {%- endif -%}
       </h1>
-      {%- if section.settings.subheading != blank -%}
-        <p class="order-tracking__subtitle">{{ section.settings.subheading }}</p>
-      {%- else -%}
-        <p class="order-tracking__subtitle">{{ 'track_order.subheading' | t }}</p>
+      {%- if tracking_ready -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="order-tracking__subtitle">{{ section.settings.subheading }}</p>
+        {%- else -%}
+          <p class="order-tracking__subtitle">{{ 'track_order.subheading' | t }}</p>
+        {%- endif -%}
       {%- endif -%}
     </header>
 
-    {%- if app_manager_store_id == blank and request.design_mode -%}
+    {%- if tracking_ready == false and request.design_mode -%}
       <p class="nl-setup-note" role="note">
-        Setup needed: add the Nurellea App Manager store ID in Theme settings &gt; Order tracking (App Manager).
-        Lookups show a configuration error until it is set. (Visible in the theme editor only.)
+        Setup needed: add the Nurellea App Manager Store ID in Theme settings &gt; Order tracking (App Manager).
+        Until then, shoppers see the help card below instead of the lookup form. (Visible in the theme editor only.)
       </p>
     {%- endif -%}
 
     <div class="order-tracking__layout">
+      {%- unless tracking_ready -%}
+        <div class="order-tracking__card order-tracking__panel order-tracking__panel--centered order-tracking__fallback">
+          <div class="order-tracking__state-icon" aria-hidden="true">{% render 'nurellea-icon', name: 'truck' %}</div>
+          <h2 class="order-tracking__state-title">{{ section.settings.fallback_heading }}</h2>
+          <p class="order-tracking__state-text">{{ section.settings.fallback_text }}</p>
+          {%- if section.settings.show_shipping_summary and shipping_summary != blank -%}
+            <p class="order-tracking__shipping-note">{{ shipping_summary }}</p>
+          {%- endif -%}
+          <div class="order-tracking__fallback-actions">
+            {%- if shop.customer_accounts_enabled -%}
+              <a class="order-tracking__submit" href="{{ routes.account_url }}">Sign in to view your orders</a>
+            {%- endif -%}
+            <a class="order-tracking__secondary-btn" href="{{ help_link }}">{{ section.settings.help_link_label | default: 'Contact us' }}</a>
+          </div>
+        </div>
+      {%- else -%}
       {%- comment -%} ——— Lookup form ——— {%- endcomment -%}
       <div
         class="order-tracking__card order-tracking__panel"
@@ -102,6 +126,9 @@
           </button>
 
           <p class="order-tracking__form-hint">{{ 'track_order.form_hint' | t }}</p>
+          {%- if section.settings.show_shipping_summary and shipping_summary != blank -%}
+            <p class="order-tracking__shipping-note">{{ shipping_summary }}</p>
+          {%- endif -%}
         </form>
 
         <ul class="order-tracking__trust" role="list">
@@ -235,13 +262,14 @@
           <div class="order-tracking__line-items" data-order-line-items></div>
         </div>
       </div>
+      {%- endunless -%}
 
-      {%- if section.settings.show_help -%}
+      {%- if section.settings.show_help and tracking_ready -%}
         <aside class="order-tracking__help">
           <h2 class="order-tracking__help-title">{{ section.settings.help_title }}</h2>
           <p class="order-tracking__help-text">{{ section.settings.help_text }}</p>
           {%- if section.settings.help_link != blank and section.settings.help_link_label != blank -%}
-            <a href="{{ section.settings.help_link }}" class="order-tracking__help-link">
+            <a href="{{ help_link }}" class="order-tracking__help-link">
               {{ section.settings.help_link_label }}
             </a>
           {%- endif -%}
@@ -251,7 +279,9 @@
   </div>
 </section>
 
-<script src="{{ 'order-tracking.js' | asset_url }}" type="module" defer></script>
+{%- if tracking_ready -%}
+  <script src="{{ 'order-tracking.js' | asset_url }}" type="module" defer></script>
+{%- endif -%}
 
 {% stylesheet %}
   .order-tracking {
@@ -313,9 +343,9 @@
 
   .order-tracking__title {
     margin: 0 0 0.75rem;
-    font-family: var(--font-heading--family, inherit);
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    font-weight: 300;
+    font-family: var(--nl-font-heading, var(--font-heading--family, inherit));
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
     line-height: 1.15;
     letter-spacing: -0.02em;
     color: var(--ot-ink);
@@ -466,6 +496,55 @@
     line-height: 1.5;
     color: var(--ot-ink-muted);
     text-align: center;
+  }
+
+  .order-tracking__shipping-note {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--ot-ink);
+    background: var(--ot-accent-soft);
+    border-radius: var(--ot-radius);
+  }
+
+  .order-tracking__fallback {
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .order-tracking__fallback .order-tracking__state-icon {
+    display: flex;
+    justify-content: center;
+  }
+
+  .order-tracking__fallback .order-tracking__state-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .order-tracking__fallback .order-tracking__shipping-note {
+    margin-bottom: 1.5rem;
+  }
+
+  .order-tracking__fallback-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .order-tracking__fallback-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .order-tracking__fallback-actions .order-tracking__secondary-btn {
+    border-radius: 999px;
+    min-height: 3.25rem;
   }
 
   .order-tracking__trust {
@@ -1037,7 +1116,7 @@
       "type": "textarea",
       "id": "help_text",
       "label": "Help text",
-      "default": "Our team is here to assist with delivery questions, changes, or gift orders."
+      "default": "Our team can help with delivery questions and order changes."
     },
     {
       "type": "url",
@@ -1049,6 +1128,33 @@
       "id": "help_link_label",
       "label": "Help link label",
       "default": "Contact support"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_summary",
+      "label": "Show shipping times",
+      "info": "Uses the shipping summary from Theme settings › Nurellea product facts.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Before App Manager is connected"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shown instead of the lookup form until an App Manager Store ID is set in Theme settings."
+    },
+    {
+      "type": "text",
+      "id": "fallback_heading",
+      "label": "Heading",
+      "default": "Where's my order?"
+    },
+    {
+      "type": "textarea",
+      "id": "fallback_text",
+      "label": "Text",
+      "default": "As soon as your order ships, we email you a shipping confirmation with your tracking details. Can't find it? Check your spam folder or get in touch and we'll look it up for you."
     }
   ],
   "presets": [

@@ -191,14 +191,16 @@
             </div>
           {%- endif -%}
           <h1 class="nl-pdp__title">{{ p.title | escape }}</h1>
-          {%- if subtitle != blank -%}
-            <p class="nl-pdp__subtitle">{{ subtitle | escape }}</p>
-          {%- endif -%}
-          {%- if review_count > 0 -%}
+          {%- if section.settings.show_trustpilot and section.settings.trustpilot_score != blank -%}
+            {% render 'nurellea-trustpilot', score: section.settings.trustpilot_score, link: section.settings.trustpilot_link, align: 'start' %}
+          {%- elsif review_count > 0 -%}
             <a class="nl-pdp__rating" href="#reviews">
               {% render 'nurellea-stars', rating: review_avg, size: 17 %}
               <span>{{ review_avg }} · {{ review_count }} {{ review_count | pluralize: 'review', 'reviews' }}</span>
             </a>
+          {%- endif -%}
+          {%- if subtitle != blank -%}
+            <p class="nl-pdp__subtitle">{{ subtitle | escape }}</p>
           {%- endif -%}
         </div>
 
@@ -1008,6 +1010,10 @@
     },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "header", "content": "Trustpilot" },
+    { "type": "checkbox", "id": "show_trustpilot", "label": "Show Trustpilot under the product title", "default": true },
+    { "type": "text", "id": "trustpilot_score", "label": "Score line", "default": "4.6 from 10,561+ reviews" },
+    { "type": "url", "id": "trustpilot_link", "label": "Trustpilot link" },
     { "type": "header", "content": "Bundle options" },
     { "type": "paragraph", "content": "Add \"Bundle option\" blocks (e.g. 1 bag, 2 bags −10%, 3 bags −15%). Each option adds that many bags to the cart. Without bundle blocks, each variant shows as a supply card instead." },
     { "type": "text", "id": "variant_heading", "label": "Heading", "default": "Choose your supply" },

@@ -1,0 +1,122 @@
+{%- liquid
+  if section.settings.background != blank
+    assign bg = section.settings.background | image_url: width: 1920
+  else
+    assign bg = 'nl-home-clouds.webp' | asset_url
+  endif
+  assign limit = section.settings.limit | default: 4
+  assign photos = 'photo_1,photo_2,photo_3,photo_4,photo_5' | split: ','
+  assign assets = 'nl-life-kitchen.webp,nl-life-portrait.webp,nl-life-hand.webp,nl-life-yoga.webp,nl-life-friends.webp' | split: ','
+  assign smalls = 'nl-life-kitchen-480.webp,nl-life-portrait-480.webp,,,nl-life-friends-560.webp' | split: ','
+  assign small_ws = '480,480,0,0,560' | split: ','
+  assign dims = '864x1152,864x1152,700x700,700x700,1100x825' | split: ','
+-%}
+<section class="nh nh-section nh-reviews" style="--bg: url('{{ bg }}');" aria-labelledby="NhReviews-{{ section.id }}">
+  <div class="nh-wave nh-wave--top" aria-hidden="true"></div>
+  <div class="nh-wrap">
+    <div class="nh-head">
+      {%- if section.settings.rating_text != blank -%}
+        <p class="nh-reviews__rating">
+          {% render 'nurellea-home-stars', label: section.settings.rating_text %}
+          {%- if section.settings.rating_link != blank -%}
+            <a href="{{ section.settings.rating_link }}" target="_blank" rel="noopener">{{ section.settings.rating_text | escape }}</a>
+          {%- else -%}
+            <span>{{ section.settings.rating_text | escape }}</span>
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+      <h2 id="NhReviews-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.subheading != blank -%}<p class="nh-sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+    </div>
+
+    <div class="nh-reviews__grid">
+      <div class="nh-photos">
+        {%- for key in photos -%}
+          {%- assign i = forloop.index0 -%}
+          {%- assign d = dims[i] | split: 'x' -%}
+          <figure>
+            {% render 'nurellea-home-img', image: section.settings[key], asset: assets[i], asset_small: smalls[i], small_w: small_ws[i], width: d[0], height: d[1], alt: '', sizes: '(min-width: 990px) 22vw, 50vw' %}
+          </figure>
+        {%- endfor -%}
+        <span class="nh-spark nh-spark--white" style="left: 26%; top: -14px; --s: 34px;" aria-hidden="true"></span>
+        <span class="nh-spark nh-spark--white" style="left: 47%; top: 13%; --s: 40px;" aria-hidden="true"></span>
+        <span class="nh-spark nh-spark--white" style="left: -10px; top: 61%; --s: 30px;" aria-hidden="true"></span>
+      </div>
+
+      <ul class="nh-review-list">
+        {%- assign rendered = 0 -%}
+        {%- for review in shop.metaobjects.nurellea_review.values -%}
+          {%- liquid
+            assign r = review.rating.value.rating | default: review.rating.value | default: 0 | round
+            if r < 4
+              continue
+            endif
+            if rendered >= limit
+              break
+            endif
+            assign rendered = rendered | plus: 1
+            assign verified = false
+            if review.verified_purchase.value == true and review.order_reference != blank
+              assign verified = true
+            endif
+          -%}
+          <li class="nh-review">
+            <div class="nh-review__top">
+              {% render 'nurellea-home-stars', label: r %}
+              {%- if review.title != blank -%}<span class="nh-review__tag">{{ review.title.value | truncate: 24 | escape }}</span>{%- endif -%}
+            </div>
+            {%- if review.body != blank -%}<p class="nh-review__body">{{ review.body.value | strip_newlines | truncate: 190 | escape }}</p>{%- endif -%}
+            <p class="nh-review__by">
+              <strong>{{ review.author.value | default: 'Customer' | escape }}</strong>
+              {%- if verified -%}<span class="nh-verified">Verified Buyer</span>{%- endif -%}
+            </p>
+          </li>
+        {%- endfor -%}
+        {%- if rendered == 0 -%}
+          <li class="nh-review nh-review--summary">
+            {% render 'nurellea-home-stars', label: section.settings.rating_text %}
+            <p class="nh-h3">{{ section.settings.empty_title | escape }}</p>
+            {%- if section.settings.empty_text != blank -%}<p>{{ section.settings.empty_text | escape }}</p>{%- endif -%}
+            {%- if section.settings.rating_link != blank -%}
+              <a class="nh-btn nh-btn--sm" href="{{ section.settings.rating_link }}" target="_blank" rel="noopener">{{ section.settings.empty_button | escape }}</a>
+            {%- elsif section.settings.link_url != blank -%}
+              <a class="nh-btn nh-btn--sm" href="{{ section.settings.link_url }}">{{ section.settings.empty_button | escape }}</a>
+            {%- endif -%}
+          </li>
+        {%- endif -%}
+      </ul>
+    </div>
+
+    {%- if rendered > 0 and section.settings.link_label != blank and section.settings.link_url != blank -%}
+      <div class="nh-reviews__more"><a class="nh-btn nh-btn--sm" href="{{ section.settings.link_url }}">{{ section.settings.link_label | escape }}</a></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: reviews",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "rating_text", "label": "Rating line", "default": "4.6 from 10,561+ reviews on Trustpilot" },
+    { "type": "url", "id": "rating_link", "label": "Trustpilot link" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Real people, real rituals & a taste worth raving about" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Real thoughts on the taste, the routine and everything in between." },
+    { "type": "image_picker", "id": "background", "label": "Background", "info": "Defaults to the bundled pink clouds." },
+    { "type": "range", "id": "limit", "label": "Reviews shown", "min": 2, "max": 6, "step": 1, "default": 4, "info": "Approved 4 and 5 star reviews from the Nurellea review metaobjects." },
+    { "type": "text", "id": "link_label", "label": "Button label", "default": "Read all reviews" },
+    { "type": "url", "id": "link_url", "label": "Button link", "default": "/pages/reviews" },
+    { "type": "header", "content": "When there are no reviews yet" },
+    { "type": "text", "id": "empty_title", "label": "Title", "default": "Loved by women who made it their ritual" },
+    { "type": "text", "id": "empty_text", "label": "Text", "default": "See what our community says about the taste, the routine and how Nurellea fits into their day." },
+    { "type": "text", "id": "empty_button", "label": "Button", "default": "Read reviews" },
+    { "type": "header", "content": "Photos" },
+    { "type": "image_picker", "id": "photo_1", "label": "Photo 1 (tall)" },
+    { "type": "image_picker", "id": "photo_2", "label": "Photo 2 (tall)" },
+    { "type": "image_picker", "id": "photo_3", "label": "Photo 3" },
+    { "type": "image_picker", "id": "photo_4", "label": "Photo 4" },
+    { "type": "image_picker", "id": "photo_5", "label": "Photo 5" }
+  ],
+  "presets": [{ "name": "Home: reviews" }]
+}
+{% endschema %}

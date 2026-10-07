@@ -1318,6 +1318,7 @@ body:has(.nl-sticky-atc.is-visible) { padding-bottom: 76px; }
 }
 .nl-pdp-intro__trustpilot svg { display: block; color: #00b67a; flex: none; }
 a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-offset: 3px; }
+.nl-pdp-intro__trust--start { justify-content: flex-start; }
 .nl-pdp-intro__faces {
   display: flex;
   justify-content: center;

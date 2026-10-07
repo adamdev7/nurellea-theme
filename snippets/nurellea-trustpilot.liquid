@@ -1,0 +1,29 @@
+{%- doc -%}
+  Green Trustpilot score row used on the product intro and under the product title.
+
+  @param {string} score - Score line, e.g. "4.6 from 10,561+ reviews"
+  @param {string} [link] - Optional Trustpilot profile URL
+  @param {string} [align] - Pass "start" to left-align the row
+{%- enddoc -%}
+{%- if score != blank -%}
+  <p class="nl-pdp-intro__trust{% if align == 'start' %} nl-pdp-intro__trust--start{% endif %}">
+    <span class="nl-pdp-intro__trust-stars" role="img" aria-label="{{ score | escape }}">
+      {%- for i in (1..5) -%}
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.4 2.8 5.8 6.4.8-4.7 4.4 1.3 6.3L12 16.7 6.2 19.7l1.3-6.3L2.8 9l6.4-.8L12 2.4z"/></svg>
+      {%- endfor -%}
+    </span>
+    <span class="nl-pdp-intro__trust-score">{{ score | escape }}</span>
+    {%- if link != blank -%}
+      <a class="nl-pdp-intro__trustpilot" href="{{ link }}">
+    {%- else -%}
+      <span class="nl-pdp-intro__trustpilot">
+    {%- endif -%}
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.2 2.9 6 6.6.8-4.8 4.5 1.3 6.5L12 16.8 6 20l1.3-6.5L2.5 9l6.6-.8L12 2.2z"/></svg>
+      Trustpilot
+    {%- if link != blank -%}
+      </a>
+    {%- else -%}
+      </span>
+    {%- endif -%}
+  </p>
+{%- endif -%}

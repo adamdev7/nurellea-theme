@@ -1,0 +1,73 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign shop_url = p.url | default: routes.all_products_collection_url
+-%}
+<section class="nh nh-section nh-quiz" aria-labelledby="NhQuiz-{{ section.id }}" data-nh-quiz>
+  <div class="nh-wrap">
+    <div class="nh-head">
+      <h2 id="NhQuiz-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+    </div>
+    <div class="nh-quiz__row">
+      <span class="nh-spark" style="left: -2%; top: -8%; --s: 30px;" aria-hidden="true"></span>
+      <span class="nh-spark" style="left: 6%; bottom: -6%; --s: 22px;" aria-hidden="true"></span>
+      <span class="nh-spark" style="right: -6%; top: 30%; --s: 30px;" aria-hidden="true"></span>
+      <div class="nh-quiz__mascot">
+        {% render 'nurellea-home-img', image: section.settings.mascot, asset: 'nl-home-mascot.webp', width: 600, height: 600, alt: section.settings.mascot_alt, sizes: '250px' %}
+      </div>
+      <div class="nh-quiz__card">
+        <div class="nh-quiz__head">
+          <h3 class="nh-h3">{{ section.settings.question | escape }}</h3>
+          <button type="button" class="nh-quiz__reset" data-nh-reset>{% render 'nurellea-icon', name: 'refresh' %}{{ section.settings.reset_label | escape }}</button>
+        </div>
+        <div class="nh-builder__row" role="group" aria-label="{{ section.settings.question | escape }}">
+          {%- for block in section.blocks -%}
+            <button type="button" class="nh-chip" aria-pressed="{% if forloop.index <= 2 %}true{% else %}false{% endif %}" data-nh-goal data-star="{{ block.settings.mushroom | escape }}" {{ block.shopify_attributes }}>{{ block.settings.label | escape }}</button>
+          {%- endfor -%}
+        </div>
+        <p class="nh-quiz__divider">{{ section.settings.pick_label | escape }}</p>
+        <div class="nh-quiz__pick" data-nh-pick>
+          <span class="nh-quiz__thumb">
+            {% render 'nurellea-home-img', image: section.settings.pick_image, asset: 'nurellea-gut-gummies-pouch-480.webp', width: 480, height: 480, alt: '', sizes: '84px' %}
+          </span>
+          <div>
+            <p class="nh-quiz__name">{{ p.title | default: 'Nurellea Gut Gummies' | escape }}</p>
+            <p class="nh-quiz__why" data-nh-why data-template="{{ section.settings.why_template | escape }}" data-empty="{{ section.settings.empty_text | escape }}"></p>
+            {%- if p != blank -%}<p class="nh-quiz__price">{{ p.price_min | money }}</p>{%- endif -%}
+          </div>
+          <a class="nh-btn nh-btn--sm" href="{{ shop_url }}">{{ section.settings.button_label | escape }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: quiz",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product in Theme settings." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Not Sure Where To Start? Nell Can Help!" },
+    { "type": "image_picker", "id": "mascot", "label": "Mascot", "info": "Defaults to Nell, the gummy mascot." },
+    { "type": "text", "id": "mascot_alt", "label": "Mascot alt", "default": "Nell, a cheerful pink gummy wearing a mushroom cap" },
+    { "type": "text", "id": "question", "label": "Question", "default": "What Do You Want More Of?" },
+    { "type": "text", "id": "reset_label", "label": "Restart label", "default": "Restart" },
+    { "type": "text", "id": "pick_label", "label": "Pick label", "default": "Nell's pick" },
+    { "type": "image_picker", "id": "pick_image", "label": "Pick image", "info": "Defaults to the pouch." },
+    { "type": "text", "id": "why_template", "label": "Pick text", "default": "Your stars: [stars]. All 10 mushrooms are in every gummy.", "info": "[stars] is replaced with the matching mushrooms." },
+    { "type": "text", "id": "empty_text", "label": "Text when nothing is selected", "default": "Tap what you want more of and Nell will point out your star mushrooms." },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Try Nell's pick" }
+  ],
+  "blocks": [
+    {
+      "type": "goal",
+      "name": "Goal",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Focus" },
+        { "type": "text", "id": "mushroom", "label": "Star mushroom", "default": "Lion's Mane" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Home: quiz" }]
+}
+{% endschema %}

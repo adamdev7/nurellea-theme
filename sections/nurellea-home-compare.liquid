@@ -1,0 +1,90 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+-%}
+<section class="nh nh-section nh-compare" aria-labelledby="NhCompare-{{ section.id }}">
+  <div class="nh-wrap">
+    <div class="nh-compare__grid">
+      <figure class="nh-compare__photo">
+        {% render 'nurellea-home-img', image: section.settings.photo, asset: 'nl-life-portrait.webp', asset_small: 'nl-life-portrait-480.webp', small_w: 480, width: 864, height: 1152, alt: section.settings.photo_alt, sizes: '(min-width: 990px) 34vw, 100vw' %}
+      </figure>
+      <div>
+        <div class="nh-compare__head">
+          <h2 id="NhCompare-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+          {%- if section.settings.subheading != blank -%}<p class="nh-sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+        </div>
+        <table class="nh-table">
+          <colgroup><col class="nh-col-label" style="width: 25%;"><col><col><col></colgroup>
+          <thead>
+            <tr>
+              <td></td>
+              <th scope="col" class="is-us">
+                {% render 'nurellea-home-img', image: section.settings.us_image, asset: 'nurellea-gut-gummies-pouch-480.webp', width: 480, height: 480, alt: '', sizes: '92px' %}
+                {{ section.settings.us_label | escape }}
+              </th>
+              <th scope="col" class="is-them">
+                {% render 'nurellea-home-img', image: section.settings.them_1_image, asset: 'nl-compare-capsules.webp', width: 360, height: 360, alt: '', sizes: '72px' %}
+                {{ section.settings.them_1_label | escape }}
+              </th>
+              <th scope="col" class="is-them">
+                {% render 'nurellea-home-img', image: section.settings.them_2_image, asset: 'nl-compare-coffee.webp', width: 360, height: 360, alt: '', sizes: '72px' %}
+                {{ section.settings.them_2_label | escape }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for block in section.blocks -%}
+              <tr {{ block.shopify_attributes }}>
+                <th scope="row"><span>{% render 'nurellea-icon', name: block.settings.icon %}{{ block.settings.label | escape }}</span></th>
+                <td class="is-us"><span class="nh-mark nh-mark--{{ block.settings.us_mark }}" aria-hidden="true"></span>{{ block.settings.us_value | escape }}</td>
+                <td class="is-them"><span class="nh-mark nh-mark--{{ block.settings.them_1_mark }}" aria-hidden="true"></span>{{ block.settings.them_1_value | escape }}</td>
+                <td class="is-them"><span class="nh-mark nh-mark--{{ block.settings.them_2_mark }}" aria-hidden="true"></span>{{ block.settings.them_2_value | escape }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+        {%- if section.settings.note != blank -%}<p class="nh-compare__note">{{ section.settings.note | escape }}</p>{%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: comparison",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why Women Are Making The Switch" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "All the mushroom goodness, with more flavor and way less effort." },
+    { "type": "image_picker", "id": "photo", "label": "Photo" },
+    { "type": "text", "id": "photo_alt", "label": "Photo alt", "default": "Smiling woman in soft natural light" },
+    { "type": "text", "id": "us_label", "label": "Our column", "default": "Nurellea Gummies" },
+    { "type": "image_picker", "id": "us_image", "label": "Our image" },
+    { "type": "text", "id": "them_1_label", "label": "Column 2", "default": "Mushroom capsules" },
+    { "type": "image_picker", "id": "them_1_image", "label": "Column 2 image" },
+    { "type": "text", "id": "them_2_label", "label": "Column 3", "default": "Mushroom coffee" },
+    { "type": "image_picker", "id": "them_2_image", "label": "Column 3 image" },
+    { "type": "text", "id": "note", "label": "Footnote", "default": "Comparison with typical products in each category. Check individual labels for details." }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Format" },
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+          { "value": "gummy", "label": "Gummy" }, { "value": "mushroom", "label": "Mushroom" }, { "value": "bolt", "label": "Bolt" },
+          { "value": "heart", "label": "Heart" }, { "value": "clock", "label": "Clock" }, { "value": "leaf", "label": "Leaf" }, { "value": "sparkle", "label": "Sparkle" }
+        ], "default": "gummy" },
+        { "type": "text", "id": "us_value", "label": "Our value", "default": "Chewable gummy" },
+        { "type": "select", "id": "us_mark", "label": "Our mark", "options": [{ "value": "yes", "label": "Better" }, { "value": "meh", "label": "Similar" }, { "value": "no", "label": "Worse" }], "default": "yes" },
+        { "type": "text", "id": "them_1_value", "label": "Column 2 value", "default": "Pills to swallow" },
+        { "type": "select", "id": "them_1_mark", "label": "Column 2 mark", "options": [{ "value": "yes", "label": "Better" }, { "value": "meh", "label": "Similar" }, { "value": "no", "label": "Worse" }], "default": "no" },
+        { "type": "text", "id": "them_2_value", "label": "Column 3 value", "default": "Brew & mix" },
+        { "type": "select", "id": "them_2_mark", "label": "Column 3 mark", "options": [{ "value": "yes", "label": "Better" }, { "value": "meh", "label": "Similar" }, { "value": "no", "label": "Worse" }], "default": "meh" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Home: comparison" }]
+}
+{% endschema %}

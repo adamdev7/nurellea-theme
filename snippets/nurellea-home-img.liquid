@@ -1,0 +1,32 @@
+{%- doc -%}
+  Image for the Nurellea home sections: a merchant-picked image when set, otherwise a bundled theme asset.
+
+  @param {object} [image] - image_picker value
+  @param {string} [asset] - theme asset filename used when no image is picked
+  @param {string} [asset_small] - smaller asset for srcset
+  @param {number} [small_w] - width of asset_small
+  @param {number} width - intrinsic width of asset
+  @param {number} height - intrinsic height of asset
+  @param {string} [alt]
+  @param {string} [class]
+  @param {string} [sizes]
+  @param {string} [loading] - lazy (default) or eager
+  @param {boolean} [priority] - adds fetchpriority=high
+{%- enddoc -%}
+{%- liquid
+  assign ld = loading | default: 'lazy'
+  assign sz = sizes | default: '100vw'
+-%}
+{%- if image != blank -%}
+  {%- if priority -%}
+    {{ image | image_url: width: 1600 | image_tag: loading: ld, fetchpriority: 'high', class: class, sizes: sz, alt: alt, widths: '480, 800, 1200, 1600' }}
+  {%- else -%}
+    {{ image | image_url: width: 1600 | image_tag: loading: ld, class: class, sizes: sz, alt: alt, widths: '480, 800, 1200, 1600' }}
+  {%- endif -%}
+{%- elsif asset != blank -%}
+  <img src="{{ asset | asset_url }}"
+    {%- if asset_small != blank %} srcset="{{ asset_small | asset_url }} {{ small_w }}w, {{ asset | asset_url }} {{ width }}w" sizes="{{ sz }}"{% endif %}
+    width="{{ width }}" height="{{ height }}" alt="{{ alt | escape }}" loading="{{ ld }}" decoding="async"
+    {%- if class != blank %} class="{{ class }}"{% endif %}
+    {%- if priority %} fetchpriority="high"{% endif %}>
+{%- endif -%}

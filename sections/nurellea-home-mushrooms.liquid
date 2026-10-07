@@ -1,0 +1,96 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign shop_url = p.url | default: routes.all_products_collection_url
+  assign first = section.blocks.first
+-%}
+<section class="nh nh-section nh-shelf" aria-labelledby="NhShelf-{{ section.id }}" data-nh-shelf>
+  {%- if section.settings.show_deco -%}
+    <img class="nh-shelf__deco nh-shelf__deco--a" src="{{ 'nl-deco-raspberry.webp' | asset_url }}" width="290" height="180" alt="" loading="lazy">
+    <img class="nh-shelf__deco nh-shelf__deco--b" src="{{ 'nl-deco-raspberry.webp' | asset_url }}" width="290" height="180" alt="" loading="lazy">
+    <img class="nh-shelf__deco nh-shelf__deco--c" src="{{ 'nl-deco-raspberry.webp' | asset_url }}" width="290" height="180" alt="" loading="lazy">
+  {%- endif -%}
+  <div class="nh-wrap">
+    <div class="nh-head">
+      <h2 id="NhShelf-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.subheading != blank -%}<p class="nh-sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+    </div>
+
+    <div class="nh-tabs" role="tablist" aria-label="{{ section.settings.heading | escape }}">
+      {%- assign tabs = 'all,mind,defences,gut' | split: ',' -%}
+      {%- for t in tabs -%}
+        {%- assign label_key = 'tab_' | append: t -%}
+        {%- assign label = section.settings[label_key] -%}
+        {%- if label != blank -%}
+          <button type="button" class="nh-tab" role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" data-nh-filter="{{ t }}">{{ label | escape }}</button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="nh-stage">
+      <div class="nh-stage__arch" aria-hidden="true"></div>
+      <ul class="nh-stage__track" data-nh-track>
+        {%- for block in section.blocks -%}
+          <li class="nh-stage__item" data-group="{{ block.settings.group }}" data-name="{{ block.settings.name | escape }}" data-tag="{{ block.settings.tag | escape }}" data-text="{{ block.settings.text | escape }}" {{ block.shopify_attributes }}>
+            {% render 'nurellea-home-img', image: block.settings.image, asset: block.settings.asset, width: 600, height: 600, alt: block.settings.name, sizes: '(min-width: 990px) 16vw, 190px' %}
+          </li>
+        {%- endfor -%}
+      </ul>
+      <div class="nh-stage__nav">
+        <button type="button" class="nh-arrow" data-nh-prev aria-label="Previous mushroom">{% render 'nurellea-icon', name: 'arrow-left' %}</button>
+        <button type="button" class="nh-arrow" data-nh-next aria-label="Next mushroom">{% render 'nurellea-icon', name: 'arrow-right' %}</button>
+      </div>
+      <div class="nh-stage__info" aria-live="polite">
+        <p class="nh-stage__tag"><span class="nh-pill" data-nh-tag>{{ first.settings.tag | escape }}</span></p>
+        <h3 class="nh-h3 nh-stage__name" data-nh-name>{{ first.settings.name | escape }}</h3>
+        <p class="nh-stage__text" data-nh-text>{{ first.settings.text | escape }}</p>
+        {%- if section.settings.button_label != blank -%}
+          <a class="nh-btn nh-btn--block" href="{{ shop_url }}">
+            {{- section.settings.button_label | escape -}}
+            {%- if section.settings.show_price and p != blank %} – {{ p.price_min | money }}{% endif -%}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+    {%- if section.settings.disclaimer != blank -%}<p class="nh-sub" style="font-size: 12px; margin-top: 26px; opacity: .8;">{{ section.settings.disclaimer | escape }}</p>{%- endif -%}
+  </div>
+  <div class="nh-wave nh-wave--bottom" aria-hidden="true"></div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: mushroom carousel",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product in Theme settings." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Meet The 10 Mushrooms In Every Gummy" },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "tab_all", "label": "Tab: all", "default": "All 10" },
+    { "type": "text", "id": "tab_mind", "label": "Tab: mind & energy", "default": "Mind & Energy" },
+    { "type": "text", "id": "tab_defences", "label": "Tab: defences", "default": "Defences" },
+    { "type": "text", "id": "tab_gut", "label": "Tab: gut & glow", "default": "Gut & Glow" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Gut Gummies" },
+    { "type": "checkbox", "id": "show_price", "label": "Show price on button", "default": true },
+    { "type": "checkbox", "id": "show_deco", "label": "Show raspberry decorations", "default": true },
+    { "type": "text", "id": "disclaimer", "label": "Disclaimer", "default": "*Traditional uses. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease." }
+  ],
+  "blocks": [
+    {
+      "type": "mushroom",
+      "name": "Mushroom",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Lion's Mane" },
+        { "type": "text", "id": "tag", "label": "Tag", "default": "Focus · 250 mg" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "A shaggy white mushroom prized in traditional practice for the mind.*" },
+        { "type": "select", "id": "group", "label": "Tab", "options": [
+          { "value": "mind", "label": "Mind & energy" },
+          { "value": "defences", "label": "Defences" },
+          { "value": "gut", "label": "Gut & glow" }
+        ], "default": "mind" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Square, on a white or transparent background." },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "info": "Used when no image is picked, e.g. nl-mush-lions-mane.webp" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Home: mushroom carousel" }]
+}
+{% endschema %}

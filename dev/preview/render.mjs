@@ -323,12 +323,14 @@ async function shell(page, body) {
   const vars = await engine.parseAndRender("{% render 'theme-styles-variables' %}{% render 'color-schemes' %}", base, { globals: base }).catch((e) => `<!-- variables failed: ${e.message} -->`);
   const footer = await renderTemplate('sections/footer-group.json', { ...base, ...page.ctx });
   const nav = PAGES.map((p) => `<a href="${p.out}.html"${p.out === page.out ? ' aria-current="page"' : ''}>${p.out}</a>`).join('');
+  const assetV = Date.now();
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>[MOCK] ${page.title} · Nurellea</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&family=DM+Sans:wght@400;500;700&family=Cormorant:ital,wght@1,500&display=swap">
 <link rel="icon" href="/assets/nurellea-icon-32.png">
 ${vars}
-<link rel="stylesheet" href="/assets/base.css"><link rel="stylesheet" href="/theme-bundled.css"><link rel="stylesheet" href="/assets/nurellea.css"><link rel="stylesheet" href="/preview.css">
+<link rel="stylesheet" href="/assets/base.css"><link rel="stylesheet" href="/theme-bundled.css"><link rel="stylesheet" href="/assets/nurellea.css"><link rel="stylesheet" href="/preview.css?v=${assetV}">
+${page.ctx.template.name === 'index' ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,600..800,100,0&display=swap"><link rel="stylesheet" href="/assets/nurellea-home.css?v=${assetV}"><script src="/assets/nurellea-home.js?v=${assetV}" defer></script>` : ''}
 </head><body class="nl-template-${page.ctx.template.name}${page.ctx.template.suffix ? ` nl-template-${page.ctx.template.name}--${page.ctx.template.suffix}` : ''}">
 <div class="preview-banner">LOCAL MOCK PREVIEW · sample data only (not Nurellea prices, ingredients or reviews) · <nav>${nav}</nav></div>
 ${await headerMock()}

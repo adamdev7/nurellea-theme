@@ -1,0 +1,10 @@
+{%- doc -%}
+  Five Trustpilot-green stars.
+
+  @param {string} [label] - accessible label, e.g. "Rated 4.6 out of 5"
+{%- enddoc -%}
+<span class="nh-stars"{% if label != blank %} role="img" aria-label="{{ label | escape }}"{% else %} aria-hidden="true"{% endif %}>
+  {%- for i in (1..5) -%}
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.4 2.8 5.8 6.4.8-4.7 4.4 1.3 6.3L12 16.7 6.2 19.7l1.3-6.3L2.8 9l6.4-.8L12 2.4z"/></svg>
+  {%- endfor -%}
+</span>

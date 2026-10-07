@@ -1,0 +1,36 @@
+<div class="nh nh-benefits">
+  <div class="nh-benefits__track">
+    {%- for copy in (1..2) -%}
+      {%- for block in section.blocks -%}
+        <p class="nh-benefits__item{% if copy == 2 %} nh-benefits__dup{% endif %}"{% if copy == 2 %} aria-hidden="true"{% else %} {{ block.shopify_attributes }}{% endif %}>{{ block.settings.text | escape }}</p>
+        <span class="nh-spark nh-benefits__spark{% if copy == 2 %} nh-benefits__dup{% elsif forloop.last %} nh-benefits__end{% endif %}" aria-hidden="true"></span>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Home: benefits bar",
+  "tag": "section",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Benefit",
+      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Made with natural flavors" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Home: benefits bar",
+      "blocks": [
+        { "type": "item", "settings": { "text": "10 functional mushrooms" } },
+        { "type": "item", "settings": { "text": "Vegan & non-GMO" } },
+        { "type": "item", "settings": { "text": "No synthetic sweeteners" } },
+        { "type": "item", "settings": { "text": "Real raspberry flavor" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

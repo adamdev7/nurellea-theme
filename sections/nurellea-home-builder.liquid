@@ -1,0 +1,213 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign v = p.selected_or_first_available_variant
+  assign tiers = section.blocks | where: 'type', 'tier'
+  assign focuses = section.blocks | where: 'type', 'focus'
+  assign live = section.settings.bundle_discounts_live
+  assign days = section.settings.supply_days | plus: 0
+  assign free_ship_cents = settings.free_shipping_threshold | plus: 0 | times: 100
+  assign default_tier = section.settings.default_tier | minus: 1 | at_least: 0
+  if default_tier >= tiers.size
+    assign default_tier = 0
+  endif
+  assign moments = 'moment_1,moment_2,moment_3' | split: ','
+-%}
+<section class="nh nh-section nh-builder" aria-labelledby="NhBuilder-{{ section.id }}" data-nh-builder>
+  <div class="nh-wrap">
+    <div class="nh-head">
+      <h2 id="NhBuilder-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.subheading != blank -%}<p class="nh-sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+    </div>
+
+    <div class="nh-builder__card">
+      <div class="nh-builder__panel">
+        <ol class="nh-steps" aria-label="Steps">
+          <li class="is-current" data-nh-step-dot="1"><span class="nh-steps__icon">{% render 'nurellea-icon', name: 'sun' %}</span>{{ section.settings.step_1 | escape }}</li>
+          <li data-nh-step-dot="2"><span class="nh-steps__icon">{% render 'nurellea-icon', name: 'package' %}</span>{{ section.settings.step_2 | escape }}</li>
+          <li data-nh-step-dot="3"><span class="nh-steps__icon">{% render 'nurellea-icon', name: 'gummy' %}</span>{{ section.settings.step_3 | escape }}</li>
+        </ol>
+
+        {%- comment -%} Step 1: moment + focus {%- endcomment -%}
+        <div class="nh-builder__step" data-nh-step="1">
+          <h3 class="nh-h3">{{ section.settings.step_1_title | escape }}</h3>
+          <div class="nh-builder__group">
+            <span class="nh-label">{{ section.settings.moment_label | escape }}</span>
+            <div class="nh-builder__row" role="group" aria-label="{{ section.settings.moment_label | escape }}">
+              {%- for m in moments -%}
+                {%- assign m_label = section.settings[m] -%}
+                {%- assign tip_key = m | append: '_tip' -%}
+                {%- if m_label != blank -%}
+                  <button type="button" class="nh-tab" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-nh-moment="{{ m_label | escape }}" data-tip="{{ section.settings[tip_key] | escape }}">{{ m_label | escape }}</button>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+          {%- if focuses.size > 0 -%}
+            <div class="nh-builder__group">
+              <span class="nh-label">{{ section.settings.focus_label | escape }}</span>
+              <div class="nh-tiles" role="group" aria-label="{{ section.settings.focus_label | escape }}">
+                {%- for block in focuses -%}
+                  <button type="button" class="nh-tile" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-nh-focus="{{ block.settings.title | escape }}" data-star="{{ block.settings.mushroom | escape }}" {{ block.shopify_attributes }}>
+                    <span class="nh-tile__img" style="--tile: {{ block.settings.tile_color }};">
+                      {% render 'nurellea-home-img', image: block.settings.image, asset: block.settings.asset, width: 600, height: 600, alt: '', sizes: '90px' %}
+                    </span>
+                    {{ block.settings.title | escape }}
+                  </button>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+          <div class="nh-builder__actions">
+            <button type="button" class="nh-btn nh-btn--block" data-nh-go="2">{{ section.settings.next_label | escape }}</button>
+          </div>
+        </div>
+
+        {%- comment -%} Step 2: supply {%- endcomment -%}
+        <div class="nh-builder__step" data-nh-step="2" hidden>
+          <h3 class="nh-h3">{{ section.settings.step_2_title | escape }}</h3>
+          <div class="nh-supply" role="group" aria-label="{{ section.settings.step_2_title | escape }}">
+            {%- for tier in tiers -%}
+              {%- liquid
+                assign qty = tier.settings.quantity | at_least: 1
+                capture math
+                  render 'nurellea-bundle-math', price: v.price, qty: qty, discount: tier.settings.discount, days: days, live: live
+                endcapture
+                assign math = math | strip | split: '|'
+                assign t_total = math[0] | plus: 0
+                assign t_full = math[1] | plus: 0
+                assign t_per_day = math[3] | plus: 0
+                assign t_save = math[4] | plus: 0
+                if qty == 1
+                  assign unit = section.settings.unit_singular
+                else
+                  assign unit = section.settings.unit_plural
+                endif
+                assign supply_days = qty | times: days
+              -%}
+              <button type="button" class="nh-supply__opt" aria-pressed="{% if forloop.index0 == default_tier %}true{% else %}false{% endif %}"
+                data-nh-tier
+                data-qty="{{ qty }}"
+                data-label="{{ qty }} {{ unit | escape }}"
+                data-total="{{ t_total | money | escape }}"
+                {{ tier.shopify_attributes }}>
+                <span class="nh-supply__radio" aria-hidden="true"></span>
+                <span>
+                  <span class="nh-supply__name">{{ qty }} {{ unit | escape }}{% if t_save > 0 %}<span class="nh-pill">Save {{ t_save | money }}</span>{% elsif tier.settings.badge != blank %}<span class="nh-pill">{{ tier.settings.badge | escape }}</span>{% endif %}</span>
+                  <span class="nh-supply__meta">
+                    {%- if days > 0 -%}{{ supply_days }}-day supply{%- endif -%}
+                    {%- if t_per_day > 0 %} · {{ t_per_day | money }}/day{% endif -%}
+                    {%- if free_ship_cents > 0 and t_total >= free_ship_cents %} · Free shipping{% endif -%}
+                  </span>
+                </span>
+                <span class="nh-supply__price">{{ t_total | money }}{% if t_save > 0 %}<s>{{ t_full | money }}</s>{% endif %}</span>
+              </button>
+            {%- endfor -%}
+          </div>
+          <div class="nh-builder__actions">
+            <button type="button" class="nh-btn nh-btn--block" data-nh-go="3">{{ section.settings.next_label | escape }}</button>
+            <button type="button" class="nh-link-btn" data-nh-go="1">{{ section.settings.back_label | escape }}</button>
+          </div>
+        </div>
+
+        {%- comment -%} Step 3: summary + add to cart {%- endcomment -%}
+        <div class="nh-builder__step" data-nh-step="3" hidden>
+          <h3 class="nh-h3">{{ section.settings.step_3_title | escape }}</h3>
+          <ul class="nh-summary">
+            <li><span>{{ section.settings.moment_label | escape | replace: ':', '' }}</span><strong data-nh-sum="moment"></strong></li>
+            <li><span>{{ section.settings.focus_label | escape | replace: ':', '' }}</span><strong data-nh-sum="focus"></strong></li>
+            <li><span>{{ section.settings.step_2_title | escape }}</span><strong data-nh-sum="supply"></strong></li>
+            <li class="nh-summary__total"><span>Total</span><strong data-nh-sum="total"></strong></li>
+          </ul>
+          <p class="nh-builder__tip">{% render 'nurellea-icon', name: 'sparkle' %}<span data-nh-tip data-template="{{ section.settings.tip_template | escape }}"></span></p>
+          <div class="nh-builder__actions">
+            {%- if p != blank -%}
+              <form method="post" action="{{ routes.cart_add_url }}" accept-charset="UTF-8" class="nh-builder__form">
+                <input type="hidden" name="form_type" value="product">
+                <input type="hidden" name="utf8" value="✓">
+                <input type="hidden" name="id" value="{{ v.id }}">
+                <input type="hidden" name="quantity" value="1" data-nh-qty>
+                <button type="submit" class="nh-btn nh-btn--block"{% unless v.available %} disabled{% endunless %}>
+                  {%- if v.available -%}{{ section.settings.add_label | escape }}{%- else -%}Sold out{%- endif -%}
+                </button>
+              </form>
+            {%- elsif request.design_mode -%}
+              <p class="nh-builder__note">Choose a product (or set the primary product in Theme settings) to enable add to cart.</p>
+            {%- endif -%}
+            <button type="button" class="nh-link-btn" data-nh-go="2">{{ section.settings.back_label | escape }}</button>
+            {%- if section.settings.note != blank -%}<p class="nh-builder__note">{{ section.settings.note | escape }}</p>{%- endif -%}
+          </div>
+        </div>
+      </div>
+
+      <div class="nh-builder__media">
+        {% render 'nurellea-home-img', image: section.settings.image, asset: 'nl-home-builder.webp', asset_small: 'nl-home-builder-480.webp', small_w: 480, width: 864, height: 1152, alt: section.settings.image_alt, sizes: '(min-width: 990px) 50vw, 100vw' %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: ritual builder",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product in Theme settings." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Build Your Daily Ritual" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Pick your moment, choose your supply and make Nurellea yours." },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Defaults to the bundled gummy pour photo." },
+    { "type": "text", "id": "image_alt", "label": "Image alt", "default": "Hand pouring raspberry gummies into a glass bowl" },
+    { "type": "header", "content": "Steps" },
+    { "type": "text", "id": "step_1", "label": "Step 1 label", "default": "Pick your ritual" },
+    { "type": "text", "id": "step_2", "label": "Step 2 label", "default": "Choose your supply" },
+    { "type": "text", "id": "step_3", "label": "Step 3 label", "default": "Get your Nurellea" },
+    { "type": "text", "id": "step_1_title", "label": "Step 1 title", "default": "Pick Your Ritual" },
+    { "type": "text", "id": "step_2_title", "label": "Step 2 title", "default": "Choose Your Supply" },
+    { "type": "text", "id": "step_3_title", "label": "Step 3 title", "default": "Your Nurellea Ritual" },
+    { "type": "text", "id": "next_label", "label": "Next button", "default": "Next" },
+    { "type": "text", "id": "back_label", "label": "Back link", "default": "Back" },
+    { "type": "text", "id": "add_label", "label": "Add to cart button", "default": "Add to cart" },
+    { "type": "header", "content": "Moments" },
+    { "type": "text", "id": "moment_label", "label": "Moment label", "default": "Choose your moment:" },
+    { "type": "text", "id": "moment_1", "label": "Moment 1", "default": "Morning" },
+    { "type": "text", "id": "moment_1_tip", "label": "Moment 1 tip", "default": "with breakfast" },
+    { "type": "text", "id": "moment_2", "label": "Moment 2", "default": "Midday" },
+    { "type": "text", "id": "moment_2_tip", "label": "Moment 2 tip", "default": "with lunch" },
+    { "type": "text", "id": "moment_3", "label": "Moment 3", "default": "Evening" },
+    { "type": "text", "id": "moment_3_tip", "label": "Moment 3 tip", "default": "as part of your wind-down" },
+    { "type": "text", "id": "focus_label", "label": "Focus label", "default": "Choose your focus:" },
+    { "type": "text", "id": "tip_template", "label": "Ritual tip", "default": "Take 2 gummies [moment]. Every gummy has all 10 mushrooms — [star] is the star for [focus].", "info": "Use [moment], [focus] and [star]." },
+    { "type": "header", "content": "Supply" },
+    { "type": "checkbox", "id": "bundle_discounts_live", "label": "Bundle discounts are live", "default": true, "info": "Only enable when matching automatic discounts exist in Shopify, so prices here match checkout." },
+    { "type": "number", "id": "supply_days", "label": "Days of supply per bag", "default": 30 },
+    { "type": "number", "id": "default_tier", "label": "Preselected supply (position)", "default": 2 },
+    { "type": "text", "id": "unit_singular", "label": "Unit (singular)", "default": "bag" },
+    { "type": "text", "id": "unit_plural", "label": "Unit (plural)", "default": "bags" },
+    { "type": "text", "id": "note", "label": "Note under button", "default": "30-day money-back guarantee" }
+  ],
+  "blocks": [
+    {
+      "type": "focus",
+      "name": "Focus",
+      "limit": 5,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Focus", "default": "Focus" },
+        { "type": "text", "id": "mushroom", "label": "Star mushroom", "default": "Lion's Mane" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "default": "nl-mush-lions-mane.webp" },
+        { "type": "color", "id": "tile_color", "label": "Tile color", "default": "#fff4f3" }
+      ]
+    },
+    {
+      "type": "tier",
+      "name": "Supply option",
+      "limit": 4,
+      "settings": [
+        { "type": "number", "id": "quantity", "label": "Bags", "default": 1 },
+        { "type": "number", "id": "discount", "label": "Discount %", "default": 0, "info": "Must match the Shopify automatic discount." },
+        { "type": "text", "id": "badge", "label": "Badge (when no saving)" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Home: ritual builder" }]
+}
+{% endschema %}

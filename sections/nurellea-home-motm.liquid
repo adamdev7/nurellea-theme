@@ -1,0 +1,61 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign shop_url = section.settings.button_link | default: p.url | default: routes.all_products_collection_url
+  assign tags = section.settings.tags | newline_to_br | split: '<br />'
+  assign steps = 'step_1,step_2,step_3' | split: ','
+  assign icons = 'droplet,gummy,heart' | split: ','
+-%}
+<section class="nh nh-section nh-motm" aria-labelledby="NhMotm-{{ section.id }}">
+  <div class="nh-wrap">
+    <div class="nh-motm__grid">
+      <div class="nh-motm__copy">
+        <h2 id="NhMotm-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.subheading != blank -%}<p class="nh-motm__sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+        {%- if section.settings.tags != blank -%}
+          <ul class="nh-motm__tags">
+            {%- for tag in tags -%}{%- assign tag = tag | strip -%}{%- if tag != blank -%}<li>{{ tag | escape }}</li>{%- endif -%}{%- endfor -%}
+          </ul>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a class="nh-btn nh-btn--block" href="{{ shop_url }}">{{ section.settings.button_label | escape }}</a>
+        {%- endif -%}
+      </div>
+      <div class="nh-motm__visual">
+        <div class="nh-recipe">
+          <p class="nh-recipe__title">{{ section.settings.card_title | escape }}</p>
+          <ol>
+            {%- for s in steps -%}
+              {%- if section.settings[s] != blank -%}
+                <li><span>{% render 'nurellea-icon', name: icons[forloop.index0] %}</span><span>{{ section.settings[s] | escape }}</span></li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ol>
+        </div>
+        {% render 'nurellea-home-img', image: section.settings.image, asset: 'nurellea-gut-gummies-pouch.webp', asset_small: 'nurellea-gut-gummies-pouch-480.webp', small_w: 480, width: 819, height: 819, alt: p.title, class: 'nh-motm__pouch', sizes: '(min-width: 990px) 28vw, 52vw' %}
+        <span class="nh-spark" style="left: 56%; top: 2%; --s: 26px;" aria-hidden="true"></span>
+        <span class="nh-spark nh-spark--rose" style="right: 4%; top: 12%; --s: 34px;" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: ritual of the month",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Defaults to the primary product in Theme settings." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Ritual Of The Month: The Raspberry Morning Reset" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Five calm minutes that set the tone for your whole day." },
+    { "type": "textarea", "id": "tags", "label": "Tags (one per line)", "default": "Raspberry Gut Gummies\nA tall glass of water\nFive slow breaths" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Try the morning reset" },
+    { "type": "url", "id": "button_link", "label": "Button link", "info": "Defaults to the product." },
+    { "type": "text", "id": "card_title", "label": "Card title", "default": "Morning Reset Ritual" },
+    { "type": "text", "id": "step_1", "label": "Step 1", "default": "Pour a tall glass of water before you reach for your phone." },
+    { "type": "text", "id": "step_2", "label": "Step 2", "default": "Enjoy 2 Nurellea gummies with breakfast." },
+    { "type": "text", "id": "step_3", "label": "Step 3", "default": "Take five slow breaths and set one kind intention for the day." },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Transparent product image. Defaults to the pouch." }
+  ],
+  "presets": [{ "name": "Home: ritual of the month" }]
+}
+{% endschema %}

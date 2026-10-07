@@ -1,0 +1,98 @@
+{%- liquid
+  assign quote = false
+  for review in shop.metaobjects.nurellea_review.values
+    assign r = review.rating.value.rating | default: review.rating.value | default: 0 | plus: 0
+    assign body = review.body.value | default: review.body | strip
+    if r >= 5 and body != blank
+      assign quote = review
+      break
+    endif
+  endfor
+  assign photos = 'photo_1,photo_2,photo_3' | split: ','
+  assign assets = 'nl-life-friends.webp,nl-home-builder.webp,nl-life-walk.webp' | split: ','
+  assign dims = '1100x825,864x1152,864x1152' | split: ','
+-%}
+<section class="nh nh-section nh-club" aria-labelledby="NhClub-{{ section.id }}">
+  <div class="nh-wrap">
+    <div class="nh-club__grid">
+      <div>
+        <div class="nh-club__lockup">
+          {% render 'nurellea-home-img', image: section.settings.mascot, asset: 'nl-home-mascot.webp', width: 600, height: 600, alt: '', sizes: '120px' %}
+          <h2 id="NhClub-{{ section.id }}" class="nh-club__word">
+            <small>{{ section.settings.word_small | escape }}</small>
+            {{- section.settings.word_big | escape -}}
+            <em>{{ section.settings.word_script | escape }}</em>
+          </h2>
+          <span class="nh-spark" style="left: 2px; top: -6px; --s: 18px;" aria-hidden="true"></span>
+          <span class="nh-spark" style="right: 6%; top: 4px; --s: 26px;" aria-hidden="true"></span>
+        </div>
+        {%- if section.settings.text != blank -%}<p class="nh-club__text">{{ section.settings.text | escape }}</p>{%- endif -%}
+
+        <div class="nh-club__card">
+          {%- if quote -%}
+            <div class="nh-club__card-top">
+              {% render 'nurellea-home-stars', label: '5 stars' %}
+              <span><strong>{{ quote.author.value | default: 'Customer' | escape }}</strong>{% if quote.verified_purchase.value == true and quote.order_reference != blank %} <span class="nh-verified">Verified</span>{% endif %}</span>
+            </div>
+            <q>{{ quote.body.value | default: quote.body | strip_newlines | truncate: 220 | escape }}</q>
+          {%- else -%}
+            <ul class="nh-club__perks">
+              {%- for i in (1..3) -%}
+                {%- assign perk_key = 'perk_' | append: i -%}
+                {%- if section.settings[perk_key] != blank -%}
+                  <li>{% render 'nurellea-icon', name: 'check-circle' %}{{ section.settings[perk_key] | escape }}</li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+
+        {%- form 'customer', class: 'nh-club__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter, ritual-club">
+          {%- if form.posted_successfully? -%}
+            <p class="nh-club__msg" role="status">{{ section.settings.success | escape }}</p>
+          {%- else -%}
+            <label class="visually-hidden" for="NhClubEmail-{{ section.id }}">Email</label>
+            <input id="NhClubEmail-{{ section.id }}" class="nh-club__input" type="email" name="contact[email]" autocomplete="email" placeholder="{{ section.settings.placeholder | escape }}" required>
+            {%- if form.errors -%}<p class="nh-club__msg" role="alert">{{ form.errors | default_errors }}</p>{%- endif -%}
+            <button type="submit" class="nh-btn nh-btn--block">{{ section.settings.button_label | escape }}</button>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      <div class="nh-club__strip">
+        {%- for key in photos -%}
+          {%- assign i = forloop.index0 -%}
+          {%- assign d = dims[i] | split: 'x' -%}
+          <figure>
+            {% render 'nurellea-home-img', image: section.settings[key], asset: assets[i], width: d[0], height: d[1], alt: '', sizes: '(min-width: 990px) 22vw, 62vw' %}
+          </figure>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: club",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "mascot", "label": "Mascot" },
+    { "type": "text", "id": "word_small", "label": "Lockup: small", "default": "nurellea" },
+    { "type": "text", "id": "word_big", "label": "Lockup: big", "default": "Ritual" },
+    { "type": "text", "id": "word_script", "label": "Lockup: script", "default": "Club" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Join the Nurellea Ritual Club for members-only offers, ritual ideas and first access to new flavors." },
+    { "type": "text", "id": "perk_1", "label": "Perk 1", "info": "Shown when there is no 5-star review to quote.", "default": "Members-only offers" },
+    { "type": "text", "id": "perk_2", "label": "Perk 2", "default": "First access to new flavors" },
+    { "type": "text", "id": "perk_3", "label": "Perk 3", "default": "Simple ritual ideas in your inbox" },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Enter your email" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Join the club" },
+    { "type": "text", "id": "success", "label": "Success message", "default": "Welcome to the club! Check your inbox soon." },
+    { "type": "image_picker", "id": "photo_1", "label": "Photo 1" },
+    { "type": "image_picker", "id": "photo_2", "label": "Photo 2" },
+    { "type": "image_picker", "id": "photo_3", "label": "Photo 3" }
+  ],
+  "presets": [{ "name": "Home: club" }]
+}
+{% endschema %}

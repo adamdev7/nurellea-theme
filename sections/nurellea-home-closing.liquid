@@ -1,0 +1,55 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign shop_url = section.settings.button_link | default: p.url | default: routes.all_products_collection_url
+  assign perks = 'perk_1,perk_2,perk_3' | split: ','
+  assign icons = 'truck,shield,leaf' | split: ','
+-%}
+<section class="nh nh-section nh-closing" aria-labelledby="NhClosing-{{ section.id }}">
+  <div class="nh-wrap">
+    <div class="nh-closing__grid">
+      <div class="nh-closing__visual">
+        <div class="nh-closing__mascot">
+          {% render 'nurellea-home-img', image: section.settings.mascot, asset: 'nl-home-mascot.webp', width: 600, height: 600, alt: '', sizes: '210px' %}
+        </div>
+        <figure class="nh-closing__photo">
+          {% render 'nurellea-home-img', image: section.settings.photo, asset: 'nl-life-morning.webp', asset_small: 'nl-life-morning-480.webp', small_w: 480, width: 864, height: 1152, alt: section.settings.photo_alt, sizes: '(min-width: 990px) 34vw, 80vw' %}
+        </figure>
+        <span class="nh-spark" style="left: 28%; top: -16px; --s: 30px;" aria-hidden="true"></span>
+        <span class="nh-spark" style="right: -16px; top: 30%; --s: 26px;" aria-hidden="true"></span>
+      </div>
+      <div class="nh-closing__copy">
+        <h2 id="NhClosing-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.subheading != blank -%}<p class="nh-closing__sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+        <ul class="nh-closing__perks">
+          {%- for k in perks -%}
+            {%- if section.settings[k] != blank -%}<li>{% render 'nurellea-icon', name: icons[forloop.index0] %}{{ section.settings[k] | escape }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+        {%- if section.settings.button_label != blank -%}
+          <a class="nh-btn nh-btn--block" href="{{ shop_url }}">{{ section.settings.button_label | escape }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: closing CTA",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your New Daily Ritual Is One Tap Away" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Two raspberry gummies, ten functional mushrooms, zero fuss." },
+    { "type": "text", "id": "perk_1", "label": "Perk 1", "default": "Free shipping on 2+ bags" },
+    { "type": "text", "id": "perk_2", "label": "Perk 2", "default": "30-day money-back guarantee" },
+    { "type": "text", "id": "perk_3", "label": "Perk 3", "default": "Vegan & lab tested" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Shop Gut Gummies" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "image_picker", "id": "mascot", "label": "Mascot" },
+    { "type": "image_picker", "id": "photo", "label": "Photo" },
+    { "type": "text", "id": "photo_alt", "label": "Photo alt", "default": "Woman enjoying a calm morning at home" }
+  ],
+  "presets": [{ "name": "Home: closing CTA" }]
+}
+{% endschema %}

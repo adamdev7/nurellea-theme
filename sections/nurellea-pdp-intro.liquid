@@ -36,26 +36,7 @@
     {%- endif -%}
 
     {%- if section.settings.show_trustpilot and section.settings.trustpilot_score != blank -%}
-      <p class="nl-pdp-intro__trust">
-        <span class="nl-pdp-intro__trust-stars" role="img" aria-label="{{ section.settings.trustpilot_score | escape }}">
-          {%- for i in (1..5) -%}
-            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.4 2.8 5.8 6.4.8-4.7 4.4 1.3 6.3L12 16.7 6.2 19.7l1.3-6.3L2.8 9l6.4-.8L12 2.4z"/></svg>
-          {%- endfor -%}
-        </span>
-        <span class="nl-pdp-intro__trust-score">{{ section.settings.trustpilot_score | escape }}</span>
-        {%- if section.settings.trustpilot_link != blank -%}
-          <a class="nl-pdp-intro__trustpilot" href="{{ section.settings.trustpilot_link }}">
-        {%- else -%}
-          <span class="nl-pdp-intro__trustpilot">
-        {%- endif -%}
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.2 2.9 6 6.6.8-4.8 4.5 1.3 6.5L12 16.8 6 20l1.3-6.5L2.5 9l6.6-.8L12 2.2z"/></svg>
-          Trustpilot
-        {%- if section.settings.trustpilot_link != blank -%}
-          </a>
-        {%- else -%}
-          </span>
-        {%- endif -%}
-      </p>
+      {% render 'nurellea-trustpilot', score: section.settings.trustpilot_score, link: section.settings.trustpilot_link %}
     {%- elsif review_count > 0 -%}
       <a class="nl-pdp-intro__rating" href="#reviews">
         {% render 'nurellea-stars', rating: review_avg, size: 16 %}

@@ -96,6 +96,8 @@
         "product": "",
         "color_scheme": "scheme-1",
         "show_breadcrumbs": true,
+        "show_trustpilot": true,
+        "trustpilot_score": "4.6 from 10,561+ reviews",
         "variant_heading": "Choose your supply",
         "default_variant_position": 3,
         "bundle_discounts_live": true,

@@ -1,424 +1,201 @@
 {
   "sections": {
     "hero": {
-      "type": "nurellea-hero",
-      "blocks": {
-        "nurellea_1": {
-          "type": "point",
-          "settings": {
-            "icon": "leaf",
-            "text": "Vegan & non-GMO"
-          }
-        },
-        "nurellea_2": {
-          "type": "point",
-          "settings": {
-            "icon": "truck",
-            "text": "Free shipping on 2+ bags"
-          }
-        },
-        "nurellea_3": {
-          "type": "point",
-          "settings": {
-            "icon": "shield",
-            "text": "30-day money-back guarantee"
-          }
-        }
-      },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3"
-      ],
+      "type": "nurellea-home-hero",
       "settings": {
-        "color_scheme": "scheme-2",
-        "eyebrow": "Gut gummies for women",
-        "heading": "A daily ritual that feels",
-        "heading_accent": "like self-care",
-        "text": "<p>10 functional mushrooms in 2 raspberry gummies a day. A daily supplement you will actually look forward to — vegan, lab tested and made to fit the way you live.</p>",
+        "show_awning": true,
+        "show_promo": true,
+        "promo_tag": "New",
+        "promo_text": "Raspberry Gut Gummies",
+        "promo_button": "Shop now",
+        "show_badge_stars": true,
+        "badge_1": "300,000+ Happy Customers",
+        "badge_2": "10 Mushrooms In 1",
+        "heading": "Daily wellness,",
+        "heading_line_2": "made delicious",
+        "text": "<p>Raspberry gut gummies made with <strong>10 functional mushrooms</strong>, <strong>vegan ingredients</strong> and <strong>no synthetic sweeteners</strong> — a 2-a-day ritual you will actually look forward to.</p>",
         "button_label": "Shop Gut Gummies",
-        "button2_label": "See what's inside",
-        "button2_link": "/pages/ingredients",
-        "show_price_chip": true,
-        "chip_text": "10 mushrooms in 1 gummy",
-        "chip_icon": "sparkle"
+        "show_pouch": true,
+        "sticker_1": "10-in-1 mushrooms",
+        "sticker_2": "Just 2 a day"
       }
     },
-    "strip": {
-      "type": "nurellea-trust-strip",
+    "benefits": {
+      "type": "nurellea-home-benefits",
       "blocks": {
-        "nurellea_1": {
-          "type": "item",
-          "settings": {
-            "icon": "mushroom",
-            "text": "10 functional mushrooms"
-          }
-        },
-        "nurellea_2": {
-          "type": "item",
-          "settings": {
-            "icon": "gummy",
-            "text": "Just 2 gummies a day"
-          }
-        },
-        "nurellea_3": {
-          "type": "item",
-          "settings": {
-            "icon": "leaf",
-            "text": "Vegan & non-GMO"
-          }
-        },
-        "nurellea_4": {
-          "type": "item",
-          "settings": {
-            "icon": "flask",
-            "text": "Lab tested"
-          }
-        },
-        "nurellea_5": {
-          "type": "item",
-          "settings": {
-            "icon": "heart",
-            "text": "Raspberry flavor"
-          }
-        },
-        "nurellea_6": {
-          "type": "item",
-          "settings": {
-            "icon": "shield",
-            "text": "30-day money-back guarantee"
-          }
-        }
+        "b1": { "type": "item", "settings": { "text": "10 functional mushrooms" } },
+        "b2": { "type": "item", "settings": { "text": "Vegan & non-GMO" } },
+        "b3": { "type": "item", "settings": { "text": "No synthetic sweeteners" } },
+        "b4": { "type": "item", "settings": { "text": "Real raspberry flavor" } }
       },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3",
-        "nurellea_4",
-        "nurellea_5",
-        "nurellea_6"
-      ],
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": {}
+    },
+    "mushrooms": {
+      "type": "nurellea-home-mushrooms",
+      "blocks": {
+        "m1": { "type": "mushroom", "settings": { "name": "Lion's Mane", "tag": "Focus · 250 mg", "text": "A shaggy white mushroom prized in traditional practice for calm, clear focus.*", "group": "mind", "asset": "nl-mush-lions-mane.webp" } },
+        "m2": { "type": "mushroom", "settings": { "name": "Cordyceps", "tag": "Energy · 250 mg", "text": "A traditional favourite for natural, steady everyday energy.*", "group": "mind", "asset": "nl-mush-cordyceps.webp" } },
+        "m3": { "type": "mushroom", "settings": { "name": "Reishi", "tag": "Mood · 250 mg", "text": "Valued for centuries as the mushroom for calm evenings and restful sleep.*", "group": "mind", "asset": "nl-mush-reishi.webp" } },
+        "m4": { "type": "mushroom", "settings": { "name": "Chaga", "tag": "Antioxidants · 250 mg", "text": "A birch-growing mushroom naturally rich in antioxidants.*", "group": "defences", "asset": "nl-mush-chaga.webp" } },
+        "m5": { "type": "mushroom", "settings": { "name": "Maitake", "tag": "Wellbeing · 250 mg", "text": "The 'dancing mushroom', traditionally used for whole-body balance.*", "group": "defences", "asset": "nl-mush-maitake.webp" } },
+        "m6": { "type": "mushroom", "settings": { "name": "Royal Sun", "tag": "Defences · 250 mg", "text": "A sweet, almond-scented mushroom traditionally used for the body's defences.*", "group": "defences", "asset": "nl-mush-royal-sun.webp" } },
+        "m7": { "type": "mushroom", "settings": { "name": "Shiitake", "tag": "Gut health · 250 mg", "text": "A kitchen staple with a long tradition in digestive wellness.*", "group": "gut", "asset": "nl-mush-shiitake.webp" } },
+        "m8": { "type": "mushroom", "settings": { "name": "Tremella", "tag": "Beauty · 250 mg", "text": "The 'snow mushroom', used in traditional beauty rituals for skin hydration.*", "group": "gut", "asset": "nl-mush-tremella.webp" } },
+        "m9": { "type": "mushroom", "settings": { "name": "White Button", "tag": "Digestion · 250 mg", "text": "The familiar everyday mushroom, traditionally used to support digestion.*", "group": "gut", "asset": "nl-mush-white-button.webp" } },
+        "m10": { "type": "mushroom", "settings": { "name": "Black Fungus", "tag": "Liver · 250 mg", "text": "Wood ear mushroom, a staple of traditional Asian cooking and wellness.*", "group": "gut", "asset": "nl-mush-black-fungus.webp" } }
+      },
+      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "animate": true,
-        "speed": 44
+        "heading": "Meet The 10 Mushrooms In Every Gummy",
+        "tab_all": "All 10",
+        "tab_mind": "Mind & Energy",
+        "tab_defences": "Defences",
+        "tab_gut": "Gut & Glow",
+        "button_label": "Shop Gut Gummies",
+        "show_price": true,
+        "show_deco": true
       }
     },
-    "why": {
-      "type": "nurellea-features",
+    "stickers": {
+      "type": "nurellea-home-stickers",
       "blocks": {
-        "nurellea_1": {
-          "type": "feature",
-          "settings": {
-            "icon": "gummy",
-            "title": "Easy to take",
-            "text": "<p>No capsules to swallow — just a chewable gummy you can keep on your desk, nightstand or in your bag.</p>"
-          }
-        },
-        "nurellea_2": {
-          "type": "feature",
-          "settings": {
-            "icon": "list",
-            "title": "Transparent by design",
-            "text": "<p>Every ingredient and amount is listed on the product page, exactly as it appears on the label.</p>"
-          }
-        },
-        "nurellea_3": {
-          "type": "feature",
-          "settings": {
-            "icon": "flower",
-            "title": "Made for women",
-            "text": "<p>Created with women's everyday wellness routines in mind.</p>"
-          }
-        },
-        "nurellea_4": {
-          "type": "feature",
-          "settings": {
-            "icon": "heart",
-            "title": "A ritual you enjoy",
-            "text": "<p>A treat-like format that makes showing up for yourself feel easy and pleasant.</p>"
-          }
-        }
+        "s1": { "type": "sticker", "settings": { "set": "1", "text": "10 mushrooms in 1", "shape": "oval", "icon": "mushroom" } },
+        "s2": { "type": "sticker", "settings": { "set": "1", "text": "250 mg each", "shape": "rect", "icon": "flask" } },
+        "s3": { "type": "sticker", "settings": { "set": "1", "text": "100% fruiting body", "shape": "scallop-cream", "icon": "leaf" } },
+        "s4": { "type": "sticker", "settings": { "set": "1", "text": "Real raspberry taste", "shape": "scallop", "icon": "heart" } },
+        "s5": { "type": "sticker", "settings": { "set": "1", "text": "Just 2 a day", "shape": "oval", "icon": "gummy" } },
+        "s6": { "type": "sticker", "settings": { "set": "1", "text": "Lab tested", "shape": "rect", "icon": "shield" } },
+        "s7": { "type": "sticker", "settings": { "set": "2", "text": "No synthetic sweeteners", "shape": "oval", "icon": "close" } },
+        "s8": { "type": "sticker", "settings": { "set": "2", "text": "No gelatin", "shape": "rect", "icon": "close" } },
+        "s9": { "type": "sticker", "settings": { "set": "2", "text": "Non-GMO", "shape": "scallop-cream", "icon": "leaf" } },
+        "s10": { "type": "sticker", "settings": { "set": "2", "text": "No pills to swallow", "shape": "scallop", "icon": "gummy" } },
+        "s11": { "type": "sticker", "settings": { "set": "2", "text": "No artificial flavors", "shape": "oval", "icon": "close" } },
+        "s12": { "type": "sticker", "settings": { "set": "2", "text": "Vegan friendly", "shape": "rect", "icon": "flower" } }
       },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3",
-        "nurellea_4"
-      ],
+      "block_order": ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "eyebrow": "Why Nurellea",
-        "heading": "Wellness made",
-        "heading_accent": "softer & simpler",
-        "text": "<p>We believe a daily routine should feel like a small act of care — not a chore.</p>",
-        "style": "soft",
-        "center": true
+        "heading": "The Taste You Crave With The Benefits You Need",
+        "tab_1": "In every gummy",
+        "tab_2": "What we leave out"
       }
     },
-    "spotlight": {
-      "type": "nurellea-product-spotlight",
+    "builder": {
+      "type": "nurellea-home-builder",
       "blocks": {
-        "nurellea_1": {
-          "type": "point",
-          "settings": {
-            "text": "10 functional mushroom extracts, 250 mg each"
-          }
-        },
-        "nurellea_2": {
-          "type": "point",
-          "settings": {
-            "text": "100% fruiting body, vegan and lab tested"
-          }
-        },
-        "nurellea_3": {
-          "type": "point",
-          "settings": {
-            "text": "Free shipping on 2+ bags, 30-day money-back guarantee"
-          }
-        }
+        "f1": { "type": "focus", "settings": { "title": "Focus", "mushroom": "Lion's Mane", "asset": "nl-mush-lions-mane.webp", "tile_color": "#fff4f3" } },
+        "f2": { "type": "focus", "settings": { "title": "Energy", "mushroom": "Cordyceps", "asset": "nl-mush-cordyceps.webp", "tile_color": "#fde8dc" } },
+        "f3": { "type": "focus", "settings": { "title": "Calm", "mushroom": "Reishi", "asset": "nl-mush-reishi.webp", "tile_color": "#fde2e4" } },
+        "f4": { "type": "focus", "settings": { "title": "Gut", "mushroom": "Shiitake", "asset": "nl-mush-shiitake.webp", "tile_color": "#f6efe8" } },
+        "f5": { "type": "focus", "settings": { "title": "Glow", "mushroom": "Tremella", "asset": "nl-mush-tremella.webp", "tile_color": "#fde9f0" } },
+        "t1": { "type": "tier", "settings": { "quantity": 1, "discount": 0 } },
+        "t2": { "type": "tier", "settings": { "quantity": 2, "discount": 10, "badge": "Most popular" } },
+        "t3": { "type": "tier", "settings": { "quantity": 3, "discount": 15, "badge": "Best value" } }
       },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3"
-      ],
+      "block_order": ["f1", "f2", "f3", "f4", "f5", "t1", "t2", "t3"],
       "settings": {
-        "color_scheme": "scheme-3",
-        "eyebrow": "Meet the gummies",
-        "text": "<p>Everything you need to know — ingredients, supplement facts, directions and warnings — is on the product page, straight from the label.</p>",
-        "button_label": "Shop now",
-        "link_label": "Read the FAQ",
-        "link_url": "/pages/faq"
+        "heading": "Build Your Daily Ritual",
+        "subheading": "Pick your moment, choose your supply and make Nurellea yours.",
+        "bundle_discounts_live": true,
+        "supply_days": 30,
+        "default_tier": 2
       }
     },
-    "ritual": {
-      "type": "nurellea-steps",
+    "moments": {
+      "type": "nurellea-home-moments",
       "blocks": {
-        "nurellea_1": {
-          "type": "step",
-          "settings": {
-            "title": "Choose your option",
-            "text": "<p>Pick the option that suits you on the product page. Prices and availability are always shown before you add to cart.</p>"
-          }
-        },
-        "nurellea_2": {
-          "type": "step",
-          "settings": {
-            "title": "Take as directed",
-            "text": "<p>Follow the serving directions on the label — they are also listed on the product page.</p>"
-          }
-        },
-        "nurellea_3": {
-          "type": "step",
-          "settings": {
-            "title": "Make it yours",
-            "text": "<p>Keep your gummies somewhere you will see them every day, so your ritual becomes second nature.</p>"
-          }
-        }
+        "c1": { "type": "moment", "settings": { "asset": "nl-life-morning.webp", "image_alt": "Woman enjoying breakfast in soft morning light", "pill": "With breakfast", "title": "Morning Ritual", "meta": "2 gummies · start the day bright" } },
+        "c2": { "type": "moment", "settings": { "asset": "nl-life-desk.webp", "image_alt": "Woman smiling at her desk", "pill": "At your desk", "title": "Workday Reset", "meta": "A sweet pause between calls" } },
+        "c3": { "type": "moment", "settings": { "asset": "nl-life-walk.webp", "image_alt": "Woman on a sunny walk", "pill": "On the go", "title": "Outdoor Moments", "meta": "Pouch-friendly for busy days" } },
+        "c4": { "type": "moment", "settings": { "asset": "nl-life-evening.webp", "image_alt": "Woman relaxing in the evening", "pill": "Wind-down", "title": "Evening Calm", "meta": "A cozy end to your day" } }
       },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3"
-      ],
+      "block_order": ["c1", "c2", "c3", "c4"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "eyebrow": "Your daily ritual",
-        "heading": "Three simple steps,",
-        "heading_accent": "every day",
-        "show_directions": false
-      }
-    },
-    "ingredients": {
-      "type": "nurellea-ingredients",
-      "blocks": {
-        "nurellea_1": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Focus",
-            "name": "Lion's Mane",
-            "amount": "250 mg",
-            "text": "<p>A shaggy white mushroom prized in traditional practice for the mind.</p>",
-            "bullets": "<ul><li>Calm, clear focus</li><li>Everyday brain health</li></ul>"
-          }
-        },
-        "nurellea_2": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Energy",
-            "name": "Cordyceps",
-            "amount": "250 mg",
-            "text": "<p>A traditional favourite for natural, steady energy.</p>",
-            "bullets": "<ul><li>Sustained everyday energy</li><li>Recovery after activity</li></ul>"
-          }
-        },
-        "nurellea_3": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Mood",
-            "name": "Reishi",
-            "amount": "250 mg",
-            "text": "<p>Valued for centuries as a mushroom for calm evenings.</p>",
-            "bullets": "<ul><li>A calmer wind-down</li><li>Restful sleep</li></ul>"
-          }
-        },
-        "nurellea_4": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Gut health",
-            "name": "Shiitake",
-            "amount": "250 mg",
-            "text": "<p>A kitchen staple with a long tradition in digestive wellness.</p>",
-            "bullets": "<ul><li>Healthy digestion</li><li>Gut comfort</li></ul>"
-          }
-        },
-        "nurellea_5": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Antioxidants",
-            "name": "Chaga",
-            "amount": "250 mg",
-            "text": "<p>A birch-growing mushroom naturally rich in antioxidants.</p>",
-            "bullets": "<ul><li>Antioxidant support</li><li>Overall wellness</li></ul>"
-          }
-        },
-        "nurellea_6": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Wellbeing",
-            "name": "Maitake",
-            "amount": "250 mg",
-            "text": "<p>The 'dancing mushroom', traditionally used for whole-body balance.</p>",
-            "bullets": "<ul><li>Normal immune function</li><li>Everyday balance</li></ul>"
-          }
-        },
-        "nurellea_7": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Beauty",
-            "name": "Tremella",
-            "amount": "250 mg",
-            "text": "<p>The 'snow mushroom', used in traditional beauty rituals.</p>",
-            "bullets": "<ul><li>Skin hydration</li><li>Hair, skin & nail care</li></ul>"
-          }
-        },
-        "nurellea_8": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Defences",
-            "name": "Royal Sun",
-            "amount": "250 mg",
-            "text": "<p>A sweet, almond-scented mushroom traditionally used for the body's defences.</p>",
-            "bullets": "<ul><li>Natural defences</li><li>Healthy bones</li></ul>"
-          }
-        },
-        "nurellea_9": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Digestion",
-            "name": "White Button",
-            "amount": "250 mg",
-            "text": "<p>The familiar everyday mushroom, traditionally used to support digestion.</p>",
-            "bullets": "<ul><li>Healthy digestion</li><li>Gut balance</li></ul>"
-          }
-        },
-        "nurellea_10": {
-          "type": "ingredient",
-          "settings": {
-            "tag": "Liver",
-            "name": "Black Fungus",
-            "amount": "250 mg",
-            "text": "<p>Wood ear mushroom, a staple of traditional Asian cooking and wellness.</p>",
-            "bullets": "<ul><li>Liver health</li><li>Healthy circulation</li></ul>"
-          }
-        }
-      },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3",
-        "nurellea_4",
-        "nurellea_5",
-        "nurellea_6",
-        "nurellea_7",
-        "nurellea_8",
-        "nurellea_9",
-        "nurellea_10"
-      ],
-      "settings": {
-        "color_scheme": "scheme-2",
-        "eyebrow": "Our 10-in-1 mushroom blend",
-        "heading": "What's inside",
-        "heading_accent": "every gummy",
-        "text": "<p>250 mg of each functional mushroom extract, made from 100% fruiting body. Tap a card to see what it is traditionally used for.*</p>",
-        "layout": "tap",
-        "columns": "5",
-        "show_disclaimer": true,
-        "button_label": "View full label",
-        "button_link": "/pages/ingredients"
-      }
-    },
-    "approach": {
-      "type": "nurellea-image-text",
-      "blocks": {
-        "nurellea_1": {
-          "type": "point",
-          "settings": {
-            "title": "Clear labels.",
-            "text": "What is on the pack is what we show online."
-          }
-        },
-        "nurellea_2": {
-          "type": "point",
-          "settings": {
-            "title": "Honest words.",
-            "text": "No exaggerated promises — just the facts."
-          }
-        },
-        "nurellea_3": {
-          "type": "point",
-          "settings": {
-            "title": "Real support.",
-            "text": "A team you can contact with any question."
-          }
-        }
-      },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3"
-      ],
-      "settings": {
-        "color_scheme": "scheme-1",
-        "placeholder_label": "Brand lifestyle photo",
-        "placeholder_art": "portrait",
-        "ratio": "4 / 5",
-        "eyebrow": "Our approach",
-        "heading": "Wellness that feels",
-        "heading_accent": "gentle",
-        "text": "<p>Nurellea was created to make daily wellness feel softer, simpler and more personal. We keep our labels clear, our communication honest and our products easy to fit into real life.</p>",
-        "button_label": "About Nurellea",
-        "button_link": "/pages/about",
-        "button_style": "secondary"
+        "heading": "A Gummy Moment For Every Part Of Your Day",
+        "subheading": "Mornings, deadlines, walks and wind-downs — there is a moment for your 2 a day."
       }
     },
     "reviews": {
-      "type": "nurellea-reviews",
+      "type": "nurellea-home-reviews",
       "settings": {
-        "scope": "product",
-        "color_scheme": "scheme-2",
-        "eyebrow": "Reviews",
-        "heading": "In their",
-        "heading_accent": "own words",
-        "columns": "3",
-        "show_filters": false,
-        "page_size": 6,
-        "limit": 6,
-        "show_form": false,
-        "hide_when_empty": true,
+        "rating_text": "4.6 from 10,561+ reviews on Trustpilot",
+        "heading": "Real people, real rituals & a taste worth raving about",
+        "subheading": "Real thoughts on the taste, the routine and everything in between.",
+        "limit": 4,
         "link_label": "Read all reviews",
-        "link_url": "/pages/reviews"
+        "link_url": "/pages/reviews",
+        "empty_button": "Read reviews"
+      }
+    },
+    "quiz": {
+      "type": "nurellea-home-quiz",
+      "blocks": {
+        "g1": { "type": "goal", "settings": { "label": "Focus", "mushroom": "Lion's Mane" } },
+        "g2": { "type": "goal", "settings": { "label": "Gut comfort", "mushroom": "Shiitake" } },
+        "g3": { "type": "goal", "settings": { "label": "Energy", "mushroom": "Cordyceps" } },
+        "g4": { "type": "goal", "settings": { "label": "Calm", "mushroom": "Reishi" } },
+        "g5": { "type": "goal", "settings": { "label": "Glow", "mushroom": "Tremella" } },
+        "g6": { "type": "goal", "settings": { "label": "Defences", "mushroom": "Royal Sun" } }
+      },
+      "block_order": ["g1", "g2", "g3", "g4", "g5", "g6"],
+      "settings": {
+        "heading": "Not Sure Where To Start? Nell Can Help!",
+        "question": "What Do You Want More Of?",
+        "pick_label": "Nell's pick",
+        "button_label": "Try Nell's pick"
+      }
+    },
+    "ideas": {
+      "type": "nurellea-home-ideas",
+      "blocks": {
+        "i1": { "type": "idea", "settings": { "tab": "1", "time": "5 min", "title": "Raspberry Morning Reset", "text": "A tall glass of water, 2 gummies with breakfast and five slow breaths before you open your inbox.", "asset": "nl-life-morning.webp", "image_alt": "Calm breakfast table in morning light", "button_label": "Start this ritual" } },
+        "i2": { "type": "idea", "settings": { "tab": "1", "time": "1 min", "title": "The Kettle Habit", "text": "Keep your pouch next to the kettle so your 2 gummies become as automatic as your first warm drink.", "asset": "nl-life-kitchen.webp", "image_alt": "Woman in a bright kitchen holding a bowl of raspberries", "button_label": "Start this ritual" } },
+        "i3": { "type": "idea", "settings": { "tab": "2", "time": "2 min", "title": "The 3 PM Sweet Pause", "text": "Step away from the screen, stretch, sip some water and enjoy a raspberry moment that is just for you.", "asset": "nl-life-desk.webp", "image_alt": "Woman taking a break at her desk", "button_label": "Start this ritual" } },
+        "i4": { "type": "idea", "settings": { "tab": "2", "time": "10 min", "title": "Walk & Reset", "text": "Pop the pouch in your bag, take your 2 a day and get ten minutes of daylight between meetings.", "asset": "nl-life-walk.webp", "image_alt": "Woman walking outdoors in the sun", "button_label": "Start this ritual" } },
+        "i5": { "type": "idea", "settings": { "tab": "3", "time": "10 min", "title": "Slow Evening Wind-Down", "text": "Dim the lights, put your phone on charge in another room and make your gummies part of a cozy routine.", "asset": "nl-life-evening.webp", "image_alt": "Woman relaxing with a book in the evening", "button_label": "Start this ritual" } },
+        "i6": { "type": "idea", "settings": { "tab": "3", "time": "15 min", "title": "Self-Care Sunday", "text": "Face mask on, favourite playlist playing, gummies on the nightstand — a little reset for the week ahead.", "asset": "nl-life-portrait.webp", "image_alt": "Smiling woman in soft natural light", "button_label": "Start this ritual" } }
+      },
+      "block_order": ["i1", "i2", "i3", "i4", "i5", "i6"],
+      "settings": {
+        "heading": "Simple Rituals For Every Kind Of Day",
+        "tab_1": "Morning",
+        "tab_2": "Workday",
+        "tab_3": "Evening"
+      }
+    },
+    "club": {
+      "type": "nurellea-home-club",
+      "settings": {
+        "word_small": "nurellea",
+        "word_big": "Ritual",
+        "word_script": "Club",
+        "text": "Join the Nurellea Ritual Club for members-only offers, ritual ideas and first access to new flavors.",
+        "button_label": "Join the club"
+      }
+    },
+    "motm": {
+      "type": "nurellea-home-motm",
+      "settings": {
+        "heading": "Ritual Of The Month: The Raspberry Morning Reset",
+        "subheading": "Five calm minutes that set the tone for your whole day.",
+        "tags": "Raspberry Gut Gummies\nA tall glass of water\nFive slow breaths",
+        "button_label": "Try the morning reset",
+        "card_title": "Morning Reset Ritual"
+      }
+    },
+    "compare": {
+      "type": "nurellea-home-compare",
+      "blocks": {
+        "r1": { "type": "row", "settings": { "label": "Format", "icon": "gummy", "us_value": "Chewable gummy", "us_mark": "yes", "them_1_value": "Pills to swallow", "them_1_mark": "no", "them_2_value": "Brew & mix", "them_2_mark": "meh" } },
+        "r2": { "type": "row", "settings": { "label": "Mushrooms", "icon": "mushroom", "us_value": "10 in 1", "us_mark": "yes", "them_1_value": "Varies", "them_1_mark": "meh", "them_2_value": "Varies", "them_2_mark": "meh" } },
+        "r3": { "type": "row", "settings": { "label": "Caffeine", "icon": "bolt", "us_value": "Caffeine-free", "us_mark": "yes", "them_1_value": "Usually none", "them_1_mark": "yes", "them_2_value": "Contains caffeine", "them_2_mark": "no" } },
+        "r4": { "type": "row", "settings": { "label": "Taste", "icon": "heart", "us_value": "Real raspberry", "us_mark": "yes", "them_1_value": "None", "them_1_mark": "meh", "them_2_value": "Earthy", "them_2_mark": "meh" } },
+        "r5": { "type": "row", "settings": { "label": "Prep time", "icon": "clock", "us_value": "0 seconds", "us_mark": "yes", "them_1_value": "0 seconds", "them_1_mark": "yes", "them_2_value": "5+ minutes", "them_2_mark": "no" } }
+      },
+      "block_order": ["r1", "r2", "r3", "r4", "r5"],
+      "settings": {
+        "heading": "Why Women Are Making The Switch",
+        "subheading": "All the mushroom goodness, with more flavor and way less effort."
       }
     },
     "faq": {
@@ -465,13 +242,7 @@
           }
         }
       },
-      "block_order": [
-        "nurellea_1",
-        "nurellea_2",
-        "nurellea_3",
-        "nurellea_4",
-        "nurellea_5"
-      ],
+      "block_order": ["nurellea_1", "nurellea_2", "nurellea_3", "nurellea_4", "nurellea_5"],
       "settings": {
         "source": "blocks",
         "color_scheme": "scheme-1",
@@ -483,28 +254,14 @@
         "contact_link": "/pages/faq"
       }
     },
-    "cta": {
-      "type": "nurellea-cta",
+    "closing": {
+      "type": "nurellea-home-closing",
       "settings": {
-        "color_scheme": "scheme-1",
-        "show_logo": true,
-        "heading": "Begin your",
-        "heading_accent": "Nurellea ritual",
-        "text": "<p>A small moment of care, every day. Make Nurellea part of yours.</p>",
+        "heading": "Your New Daily Ritual Is One Tap Away",
+        "subheading": "Two raspberry gummies, ten functional mushrooms, zero fuss.",
         "button_label": "Shop Gut Gummies"
       }
     }
   },
-  "order": [
-    "hero",
-    "strip",
-    "why",
-    "spotlight",
-    "ritual",
-    "ingredients",
-    "approach",
-    "reviews",
-    "faq",
-    "cta"
-  ]
+  "order": ["hero", "benefits", "mushrooms", "stickers", "builder", "moments", "reviews", "quiz", "ideas", "club", "motm", "compare", "faq", "closing"]
 }

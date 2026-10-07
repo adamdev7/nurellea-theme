@@ -1,0 +1,56 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign shop_url = p.url | default: routes.all_products_collection_url
+-%}
+<section class="nh nh-section nh-moments" aria-labelledby="NhMoments-{{ section.id }}">
+  <div class="nh-wrap">
+    <div class="nh-head">
+      <h2 id="NhMoments-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.subheading != blank -%}<p class="nh-sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+    </div>
+    <ul class="nh-moments__grid">
+      {%- for block in section.blocks -%}
+        <li {{ block.shopify_attributes }}>
+          <a class="nh-moment" href="{{ block.settings.link | default: shop_url }}">
+            <span class="nh-moment__img">
+              {%- assign small = block.settings.asset | replace: '.webp', '-480.webp' -%}
+              {% render 'nurellea-home-img', image: block.settings.image, asset: block.settings.asset, asset_small: small, small_w: 480, width: 864, height: 1152, alt: block.settings.image_alt, sizes: '(min-width: 990px) 22vw, 46vw' %}
+            </span>
+            {%- if block.settings.pill != blank -%}<span class="nh-pill">{{ block.settings.pill | escape }}</span>{%- endif -%}
+            <span class="nh-moment__title">{{ block.settings.title | escape }}</span>
+            {%- if block.settings.meta != blank -%}<span class="nh-moment__meta">{{ block.settings.meta | escape }}</span>{%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: moments",
+  "tag": "div",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Cards link here unless a card has its own link." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "A Gummy Moment For Every Part Of Your Day" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Mornings, deadlines, walks and wind-downs — there's a moment for your 2 a day." }
+  ],
+  "blocks": [
+    {
+      "type": "moment",
+      "name": "Moment",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "info": "Used when no image is picked, e.g. nl-life-morning.webp" },
+        { "type": "text", "id": "image_alt", "label": "Image alt" },
+        { "type": "text", "id": "pill", "label": "Pill", "default": "With breakfast" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Morning ritual" },
+        { "type": "text", "id": "meta", "label": "Subtitle", "default": "2 gummies · start the day" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Home: moments" }]
+}
+{% endschema %}

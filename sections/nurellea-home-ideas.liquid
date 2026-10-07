@@ -1,0 +1,82 @@
+{%- liquid
+  assign p = section.settings.product | default: settings.nurellea_product
+  assign shop_url = p.url | default: routes.all_products_collection_url
+  assign tabs = 'tab_1,tab_2,tab_3' | split: ','
+-%}
+<section class="nh nh-section nh-ideas" aria-labelledby="NhIdeas-{{ section.id }}" data-nh-ideas>
+  <div class="nh-wrap">
+    <div class="nh-head">
+      <h2 id="NhIdeas-{{ section.id }}" class="nh-title">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.subheading != blank -%}<p class="nh-sub">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+    </div>
+    <div class="nh-tabs" role="tablist" aria-label="{{ section.settings.heading | escape }}">
+      {%- for t in tabs -%}
+        {%- if section.settings[t] != blank -%}
+          <button type="button" class="nh-tab" role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" data-nh-ideas-tab="{{ forloop.index }}">{{ section.settings[t] | escape }}</button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <div class="nh-ideas__viewport">
+      {%- for t in tabs -%}
+        {%- assign tab_index = forloop.index | append: '' -%}
+        <ul class="nh-ideas__list" data-nh-ideas-list="{{ forloop.index }}"{% unless forloop.first %} hidden{% endunless %}>
+          {%- for block in section.blocks -%}
+            {%- if block.settings.tab == tab_index -%}
+              {%- assign small = block.settings.asset | replace: '.webp', '-480.webp' -%}
+              <li class="nh-idea" {{ block.shopify_attributes }}>
+                <div class="nh-idea__body">
+                  {%- if block.settings.time != blank -%}<span class="nh-pill">{% render 'nurellea-icon', name: 'clock' %}{{ block.settings.time | escape }}</span>{%- endif -%}
+                  <h3 class="nh-h3">{{ block.settings.title | escape }}</h3>
+                  {%- if block.settings.text != blank -%}<p class="nh-idea__text">{{ block.settings.text | escape }}</p>{%- endif -%}
+                  {%- if block.settings.button_label != blank -%}
+                    <a class="nh-btn nh-btn--sm" href="{{ block.settings.link | default: shop_url }}">{{ block.settings.button_label | escape }}</a>
+                  {%- endif -%}
+                </div>
+                <div class="nh-idea__img">
+                  {% render 'nurellea-home-img', image: block.settings.image, asset: block.settings.asset, asset_small: small, small_w: 480, width: 864, height: 1152, alt: block.settings.image_alt, sizes: '(min-width: 990px) 22vw, 86vw' %}
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endfor -%}
+    </div>
+    <div class="nh-ideas__nav">
+      <button type="button" class="nh-arrow" data-nh-ideas-prev aria-label="Previous ritual">{% render 'nurellea-icon', name: 'arrow-left' %}</button>
+      <button type="button" class="nh-arrow" data-nh-ideas-next aria-label="Next ritual">{% render 'nurellea-icon', name: 'arrow-right' %}</button>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home: ritual ideas",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Buttons link here unless a card has its own link." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Simple Rituals For Every Kind Of Day" },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "tab_1", "label": "Tab 1", "default": "Morning" },
+    { "type": "text", "id": "tab_2", "label": "Tab 2", "default": "Workday" },
+    { "type": "text", "id": "tab_3", "label": "Tab 3", "default": "Evening" }
+  ],
+  "blocks": [
+    {
+      "type": "idea",
+      "name": "Ritual idea",
+      "settings": [
+        { "type": "select", "id": "tab", "label": "Tab", "options": [{ "value": "1", "label": "Tab 1" }, { "value": "2", "label": "Tab 2" }, { "value": "3", "label": "Tab 3" }], "default": "1" },
+        { "type": "text", "id": "time", "label": "Time pill", "default": "2 min" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Raspberry morning reset" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "info": "e.g. nl-life-morning.webp" },
+        { "type": "text", "id": "image_alt", "label": "Image alt" },
+        { "type": "text", "id": "button_label", "label": "Button", "default": "Start this ritual" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Home: ritual ideas" }]
+}
+{% endschema %}

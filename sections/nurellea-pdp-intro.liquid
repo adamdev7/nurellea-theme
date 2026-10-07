@@ -35,7 +35,28 @@
       <div class="nl-pdp-intro__sub">{{ section.settings.text }}</div>
     {%- endif -%}
 
-    {%- if review_count > 0 -%}
+    {%- if section.settings.show_trustpilot and section.settings.trustpilot_score != blank -%}
+      <p class="nl-pdp-intro__trust">
+        <span class="nl-pdp-intro__trust-stars" role="img" aria-label="{{ section.settings.trustpilot_score | escape }}">
+          {%- for i in (1..5) -%}
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.4 2.8 5.8 6.4.8-4.7 4.4 1.3 6.3L12 16.7 6.2 19.7l1.3-6.3L2.8 9l6.4-.8L12 2.4z"/></svg>
+          {%- endfor -%}
+        </span>
+        <span class="nl-pdp-intro__trust-score">{{ section.settings.trustpilot_score | escape }}</span>
+        {%- if section.settings.trustpilot_link != blank -%}
+          <a class="nl-pdp-intro__trustpilot" href="{{ section.settings.trustpilot_link }}">
+        {%- else -%}
+          <span class="nl-pdp-intro__trustpilot">
+        {%- endif -%}
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 2.2 2.9 6 6.6.8-4.8 4.5 1.3 6.5L12 16.8 6 20l1.3-6.5L2.5 9l6.6-.8L12 2.2z"/></svg>
+          Trustpilot
+        {%- if section.settings.trustpilot_link != blank -%}
+          </a>
+        {%- else -%}
+          </span>
+        {%- endif -%}
+      </p>
+    {%- elsif review_count > 0 -%}
       <a class="nl-pdp-intro__rating" href="#reviews">
         {% render 'nurellea-stars', rating: review_avg, size: 16 %}
         <span>{{ review_avg }} from {{ review_count }} {{ review_count | pluralize: 'review', 'reviews' }}</span>
@@ -100,11 +121,15 @@
   "class": "nl-pdp-intro-section",
   "enabled_on": { "templates": ["product"] },
   "settings": [
-    { "type": "paragraph", "content": "Compact intro shown above the product. Ratings only appear when the product has published reviews. Portrait photos replace the built-in illustrations." },
+    { "type": "paragraph", "content": "Compact intro shown above the product. The Trustpilot line is the text you enter below. Portrait photos replace the built-in illustrations." },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Your natural ritual" },
     { "type": "text", "id": "heading_line_2", "label": "Heading, second line", "default": "starts here" },
-    { "type": "text", "id": "lead", "label": "Lead", "default": "Make Nurellea part of your natural daily ritual." },
+    { "type": "text", "id": "lead", "label": "Lead", "default": "Join 300,000+ customers who've made Nurellea part of their natural daily ritual." },
+    { "type": "header", "content": "Trustpilot" },
+    { "type": "checkbox", "id": "show_trustpilot", "label": "Show Trustpilot row", "default": true },
+    { "type": "text", "id": "trustpilot_score", "label": "Score line", "default": "4.6 from 10,561+ reviews" },
+    { "type": "url", "id": "trustpilot_link", "label": "Trustpilot link" },
     {
       "type": "richtext",
       "id": "text",

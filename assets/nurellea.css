@@ -1242,7 +1242,7 @@ body:has(.nl-sticky-atc.is-visible) { padding-bottom: 76px; }
   text-align: center;
 }
 .nl-pdp-intro__inner {
-  width: min(460px, calc(100% - (var(--nl-gutter) * 2)));
+  width: min(560px, calc(100% - (var(--nl-gutter) * 2)));
   margin-inline: auto;
   display: grid;
   justify-items: center;
@@ -1287,6 +1287,37 @@ body:has(.nl-sticky-atc.is-visible) { padding-bottom: 76px; }
   text-decoration: none;
 }
 .nl-pdp-intro__rating:hover { text-decoration: underline; text-underline-offset: 3px; }
+.nl-pdp-intro__trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  margin: 0;
+  color: var(--color-foreground-heading);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.nl-pdp-intro__trust-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #00b67a;
+}
+.nl-pdp-intro__trust-stars svg { display: block; }
+.nl-pdp-intro__trust-score { letter-spacing: -0.01em; }
+.nl-pdp-intro__trustpilot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #191919;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.nl-pdp-intro__trustpilot svg { display: block; color: #00b67a; flex: none; }
+a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-offset: 3px; }
 .nl-pdp-intro__faces {
   display: flex;
   justify-content: center;
@@ -1309,13 +1340,13 @@ body:has(.nl-sticky-atc.is-visible) { padding-bottom: 76px; }
 .nl-pdp-intro__face img,
 .nl-pdp-intro__face svg { width: 100%; height: 100%; display: block; object-fit: cover; }
 .nl-pdp-intro__btn {
-  width: 100%;
+  width: min(100%, 420px);
   min-height: 48px;
   margin-top: 2px;
   font-size: 0.98rem;
 }
 .nl-pdp-intro__guarantee {
-  width: 100%;
+  width: min(100%, 420px);
   margin-top: 2px;
   padding: 12px 16px 14px;
   border-radius: 10px;

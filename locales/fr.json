@@ -288,7 +288,7 @@
       "many": "{{ count }} articles ajoutés au panier"
     },
     "quick_order_list": "Liste de commande rapide",
-    "nurellea_cart_pulse": "10 561 femmes le prennent déjà chaque jour. Terminez tant que ce prix est dans votre panier.",
+    "nurellea_cart_pulse": "Dépêchez-vous. 10 561 femmes le prennent déjà chaque jour.",
     "nurellea_cart_save": {
       "one": "Vous économisez {{ amount }} sur cette commande",
       "other": "Vous économisez {{ amount }} sur {{ count }} au panier"

@@ -183,6 +183,11 @@
     "cart_subtotal": "Subtotal",
     "cart_total": "Cart total",
     "checkout": "Check out",
+    "nurellea_cart_pulse": "10,561 women already take this daily. Finish while this price is still in your cart.",
+    "nurellea_cart_save": {
+      "one": "You save {{ amount }} on this order",
+      "other": "You save {{ amount }} by keeping {{ count }} in your cart"
+    },
     "collection_placeholder": "Collection title",
     "discount_code": "Discount code",
     "shipping_discount_error": "Shipping discounts are shown at checkout after adding an address",

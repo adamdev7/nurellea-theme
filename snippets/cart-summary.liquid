@@ -257,7 +257,38 @@
   </div>
 </div>
 
+{%- liquid
+  assign nl_savings = 0
+  assign nl_count = cart.item_count
+  for item in cart.items
+    assign nl_compare = item.variant.compare_at_price | default: 0
+    assign nl_unit_save = 0
+    if item.original_price != item.final_price
+      if nl_compare > item.original_price
+        assign nl_was = nl_compare
+      else
+        assign nl_was = item.original_price
+      endif
+      assign nl_unit_save = nl_was | minus: item.final_price
+    elsif nl_compare > item.original_price
+      assign nl_unit_save = nl_compare | minus: item.original_price
+    endif
+    if nl_unit_save > 0
+      assign nl_line_save = nl_unit_save | times: item.quantity
+      assign nl_savings = nl_savings | plus: nl_line_save
+    endif
+  endfor
+  if settings.currency_code_enabled_cart_total
+    assign nl_savings_money = nl_savings | money_with_currency
+  else
+    assign nl_savings_money = nl_savings | money
+  endif
+-%}
+
 <div class="cart__ctas">
+  {%- if nl_savings > 0 -%}
+    <p class="nl-cart-save">{{ 'content.nurellea_cart_save' | t: amount: nl_savings_money, count: nl_count }}</p>
+  {%- endif -%}
   <button
     type="submit"
     id="checkout"
@@ -270,8 +301,15 @@
   >
     <span class="button-text">
       {{ 'content.checkout' | t }}
+      {%- unless cart == empty -%}
+        <span class="nl-cart-pay__sep" aria-hidden="true">·</span>
+        <span class="nl-cart-pay__amount">{{ total_price }}</span>
+      {%- endunless -%}
     </span>
   </button>
+  {%- unless cart == empty -%}
+    {% render 'nurellea-trustpilot', score: '4.6 from 10,561+ reviews' %}
+  {%- endunless -%}
 
   {% comment %} {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
     <div
@@ -462,15 +500,27 @@
   .cart__ctas {
     width: 100%;
     display: grid;
-    gap: var(--checkout-button-gap);
+    gap: 10px;
     grid-auto-flow: row;
     grid-template-columns: 1fr;
   }
 
   .cart__ctas .cart__checkout-button {
     width: 100%;
-    height: clamp(25px, var(--height-buy-buttons), 55px);
+    height: 56px;
+    min-height: 56px;
     padding-inline: var(--padding-4xl);
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .cart__ctas .cart__checkout-button .button-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
   }
 
   .cart-drawer__summary .cart-totals:not(:has(.cart-totals__original-container:empty)) {

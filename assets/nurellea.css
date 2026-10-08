@@ -1330,6 +1330,63 @@ body:has(.nl-sticky-atc.is-visible) { padding-bottom: 76px; }
 .nl-pdp-intro__trustpilot svg { display: block; color: #00b67a; flex: none; }
 a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-offset: 3px; }
 .nl-pdp-intro__trust--start { justify-content: flex-start; }
+
+/* Cart drawer close. The pulse answers "am I the only one?", the save line
+   answers "is this total a mistake?", and the Trustpilot row is the same
+   proof they already accepted on the product page. */
+.nl-cart-pulse {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px var(--cart-drawer-padding, 16px);
+  background: #f6d5d4;
+  color: var(--nl-ink);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.nl-cart-pulse > span:last-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+@media screen and (min-width: 750px) {
+  .nl-cart-pulse { padding-inline: var(--cart-drawer-padding-desktop, 20px); }
+}
+.nl-cart-pulse__dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 0.35em;
+  border-radius: 50%;
+  background: var(--nl-rose-deep);
+  flex: none;
+  box-shadow: 0 0 0 0 rgb(163 67 79 / 0.5);
+  animation: nl-cart-pulse 1.8s ease-out infinite;
+}
+@keyframes nl-cart-pulse {
+  70% { box-shadow: 0 0 0 7px rgb(163 67 79 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(163 67 79 / 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-cart-pulse__dot { animation: none; }
+}
+.nl-cart-save {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #e7f3ec;
+  color: var(--nl-success);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+.cart__ctas .nl-pdp-intro__trust {
+  justify-content: center;
+  margin-top: 2px;
+}
+.nl-cart-pay__sep { opacity: 0.72; }
+.nl-cart-pay__amount { font-weight: 700; }
 .nl-pdp-intro__faces {
   display: flex;
   justify-content: center;

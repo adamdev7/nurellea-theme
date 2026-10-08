@@ -1338,11 +1338,16 @@ a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-of
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  position: relative;
+  z-index: 2;
+  flex: none;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0;
-  padding: 10px var(--cart-drawer-padding, 16px);
+  padding: 9px 16px 11px;
   background: #f6d5d4;
   color: var(--nl-ink);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.35;
 }
@@ -1351,7 +1356,10 @@ a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-of
   min-width: 0;
 }
 @media screen and (min-width: 750px) {
-  .nl-cart-pulse { padding-inline: var(--cart-drawer-padding-desktop, 20px); }
+  .nl-cart-pulse {
+    padding-inline: var(--cart-drawer-padding-desktop, 22px);
+    font-size: 0.84rem;
+  }
 }
 .nl-cart-pulse__dot {
   width: 8px;
@@ -1372,18 +1380,32 @@ a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-of
 }
 .nl-cart-save {
   margin: 0;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: 8px;
   background: #e7f3ec;
   color: var(--nl-success);
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   font-weight: 700;
   line-height: 1.35;
   text-align: center;
 }
 .cart__ctas .nl-pdp-intro__trust {
   justify-content: center;
-  margin-top: 2px;
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: center;
+}
+@media screen and (max-width: 749px) {
+  .cart-drawer__dialog .cart-drawer__summary {
+    gap: 12px;
+    padding-bottom: max(18px, calc(env(safe-area-inset-bottom) + 14px));
+  }
+  .cart-drawer__dialog .cart__ctas .cart__checkout-button {
+    height: 52px;
+    min-height: 52px;
+    font-size: 0.95rem;
+    padding-inline: 16px;
+  }
 }
 .nl-cart-pay__sep { opacity: 0.72; }
 .nl-cart-pay__amount { font-weight: 700; }

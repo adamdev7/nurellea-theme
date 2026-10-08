@@ -94,8 +94,7 @@
         "open_description": true,
         "show_dynamic_checkout": false,
         "show_sticky_bar": true,
-        "show_disclaimer": true,
-        "show_lifestyle": true
+        "show_disclaimer": true
       }
     },
     "highlights": {

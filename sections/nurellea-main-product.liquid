@@ -81,6 +81,19 @@
               aria-roledescription="carousel"
               aria-label="{{ p.title | escape }} media gallery"
             >
+              {%- liquid
+                assign slide_count = p.media.size
+                if slide_count == 0
+                  assign slide_count = 2
+                endif
+                if section.settings.show_lifestyle
+                  assign slide_count = slide_count | plus: 1
+                endif
+                assign life_index = p.media.size | plus: 1
+                if p.media.size == 0
+                  assign life_index = 3
+                endif
+              -%}
               {%- if p.media.size > 0 -%}
                 {%- for media in p.media -%}
                   <figure
@@ -89,7 +102,7 @@
                     data-media-id="{{ media.id }}"
                     role="group"
                     aria-roledescription="slide"
-                    aria-label="{{ forloop.index }} of {{ p.media.size }}"
+                    aria-label="{{ forloop.index }} of {{ slide_count }}"
                   >
                     {%- case media.media_type -%}
                       {%- when 'image' -%}
@@ -129,13 +142,37 @@
                   {% render 'nurellea-placeholder', label: 'Gummy close-up — upload product media', art: 'gummy' %}
                 </figure>
               {%- endif -%}
+              {%- if section.settings.show_lifestyle -%}
+                <figure
+                  class="nl-gallery__slide"
+                  data-nl-gallery-slide
+                  data-media-id="lifestyle"
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label="{{ life_index }} of {{ slide_count }}"
+                >
+                  {%- if section.settings.lifestyle_image != blank -%}
+                    {{
+                      section.settings.lifestyle_image
+                      | image_url: width: 1600
+                      | image_tag:
+                        widths: '480, 720, 960, 1200, 1600',
+                        sizes: '(min-width: 990px) 55vw, 100vw',
+                        loading: 'lazy',
+                        alt: 'Raspberry gummy held in a hand'
+                    }}
+                  {%- else -%}
+                    <img
+                      src="{{ 'nl-life-hand.webp' | asset_url }}"
+                      alt="Raspberry gummy held in a hand"
+                      width="1200"
+                      height="1200"
+                      loading="lazy"
+                    >
+                  {%- endif -%}
+                </figure>
+              {%- endif -%}
             </div>
-            {%- liquid
-              assign slide_count = p.media.size
-              if slide_count == 0
-                assign slide_count = 2
-              endif
-            -%}
             {%- if slide_count > 1 -%}
               <button type="button" class="nl-gallery__nav nl-gallery__nav--prev" data-nl-gallery-prev aria-label="Previous image">
                 {% render 'nurellea-icon', name: 'chevron-left' %}
@@ -147,7 +184,7 @@
             {%- endif -%}
           </div>
 
-          {%- if p.media.size > 1 -%}
+          {%- if slide_count > 1 -%}
             <div class="nl-gallery__thumbs" role="list">
               {%- for media in p.media -%}
                 <button
@@ -161,11 +198,30 @@
                   {{ media.preview_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 90, height: 90 }}
                 </button>
               {%- endfor -%}
+              {%- if section.settings.show_lifestyle -%}
+                <button
+                  type="button"
+                  class="nl-gallery__thumb"
+                  data-nl-gallery-thumb
+                  role="listitem"
+                  aria-label="Show the gummy in hand"
+                  aria-current="false"
+                >
+                  {%- if section.settings.lifestyle_image != blank -%}
+                    {{ section.settings.lifestyle_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 90, height: 90 }}
+                  {%- else -%}
+                    <img src="{{ 'nl-life-hand.webp' | asset_url }}" alt="" width="90" height="90" loading="lazy">
+                  {%- endif -%}
+                </button>
+              {%- endif -%}
             </div>
             <div class="nl-gallery__dots">
               {%- for media in p.media -%}
                 <button type="button" class="nl-gallery__dot" data-nl-gallery-dot aria-label="Show media {{ forloop.index }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
               {%- endfor -%}
+              {%- if section.settings.show_lifestyle -%}
+                <button type="button" class="nl-gallery__dot" data-nl-gallery-dot aria-label="Show the gummy in hand" aria-current="false"></button>
+              {%- endif -%}
             </div>
           {%- endif -%}
         </div>
@@ -192,7 +248,7 @@
           {%- endif -%}
           <h1 class="nl-pdp__title">{{ p.title | escape }}</h1>
           {%- if section.settings.show_trustpilot and section.settings.trustpilot_score != blank -%}
-            {% render 'nurellea-trustpilot', score: section.settings.trustpilot_score, link: section.settings.trustpilot_link, align: 'start' %}
+            {% render 'nurellea-trustpilot', score: section.settings.trustpilot_score, link: section.settings.trustpilot_link | default: '#reviews', align: 'start' %}
           {%- elsif review_count > 0 -%}
             <a class="nl-pdp__rating" href="#reviews">
               {% render 'nurellea-stars', rating: review_avg, size: 17 %}
@@ -1014,6 +1070,9 @@
     { "type": "checkbox", "id": "show_trustpilot", "label": "Show Trustpilot under the product title", "default": true },
     { "type": "text", "id": "trustpilot_score", "label": "Score line", "default": "4.6 from 10,561+ reviews" },
     { "type": "url", "id": "trustpilot_link", "label": "Trustpilot link" },
+    { "type": "header", "content": "Gallery" },
+    { "type": "checkbox", "id": "show_lifestyle", "label": "Show an in-use photo after the product images", "default": true },
+    { "type": "image_picker", "id": "lifestyle_image", "label": "In-use photo", "info": "Shown after the product photos. Leave blank to use the gummy-in-hand photo." },
     { "type": "header", "content": "Bundle options" },
     { "type": "paragraph", "content": "Add \"Bundle option\" blocks (e.g. 1 bag, 2 bags −10%, 3 bags −15%). Each option adds that many bags to the cart. Without bundle blocks, each variant shows as a supply card instead." },
     { "type": "text", "id": "variant_heading", "label": "Heading", "default": "Choose your supply" },

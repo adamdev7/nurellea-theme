@@ -522,6 +522,8 @@
 .nl-review-card__verified svg { width: 15px; height: 15px; }
 .nl-review-card__media { --nl-ratio: 1 / 1; max-width: 120px; border-radius: var(--nl-radius-sm); }
 .nl-review-card--demo { border-style: dashed; border-color: #e6c46a; }
+.nl-trust-panel { display: grid; gap: 12px; justify-items: start; max-width: 640px; padding: 28px; }
+.nl-trust-panel .nl-h3 { margin: 0; }
 
 .nl-empty {
   display: grid;
@@ -726,7 +728,6 @@
   .nl-pdp__grid { grid-template-columns: 1fr; }
   .nl-pdp__gallery { position: relative; top: 0; margin-inline: calc(var(--nl-gutter) * -1); }
 }
-
 .nl-gallery { display: grid; gap: 14px; }
 .nl-gallery__viewport {
   position: relative;
@@ -814,6 +815,15 @@
 }
 
 .nl-pdp__info { display: grid; gap: 22px; align-content: start; }
+@media (max-width: 749px) {
+  .nl-pdp__info { display: contents; }
+  .nl-pdp__info > * { order: 5; }
+  .nl-pdp__info > .nl-stack:first-child { order: 1; }
+  .nl-pdp__info > .nl-price { order: 2; }
+  .nl-pdp__info > .nl-pdp__tax { order: 3; }
+  .nl-pdp__gallery { order: 4; width: 100%; }
+  .nl-gallery__slide { aspect-ratio: 5 / 4; }
+}
 .nl-pdp__title { font-family: var(--nl-font-heading); font-size: clamp(2rem, 3.4vw, 2.9rem); font-weight: 400; letter-spacing: -0.02em; line-height: 1.08; }
 .nl-pdp__subtitle { font-family: var(--nl-font-accent); font-style: italic; font-size: 1.35rem; color: var(--nl-rose-deep); }
 .nl-pdp__rating { display: inline-flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--nl-text); text-decoration: none; }

@@ -9,23 +9,6 @@
  */
 {
   "sections": {
-    "intro": {
-      "type": "nurellea-pdp-intro",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "heading": "Your natural ritual",
-        "heading_line_2": "starts here",
-        "lead": "Join 300,000+ customers who've made Nurellea part of their natural daily ritual.",
-        "show_trustpilot": true,
-        "trustpilot_score": "4.6 from 10,561+ reviews",
-        "text": "<p>10 functional mushrooms in one <strong>raspberry gummy</strong>.</p>",
-        "button_label": "Start your ritual",
-        "guarantee_title": "30-day money-back guarantee",
-        "guarantee_link": "/pages/returns",
-        "guarantee_text": "<p>If you are not happy within <strong>30 days</strong>, simply email us and we will give you a full refund.</p>",
-        "show_faces": true
-      }
-    },
     "main": {
       "type": "nurellea-main-product",
       "blocks": {
@@ -111,7 +94,8 @@
         "open_description": true,
         "show_dynamic_checkout": false,
         "show_sticky_bar": true,
-        "show_disclaimer": true
+        "show_disclaimer": true,
+        "show_lifestyle": true
       }
     },
     "highlights": {
@@ -580,7 +564,8 @@
         "hide_when_empty": false,
         "app_only": false,
         "link_label": "",
-        "link_url": ""
+        "link_url": "",
+        "trustpilot_score": "4.6 from 10,561+ reviews"
       }
     },
     "faq": {
@@ -705,7 +690,6 @@
     }
   },
   "order": [
-    "intro",
     "main",
     "highlights",
     "benefits",

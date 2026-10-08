@@ -206,16 +206,30 @@
         </div>
 
         {%- if count == 0 and demo == false -%}
-          <div class="nl-empty">
-            {% render 'nurellea-icon', name: 'chat' %}
-            <p class="nl-h4">No reviews yet</p>
-            <p class="nl-muted">Reviews from customers appear here after they are checked by our team.{% if show_form %} Tried Nurellea? We would love to hear from you.{% endif %}</p>
-          </div>
+          {%- if section.settings.trustpilot_score != blank -%}
+            {%- assign trust_rating = section.settings.trustpilot_score | split: ' ' | first -%}
+            <div class="nl-card nl-trust-panel">
+              {% render 'nurellea-stars', rating: trust_rating, size: 22 %}
+              <p class="nl-h3">{{ section.settings.trustpilot_score | escape }}</p>
+              <p class="nl-muted">This score is from Trustpilot. Reviews written on this website appear here after our team checks them.</p>
+              {%- if section.settings.trustpilot_link != blank -%}
+                <a class="button nl-btn" href="{{ section.settings.trustpilot_link }}">Read them on Trustpilot</a>
+              {%- endif -%}
+            </div>
+          {%- else -%}
+            <div class="nl-empty">
+              {% render 'nurellea-icon', name: 'chat' %}
+              <p class="nl-h4">No reviews yet</p>
+              <p class="nl-muted">Reviews from customers appear here after they are checked by our team.{% if show_form %} Tried Nurellea? We would love to hear from you.{% endif %}</p>
+            </div>
+          {%- endif -%}
         {%- endif -%}
 
-        <div class="nl-empty" data-nl-reviews-empty hidden style="margin-top: 20px;">
-          <p class="nl-muted">No reviews match this filter.</p>
-        </div>
+        {%- if count > 0 -%}
+          <div class="nl-empty" data-nl-reviews-empty hidden style="margin-top: 20px;">
+            <p class="nl-muted">No reviews match this filter.</p>
+          </div>
+        {%- endif -%}
         {%- if count > section.settings.page_size and rendered > section.settings.page_size -%}
           <div class="nl-actions" style="justify-content:center;margin-top:32px;">
             <button type="button" class="button-secondary nl-btn" data-nl-reviews-more>Show more reviews</button>
@@ -331,7 +345,10 @@
     { "type": "checkbox", "id": "hide_when_empty", "label": "Hide section when there are no reviews", "default": false },
     { "type": "checkbox", "id": "app_only", "label": "Only show app block (hide native reviews)", "default": false },
     { "type": "text", "id": "link_label", "label": "Link label" },
-    { "type": "url", "id": "link_url", "label": "Link" }
+    { "type": "url", "id": "link_url", "label": "Link" },
+    { "type": "header", "content": "Trustpilot" },
+    { "type": "text", "id": "trustpilot_score", "label": "Score line", "info": "Shown when there are no published reviews on this site yet. Example: 4.6 from 10,561+ reviews. Leave blank to show the empty state." },
+    { "type": "url", "id": "trustpilot_link", "label": "Trustpilot profile link" }
   ],
   "blocks": [{ "type": "@app" }],
   "presets": [{ "name": "Nurellea reviews" }]

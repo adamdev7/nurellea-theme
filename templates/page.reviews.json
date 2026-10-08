@@ -7,7 +7,7 @@
         "eyebrow": "Reviews",
         "heading": "Customer",
         "heading_accent": "reviews",
-        "text": "<p>Reviews are checked by our team before they are published. Reviews marked \"Verified purchase\" have been matched to an order.</p>"
+        "text": "<p>The score on this page is from Trustpilot. Reviews left on this site are checked by our team before they are published. Reviews marked \"Verified purchase\" have been matched to an order.</p>"
       }
     },
     "reviews": {
@@ -24,7 +24,8 @@
         "limit": 0,
         "show_form": true,
         "form_expanded": true,
-        "hide_when_empty": false
+        "hide_when_empty": false,
+        "trustpilot_score": "4.6 from 10,561+ reviews"
       }
     },
     "cta": {

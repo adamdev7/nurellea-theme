@@ -15,15 +15,15 @@
         "show_awning": true,
         "show_promo": true,
         "promo_tag": "New",
-        "promo_text": "Raspberry Gut Gummies",
+        "promo_text": "Raspberry Mush Gummies",
         "promo_button": "Shop now",
         "show_badge_stars": true,
         "badge_1": "300,000+ Happy Customers",
         "badge_2": "10 Mushrooms In 1",
         "heading": "Daily wellness,",
         "heading_line_2": "made delicious",
-        "text": "<p>Raspberry gut gummies made with <strong>10 functional mushrooms</strong>, <strong>vegan ingredients</strong> and <strong>no synthetic sweeteners</strong> — a 2-a-day ritual you will actually look forward to.</p>",
-        "button_label": "Shop Gut Gummies",
+        "text": "<p>Raspberry mush gummies made with <strong>10 functional mushrooms</strong>, <strong>vegan ingredients</strong> and <strong>no synthetic sweeteners</strong> — a 2-a-day ritual you will actually look forward to.</p>",
+        "button_label": "Shop Mush Gummies",
         "show_pouch": true,
         "sticker_1": "10-in-1 mushrooms",
         "sticker_2": "Just 2 a day"
@@ -61,7 +61,7 @@
         "tab_mind": "Mind & Energy",
         "tab_defences": "Defences",
         "tab_gut": "Gut & Glow",
-        "button_label": "Shop Gut Gummies",
+        "button_label": "Shop Mush Gummies",
         "show_price": true,
         "show_deco": true
       }
@@ -187,7 +187,7 @@
       "settings": {
         "heading": "Ritual Of The Month: The Raspberry Morning Reset",
         "subheading": "Five calm minutes that set the tone for your whole day.",
-        "tags": "Raspberry Gut Gummies\nA tall glass of water\nFive slow breaths",
+        "tags": "Raspberry Mush Gummies\nA tall glass of water\nFive slow breaths",
         "button_label": "Try the morning reset",
         "card_title": "Morning Reset Ritual"
       }
@@ -213,7 +213,7 @@
         "nurellea_1": {
           "type": "question",
           "settings": {
-            "question": "What's in Nurellea Gut Gummies?",
+            "question": "What's in Nurellea Mush Gummies?",
             "answer": "<p>Ten functional mushroom extracts, 250 mg each: Lion's Mane, Cordyceps, Chaga, Maitake, Shiitake, Reishi, Tremella, Royal Sun, Black Fungus and White Button. The other ingredients are glucose syrup, sugar, glucose, pectin, citric acid, natural raspberry flavor, sodium citrate, fruit and vegetable juice concentrate and a glazing agent (sunflower oil, carnauba wax). Full supplement facts are on the <a href=\"/pages/ingredients\">ingredients page</a>.</p>",
             "category": "Product"
           }
@@ -268,7 +268,7 @@
       "settings": {
         "heading": "Your New Daily Ritual Is One Tap Away",
         "subheading": "Two raspberry gummies, ten functional mushrooms, zero fuss.",
-        "button_label": "Shop Gut Gummies"
+        "button_label": "Shop Mush Gummies"
       }
     }
   },

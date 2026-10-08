@@ -24,7 +24,7 @@
       <div class="nl-split__content" data-nl-reveal>
         {%- if section.settings.eyebrow != blank -%}<p class="nl-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
         <h2 id="Spotlight-{{ section.id }}" class="nl-h2">
-          {%- if section.settings.heading != blank -%}{{ section.settings.heading | escape }}{%- else -%}{{ p.title | default: 'Nurellea Gut Gummies' | escape }}{%- endif -%}
+          {%- if section.settings.heading != blank -%}{{ section.settings.heading | escape }}{%- else -%}{{ p.title | default: 'Nurellea Mush Gummies' | escape }}{%- endif -%}
         </h2>
         {%- if mf.subtitle != blank -%}<p class="nl-pdp__subtitle">{{ mf.subtitle.value | escape }}</p>{%- endif -%}
         {%- if review_count > 0 -%}

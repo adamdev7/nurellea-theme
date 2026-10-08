@@ -42,10 +42,10 @@ const FAQ = {
   guarantee: q("What if they're not for me?", '<p>Every order is covered by our 30-day money-back guarantee. If you are not happy, <a href="/pages/contact">contact us</a> within 30 days of receiving your order and we will refund you. Full terms are in our <a href="/pages/returns">returns information</a>.</p>', 'Orders & shipping'),
   change: q('Can I change or cancel my order?', '<p>Please <a href="/pages/contact">contact us</a> as soon as possible with your order number. We will do our best to help if your order has not been shipped yet.</p>', 'Orders & shipping'),
   returns: q('What is your return policy?', '<p>Please see our <a href="/pages/returns">returns information</a> for eligibility and how to start a return.</p>', 'Orders & shipping'),
-  inside: q("What's in Nurellea Gut Gummies?", "<p>Ten functional mushroom extracts, 250 mg each: Lion's Mane, Cordyceps, Chaga, Maitake, Shiitake, Reishi, Tremella, Royal Sun, Black Fungus and White Button. The other ingredients are glucose syrup, sugar, glucose, pectin, citric acid, natural raspberry flavor, sodium citrate, fruit and vegetable juice concentrate and a glazing agent (sunflower oil, carnauba wax). Full supplement facts are on the <a href=\"/pages/ingredients\">ingredients page</a>.</p>", 'Product'),
+  inside: q("What's in Nurellea Mush Gummies?", "<p>Ten functional mushroom extracts, 250 mg each: Lion's Mane, Cordyceps, Chaga, Maitake, Shiitake, Reishi, Tremella, Royal Sun, Black Fungus and White Button. The other ingredients are glucose syrup, sugar, glucose, pectin, citric acid, natural raspberry flavor, sodium citrate, fruit and vegetable juice concentrate and a glazing agent (sunflower oil, carnauba wax). Full supplement facts are on the <a href=\"/pages/ingredients\">ingredients page</a>.</p>", 'Product'),
   take: q('How do I take them?', '<p>Take 2 gummies a day and chew thoroughly. Many people pair them with breakfast so the habit sticks. Do not exceed the recommended daily dose.</p>', 'Product'),
   medical: q('Can I take them with medication, or if I am pregnant or breastfeeding?', '<p>Please speak with your doctor or pharmacist before taking any food supplement if you are pregnant, breastfeeding, taking medication or have a medical condition. Always read the warnings on the label.</p>', 'Product'),
-  diet: q('Are they vegan?', '<p>Yes. Nurellea Gut Gummies are vegan and non-GMO, and they are set with fruit pectin instead of gelatin.</p>', 'Product'),
+  diet: q('Are they vegan?', '<p>Yes. Nurellea Mush Gummies are vegan and non-GMO, and they are set with fruit pectin instead of gelatin.</p>', 'Product'),
   storage: q('How should I store them?', '<p>Store the bag in a cool, dry place away from direct sunlight, reseal it after each use and keep it out of reach of children.</p>', 'Product'),
   sugar: q('Do they contain sugar?', '<p>Yes, a little. Mushrooms are naturally bitter, so we use just enough sugar to make every gummy taste like raspberry — with no synthetic sweeteners. The full list is under Other ingredients on the product page.</p>', 'Product'),
   magic: q('Are these magic mushrooms?', '<p>No. Our gummies contain functional mushrooms, not psychoactive ones. There are no psychoactive compounds in them.</p>', 'Product'),
@@ -78,11 +78,11 @@ write(
   template([
     ['hero', section('nurellea-hero', {
       color_scheme: 'scheme-2',
-      eyebrow: 'Gut gummies for women',
+      eyebrow: 'Mush gummies for women',
       heading: 'A daily ritual that feels',
       heading_accent: 'like self-care',
       text: '<p>10 functional mushrooms in 2 raspberry gummies a day. A daily supplement you will actually look forward to — vegan, lab tested and made to fit the way you live.</p>',
-      button_label: 'Shop Gut Gummies',
+      button_label: 'Shop Mush Gummies',
       button2_label: "See what's inside",
       button2_link: '/pages/ingredients',
       show_price_chip: true,
@@ -198,7 +198,7 @@ write(
       heading: 'Begin your',
       heading_accent: 'Nurellea ritual',
       text: '<p>A small moment of care, every day. Make Nurellea part of yours.</p>',
-      button_label: 'Shop Gut Gummies',
+      button_label: 'Shop Mush Gummies',
     })],
   ])
 );
@@ -317,7 +317,7 @@ write(
       eyebrow: 'Try it risk-free',
       heading: 'Our 30-day',
       heading_accent: 'money-back guarantee',
-      text: '<p>We want you to love your ritual. If Nurellea Gut Gummies are not for you, contact us within 30 days of receiving your order and we will refund you.</p>',
+      text: '<p>We want you to love your ritual. If Nurellea Mush Gummies are not for you, contact us within 30 days of receiving your order and we will refund you.</p>',
       button_label: 'Try Nurellea today',
     })],
     ['reviews', section('nurellea-reviews', {
@@ -407,7 +407,7 @@ write(
       { type: 'feature', settings: { icon: 'chat', title: 'Real conversations', text: '<p>Questions about your order or our products? Our team is one message away.</p>' } },
       { type: 'feature', settings: { icon: 'shield', title: 'Responsible words', text: '<p>We describe our products carefully and never use invented reviews or results.</p>' } },
     ])],
-    ['cta', section('nurellea-cta', { color_scheme: 'scheme-1', show_logo: true, heading: 'Ready to begin your', heading_accent: 'ritual?', text: '', button_label: 'Shop Gut Gummies' })],
+    ['cta', section('nurellea-cta', { color_scheme: 'scheme-1', show_logo: true, heading: 'Ready to begin your', heading_accent: 'ritual?', text: '', button_label: 'Shop Mush Gummies' })],
   ])
 );
 
@@ -430,7 +430,7 @@ write(
       layout: 'tap',
       columns: '5',
       show_disclaimer: true,
-      button_label: 'Shop Gut Gummies',
+      button_label: 'Shop Mush Gummies',
     }, MUSHROOMS)],
     ['label', section('nurellea-label-facts', { color_scheme: 'scheme-3', eyebrow: 'The label', heading: 'Everything on the', heading_accent: 'label' })],
     ['ritual', section('nurellea-steps', {
@@ -445,7 +445,7 @@ write(
       { type: 'step', settings: { title: 'Store it well', text: '<p>Store as directed on the label and keep out of reach of children.</p>' } },
     ])],
     ['faq', section('nurellea-faq', { source: 'blocks', color_scheme: 'scheme-2', layout: 'split', eyebrow: 'FAQ', heading: 'Ingredient', heading_accent: 'questions', contact_label: 'Ask us anything', contact_link: '/pages/contact' }, [FAQ.medical, FAQ.diet, FAQ.storage])],
-    ['cta', section('nurellea-cta', { color_scheme: 'scheme-1', show_logo: false, heading: 'Ready to try', heading_accent: 'Nurellea?', text: '', button_label: 'Shop Gut Gummies' })],
+    ['cta', section('nurellea-cta', { color_scheme: 'scheme-1', show_logo: false, heading: 'Ready to try', heading_accent: 'Nurellea?', text: '', button_label: 'Shop Mush Gummies' })],
   ])
 );
 
@@ -513,7 +513,7 @@ write(
       form_expanded: true,
       hide_when_empty: false,
     })],
-    ['cta', section('nurellea-cta', { color_scheme: 'scheme-1', show_logo: false, heading: 'Try it for', heading_accent: 'yourself', text: '', button_label: 'Shop Gut Gummies' })],
+    ['cta', section('nurellea-cta', { color_scheme: 'scheme-1', show_logo: false, heading: 'Try it for', heading_accent: 'yourself', text: '', button_label: 'Shop Mush Gummies' })],
   ])
 );
 
@@ -637,7 +637,7 @@ ann.settings['padding-block-end'] = 10;
 ann.blocks = {
   announcement_1: {
     type: '_announcement',
-    settings: { text: 'Meet Nurellea Gut Gummies — your new daily ritual', link: '/collections/all', font: 'var(--font-subheading--family)', font_size: '0.875rem', weight: '', letter_spacing: 'normal', case: 'none' },
+    settings: { text: 'Meet Nurellea Mush Gummies — your new daily ritual', link: '/collections/all', font: 'var(--font-subheading--family)', font_size: '0.875rem', weight: '', letter_spacing: 'normal', case: 'none' },
     blocks: {},
   },
   announcement_2: {

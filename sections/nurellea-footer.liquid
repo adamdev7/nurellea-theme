@@ -1,6 +1,6 @@
 {%- liquid
   assign product_url = settings.nurellea_product.url | default: routes.all_products_collection_url
-  assign fallback_shop = 'Shop all|' | append: routes.all_products_collection_url | append: ';Gut Gummies|' | append: product_url | append: ';Ingredients|/pages/ingredients;Reviews|/pages/reviews'
+  assign fallback_shop = 'Shop all|' | append: routes.all_products_collection_url | append: ';Mush Gummies|' | append: product_url | append: ';Ingredients|/pages/ingredients;Reviews|/pages/reviews'
   assign fallback_help = 'FAQ|/pages/faq;Track your order|/pages/track-order;Shipping|/pages/shipping;Returns|/pages/returns;Contact us|/pages/contact'
   assign fallback_about = 'About Nurellea|/pages/about;Journal|/blogs/news'
 -%}

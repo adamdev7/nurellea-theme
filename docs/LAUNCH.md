@@ -16,7 +16,7 @@ Work lives on branch `nurellea-redesign`. The untouched starting point is preser
 
 | Group | Setting | Current | Action |
 | --- | --- | --- | --- |
-| Nurellea product | `nurellea_product` | blank | Pick the Gut Gummies product. Home, header and CTA sections read price, image and URL from it. |
+| Nurellea product | `nurellea_product` | blank | Pick the Mush Gummies product. Home, header and CTA sections read price, image and URL from it. |
 | Brand & support | `brand_support_email` | blank | _Needed:_ Nurellea support address. |
 | | `brand_support_phone`, `brand_support_hours`, `brand_response_time` | blank | Optional. Only enter real commitments; hidden when blank. |
 | | `brand_legal_name`, `brand_business_address` | blank | _Needed_ for footer/legal and Organization JSON-LD. |
@@ -62,7 +62,7 @@ Blog: the footer's fallback "Journal" link points to Shopify's default blog, `/b
 ## 4. Navigation
 
 - `main-menu`: Shop (`/collections/all` or the product), Ingredients, Reviews, About, FAQ.
-- `footer`: the footer section has three link columns; assign menus or keep the built-in fallback links (Shop all, Gut Gummies, Ingredients, Reviews / FAQ, Track your order, Shipping, Returns, Contact / About, Journal).
+- `footer`: the footer section has three link columns; assign menus or keep the built-in fallback links (Shop all, Mush Gummies, Ingredients, Reviews / FAQ, Track your order, Shipping, Returns, Contact / About, Journal).
 
 ## 5. Content model
 

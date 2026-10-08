@@ -15,7 +15,7 @@ if (!has('nurellea_product')) {
     {
       type: 'product',
       id: 'nurellea_product',
-      label: 'Gut Gummies product',
+      label: 'Mush Gummies product',
       info: 'Single source of truth for price, variants, stock and product facts used across the homepage, ingredients and FAQ sections. Sections can override it.',
     },
   ]);

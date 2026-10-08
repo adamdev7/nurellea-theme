@@ -2290,7 +2290,7 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Label facts for the Gut Gummies. Used on the product page, ingredients and label sections whenever the product's own nurellea.* metafields are empty. Must match the printed label exactly."
+        "content": "Label facts for the Mush Gummies. Used on the product page, ingredients and label sections whenever the product's own nurellea.* metafields are empty. Must match the printed label exactly."
       },
       { "type": "text", "id": "facts_subtitle", "label": "Product subtitle" },
       {
@@ -2333,7 +2333,7 @@
       {
         "type": "product",
         "id": "nurellea_product",
-        "label": "Gut Gummies product",
+        "label": "Mush Gummies product",
         "info": "Single source of truth for price, variants, stock and product facts used across the homepage, ingredients and FAQ sections. Sections can override it."
       },
       {

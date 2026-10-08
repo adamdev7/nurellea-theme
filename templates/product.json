@@ -542,7 +542,7 @@
         "eyebrow": "Try it risk-free",
         "heading": "Our 30-day",
         "heading_accent": "money-back guarantee",
-        "text": "<p>We want you to love your ritual. If Nurellea Gut Gummies are not for you, contact us within 30 days of receiving your order and we will refund you.</p>",
+        "text": "<p>We want you to love your ritual. If Nurellea Mush Gummies are not for you, contact us within 30 days of receiving your order and we will refund you.</p>",
         "button_label": "Try Nurellea today"
       }
     },
@@ -582,7 +582,7 @@
         "nurellea_2": {
           "type": "question",
           "settings": {
-            "question": "What's in Nurellea Gut Gummies?",
+            "question": "What's in Nurellea Mush Gummies?",
             "answer": "<p>Ten functional mushroom extracts, 250 mg each: Lion's Mane, Cordyceps, Chaga, Maitake, Shiitake, Reishi, Tremella, Royal Sun, Black Fungus and White Button. The other ingredients are glucose syrup, sugar, glucose, pectin, citric acid, natural raspberry flavor, sodium citrate, fruit and vegetable juice concentrate and a glazing agent (sunflower oil, carnauba wax). Full supplement facts are on the <a href=\"/pages/ingredients\">ingredients page</a>.</p>",
             "category": "Product"
           }
@@ -599,7 +599,7 @@
           "type": "question",
           "settings": {
             "question": "Are they vegan?",
-            "answer": "<p>Yes. Nurellea Gut Gummies are vegan and non-GMO, and they are set with fruit pectin instead of gelatin.</p>",
+            "answer": "<p>Yes. Nurellea Mush Gummies are vegan and non-GMO, and they are set with fruit pectin instead of gelatin.</p>",
             "category": "Product"
           }
         },

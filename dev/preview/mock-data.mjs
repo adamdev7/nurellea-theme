@@ -26,7 +26,7 @@ const variant = (id, title, price, compare, available, badge, caption) => ({
 // One variant, like the live product; bundle options are quantity-based theme blocks.
 const variants = [variant(9001, 'Default Title', 4019, null, true, null, null)];
 
-const pouch = { src: '/assets/nurellea-gut-gummies-pouch.webp', alt: 'Nurellea Gut Gummies pouch', width: 819, height: 819 };
+const pouch = { src: '/assets/nurellea-mush-gummies-pouch.webp', alt: 'Nurellea Mush Gummies pouch', width: 819, height: 819 };
 const pouchMedia = { id: 5001, media_type: 'image', ...pouch, preview_image: pouch };
 
 // Sample values layered over theme/section settings in the preview only, so optional UI (bundle discounts,
@@ -36,7 +36,7 @@ export const previewSectionSettings = { 'nurellea-main-product': { bundle_discou
 
 export const product = {
   id: 7001,
-  title: 'Gut Gummies (sample product)',
+  title: 'Mush Gummies (sample product)',
   handle: 'gut-gummies',
   url: '/products/gut-gummies',
   type: 'Gummies',

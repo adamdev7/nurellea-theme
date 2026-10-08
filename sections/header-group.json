@@ -8,7 +8,7 @@
         "announcement_1": {
           "type": "_announcement",
           "settings": {
-            "text": "Meet Nurellea Gut Gummies — your new daily ritual",
+            "text": "Meet Nurellea Mush Gummies — your new daily ritual",
             "link": "/collections/all",
             "font": "var(--font-subheading--family)",
             "font_size": "0.875rem",

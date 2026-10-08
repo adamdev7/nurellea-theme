@@ -156,7 +156,7 @@ Object.assign(c, {
   reviews_demo_preview: false,
   seo_noindex_all: false,
   seo_default_description:
-    'Nurellea makes women’s wellness gummies for a simple, enjoyable daily routine. Shop gut gummies, read the full ingredient details and find answers to common questions.',
+    'Nurellea makes women’s wellness gummies for a simple, enjoyable daily routine. Shop mush gummies, read the full ingredient details and find answers to common questions.',
   show_placeholder_labels: true,
   legacy_vendor_scripts: false,
   color_schemes: schemes,

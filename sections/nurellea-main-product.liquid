@@ -30,6 +30,35 @@
   if subscriptions_on == false
     assign selected_plan = nil
   endif
+  assign subscribe_plan = nil
+  assign subscribe_percent = 0
+  if settings.subscriptions_enabled
+    for group in p.selling_plan_groups
+      for plan in group.selling_plans
+        assign this_percent = 0
+        for adjustment in plan.price_adjustments
+          if adjustment.value_type == 'percentage' and adjustment.value > this_percent
+            assign this_percent = adjustment.value | round
+          endif
+        endfor
+        if subscribe_plan == nil or this_percent > subscribe_percent
+          assign subscribe_plan = plan
+          assign subscribe_percent = this_percent
+        endif
+      endfor
+    endfor
+  endif
+  assign subscribe_title = section.settings.subscribe_title
+  if subscribe_title == blank
+    assign subscribe_title = 'Save 20% With Auto Refills'
+  endif
+  if subscribe_percent > 0
+    assign subscribe_title = 'Save ' | append: subscribe_percent | append: '% With Auto Refills'
+  endif
+  assign subscribe_subtitle = section.settings.subscribe_subtitle
+  if subscribe_subtitle == blank
+    assign subscribe_subtitle = 'Cancel Anytime, Zero Commitment'
+  endif
 
   capture review_stats
     render 'nurellea-review-stats', product: p
@@ -336,9 +365,10 @@
           <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
           {%- form 'product', p, id: form_id, data-type: 'add-to-cart-form' -%}
             <input type="hidden" name="id" ref="variantId" value="{{ current_variant.id }}">
-            {%- if subscriptions_on -%}
-              <input type="hidden" name="selling_plan" value="{{ selected_plan.id }}" {% unless selected_plan %}disabled{% endunless %}>
+            {%- if subscribe_plan -%}
+              <input type="hidden" name="selling_plan" value="{{ subscribe_plan.id }}">
             {%- endif -%}
+            <input type="hidden" name="properties[Auto refill]" value="Yes" data-nl-subscribe-prop>
 
             <div class="nl-stack">
               {%- if tier_mode -%}
@@ -592,70 +622,7 @@
                 </fieldset>
               {%- endif -%}
 
-              {%- if tier_mode and tier_live -%}
-                {%- liquid
-                  assign offer_index = -1
-                  assign offer_discount = 0
-                  assign base_tier = 0
-                  assign base_found = false
-                  for tier in tier_blocks
-                    if tier.settings.discount == 0 and base_found == false
-                      assign base_tier = forloop.index0
-                      assign base_found = true
-                    endif
-                    if tier.settings.discount > offer_discount
-                      assign offer_discount = tier.settings.discount
-                      assign offer_index = forloop.index0
-                    endif
-                  endfor
-                  assign offer_name = ''
-                  assign offer_free = false
-                  if offer_discount > 0 and offer_index != base_tier
-                    assign offer_tier = tier_blocks[offer_index]
-                    assign offer_qty = offer_tier.settings.quantity | at_least: 1
-                    assign offer_unit = section.settings.unit_plural | default: 'bags'
-                    if offer_qty == 1
-                      assign offer_unit = section.settings.unit_singular | default: 'bag'
-                    endif
-                    assign offer_name = offer_tier.settings.title
-                    if offer_name == blank
-                      assign offer_name = offer_qty | append: ' ' | append: offer_unit
-                    endif
-                    capture offer_math
-                      render 'nurellea-bundle-math', price: current_variant.price, qty: offer_qty, discount: offer_discount, days: 0, live: tier_live
-                    endcapture
-                    assign offer_parts = offer_math | strip | split: '|'
-                    assign offer_total = offer_parts[0] | plus: 0
-                    assign free_ship_cents = settings.free_shipping_threshold | plus: 0 | times: 100
-                    if free_ship_cents > 0 and offer_total >= free_ship_cents
-                      assign offer_free = true
-                    endif
-                  endif
-                -%}
-                {%- if offer_discount > 0 and offer_index != base_tier -%}
-                  <label class="nl-offer">
-                    <input
-                      type="checkbox"
-                      data-nl-offer-input
-                      data-nl-offer-on="{{ offer_index }}"
-                      data-nl-offer-off="{{ base_tier }}"
-                      {% if selected_tier == offer_index %}checked{% endif %}
-                    >
-                    <span class="nl-offer__box">
-                      <span class="nl-offer__check" aria-hidden="true"></span>
-                      <span class="nl-offer__copy">
-                        <span class="nl-offer__title">Save {{ offer_discount }}% on {{ offer_name | escape }}</span>
-                        <span class="nl-offer__sub" data-nl-offer-sub data-guarantee="{{ settings.guarantee_text | escape }}">
-                          {%- if offer_free -%}Free shipping{% if settings.guarantee_text != blank %} · {% endif %}{%- endif -%}
-                          {%- if settings.guarantee_text != blank -%}{{ settings.guarantee_text | escape }}{%- endif -%}
-                        </span>
-                      </span>
-                    </span>
-                  </label>
-                {%- endif -%}
-              {%- endif -%}
-
-              {%- if subscriptions_on -%}
+              {%- if subscriptions_on and subscribe_plan == nil -%}
                 <fieldset class="nl-options">
                   <legend class="nl-options__legend"><span>Purchase option</span></legend>
                   {%- unless p.requires_selling_plan -%}
@@ -704,6 +671,21 @@
                 <span class="product-form-text__error hidden" ref="addToCartTextError">
                   <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
                 </span>
+                <label class="nl-offer">
+                  <input
+                    type="checkbox"
+                    data-nl-subscribe
+                    value="{{ subscribe_plan.id }}"
+                    checked
+                  >
+                  <span class="nl-offer__box">
+                    <span class="nl-offer__check" aria-hidden="true"></span>
+                    <span class="nl-offer__copy">
+                      <span class="nl-offer__title">{{ subscribe_title | escape }}</span>
+                      <span class="nl-offer__sub">{{ subscribe_subtitle | escape }}</span>
+                    </span>
+                  </span>
+                </label>
                 <div class="nl-buy-row">
                   {%- if tier_mode -%}
                     <input type="hidden" name="quantity" value="{{ tier_blocks[selected_tier].settings.quantity | at_least: 1 }}" data-nl-tier-qty>
@@ -1168,6 +1150,20 @@
     },
     { "type": "checkbox", "id": "show_best_value", "label": "Label the biggest saving", "default": true },
     { "type": "text", "id": "best_value_label", "label": "Biggest saving label", "default": "Best value" },
+    { "type": "header", "content": "Auto refill" },
+    {
+      "type": "text",
+      "id": "subscribe_title",
+      "label": "Checked label",
+      "default": "Save 20% With Auto Refills",
+      "info": "Used when the product has no percentage selling plan. A plan percent replaces this with “Save 20% With Auto Refills”."
+    },
+    {
+      "type": "text",
+      "id": "subscribe_subtitle",
+      "label": "Note under the label",
+      "default": "Cancel Anytime, Zero Commitment"
+    },
     { "type": "header", "content": "Buy box" },
     { "type": "checkbox", "id": "show_quantity", "label": "Show quantity selector", "default": true },
     { "type": "checkbox", "id": "show_short_description", "label": "Show short description above buy box", "default": false },

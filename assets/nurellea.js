@@ -137,23 +137,19 @@
       this.tierInputs.forEach((input) =>
         input.addEventListener('change', () => input.checked && this.selectTier(Number(input.value)))
       );
-      this.offerInput = $('[data-nl-offer-input]', root);
-      this.offerInput?.addEventListener('change', () => {
-        const index = Number(this.offerInput.checked ? this.offerInput.dataset.nlOfferOn : this.offerInput.dataset.nlOfferOff);
-        const tierInput = this.tierInputs[index];
-        if (!tierInput || tierInput.checked) {
-          this.syncOffer();
-          return;
-        }
-        tierInput.checked = true;
-        this.selectTier(index);
+      this.subscribeInput = $('[data-nl-subscribe]', root);
+      this.subscribeProp = this.form ? $('input[data-nl-subscribe-prop]', this.form) : null;
+      this.subscribeInput?.addEventListener('change', () => {
+        this.applySubscribe(this.subscribeInput.checked);
       });
       const checkedTier = this.tierInputs.find((input) => input.checked);
       this.tierIndex = checkedTier ? Number(checkedTier.value) : 0;
 
       const initial = this.idInput?.value;
       this.current = this.variants.find((v) => String(v.id) === String(initial)) || this.variants[0];
-      this.currentPlan = this.planInput?.value || '';
+      this.currentPlan = '';
+      if (this.subscribeInput) this.applySubscribe(this.subscribeInput.checked, false);
+      else this.currentPlan = this.planInput?.value || '';
       if (this.tierInputs.length) this.selectTier(this.tierIndex);
       else this.render();
       this.initSticky();
@@ -203,12 +199,25 @@
       this.render();
     }
 
+    applySubscribe(checked, render = true) {
+      const planId = checked ? this.subscribeInput?.value || '' : '';
+      this.currentPlan = planId;
+      if (this.planInput) {
+        this.planInput.value = planId;
+        this.planInput.disabled = !planId;
+      }
+      if (this.subscribeProp) this.subscribeProp.disabled = !checked;
+      if (render) this.render();
+    }
+
     selectPlan(planId) {
       this.currentPlan = planId || '';
       if (this.planInput) {
         this.planInput.value = this.currentPlan;
         this.planInput.disabled = !this.currentPlan;
       }
+      if (this.subscribeInput) this.subscribeInput.checked = Boolean(this.currentPlan);
+      if (this.subscribeProp) this.subscribeProp.disabled = !this.subscribeInput?.checked;
       this.render();
     }
 
@@ -247,7 +256,6 @@
       set('[data-nl-unit]', v.unit_price || '');
       set('[data-nl-variant-title]', [variantTitle, tierTitle].filter(Boolean).join(' · '));
       this.renderTiers(v);
-      this.syncOffer();
 
       $$('[data-nl-stock]', this.root).forEach((el) => {
         el.dataset.available = String(v.available);
@@ -266,21 +274,6 @@
         const src = plan && v.plans ? v.plans[plan] : v;
         if (src) el.textContent = src.price;
       });
-    }
-
-    syncOffer() {
-      const offer = this.offerInput;
-      if (!offer || !this.tierInputs.length) return;
-      const on = Number(offer.dataset.nlOfferOn);
-      offer.checked = this.tierIndex === on;
-      const sub = $('[data-nl-offer-sub]', this.root);
-      const tier = this.current?.tiers?.[on];
-      if (!sub || !tier) return;
-      const bits = [];
-      if (tier.free_shipping) bits.push('Free shipping');
-      if (sub.dataset.guarantee) bits.push(sub.dataset.guarantee);
-      sub.textContent = bits.join(' · ');
-      sub.hidden = bits.length === 0;
     }
 
     renderTiers(v) {

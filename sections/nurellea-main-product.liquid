@@ -248,7 +248,8 @@
           {%- endif -%}
           <h1 class="nl-pdp__title">{{ p.title | escape }}</h1>
           {%- if section.settings.show_trustpilot and section.settings.trustpilot_score != blank -%}
-            {% render 'nurellea-trustpilot', score: section.settings.trustpilot_score, link: section.settings.trustpilot_link | default: '#reviews', align: 'start' %}
+            {%- assign trustpilot_link = section.settings.trustpilot_link | default: '#reviews' -%}
+            {% render 'nurellea-trustpilot', score: section.settings.trustpilot_score, link: trustpilot_link, align: 'start' %}
           {%- elsif review_count > 0 -%}
             <a class="nl-pdp__rating" href="#reviews">
               {% render 'nurellea-stars', rating: review_avg, size: 17 %}

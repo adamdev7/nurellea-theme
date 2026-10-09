@@ -665,12 +665,6 @@
               {%- endif -%}
 
               <div class="nl-stack nl-stack--sm" data-nl-buy-area>
-                <span class="nl-stock" data-nl-stock data-available="{{ current_variant.available }}">
-                  {%- if current_variant.available -%}In stock{%- else -%}Sold out{%- endif -%}
-                </span>
-                <span class="product-form-text__error hidden" ref="addToCartTextError">
-                  <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
-                </span>
                 <label class="nl-offer">
                   <input
                     type="checkbox"
@@ -686,6 +680,12 @@
                     </span>
                   </span>
                 </label>
+                <span class="nl-stock" data-nl-stock data-available="{{ current_variant.available }}">
+                  {%- if current_variant.available -%}In stock{%- else -%}Sold out{%- endif -%}
+                </span>
+                <span class="product-form-text__error hidden" ref="addToCartTextError">
+                  <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+                </span>
                 <div class="nl-buy-row">
                   {%- if tier_mode -%}
                     <input type="hidden" name="quantity" value="{{ tier_blocks[selected_tier].settings.quantity | at_least: 1 }}" data-nl-tier-qty>

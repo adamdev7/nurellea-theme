@@ -159,6 +159,34 @@ test('bundle options: the pre-selected tier sets cart quantity, prices and the p
   assert.equal(doc.querySelector('[data-nl-tier="0"] [data-nl-tier-save]').hidden, true);
 });
 
+test('offer checkbox selects the best supply and clears back to one bag', async () => {
+  const html = TIER_PDP.replace(
+    '<div data-nl-buy-area>',
+    `<label class="nl-offer"><input type="checkbox" data-nl-offer-input data-nl-offer-on="2" data-nl-offer-off="0" checked>
+      <span class="nl-offer__sub" data-nl-offer-sub data-guarantee="30-day money-back guarantee">Free shipping · 30-day money-back guarantee</span></label>
+      <div data-nl-buy-area>`
+  );
+  const env = createWindow({ url: 'https://nurellea.test/products/gut-gummies', html });
+  env.window.__META_CAPI__ = { variantId: 11, productPrice: 40.19 };
+  env.window.eval(SCRIPT);
+  await ready(env.window);
+  const doc = env.window.document;
+  const offer = doc.querySelector('[data-nl-offer-input]');
+  assert.equal(offer.checked, true);
+  assert.equal(doc.querySelector('[data-nl-offer-sub]').textContent, 'Free shipping · 30-day money-back guarantee');
+  offer.checked = false;
+  offer.dispatchEvent(new env.window.Event('change', { bubbles: true }));
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '1');
+  assert.equal(offer.checked, false);
+  assert.equal(doc.querySelector('[data-nl-offer-sub]').textContent, 'Free shipping · 30-day money-back guarantee');
+  offer.checked = true;
+  offer.dispatchEvent(new env.window.Event('change', { bubbles: true }));
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '3');
+  assert.equal(doc.querySelector('[data-nl-price]').textContent, '$102.48');
+  chooseTier(env.window, 1);
+  assert.equal(offer.checked, false);
+});
+
 test('bundle options: switching tiers updates quantity, Horizon quantity default, prices and attribution', async () => {
   const { window } = await bootTierPdp();
   const doc = window.document;

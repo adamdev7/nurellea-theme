@@ -159,11 +159,15 @@ test('bundle options: the pre-selected tier sets cart quantity, prices and the p
   assert.equal(doc.querySelector('[data-nl-tier="0"] [data-nl-tier-save]').hidden, true);
 });
 
-test('offer checkbox selects the best supply and clears back to one bag', async () => {
+test('auto refill stays checked by default and unchecking it is a one-time purchase', async () => {
   const html = TIER_PDP.replace(
+    '<form data-type="add-to-cart-form" action="/cart/add" method="post">',
+    `<form data-type="add-to-cart-form" action="/cart/add" method="post">
+      <input type="hidden" name="selling_plan" value="99">
+      <input type="hidden" name="properties[Auto refill]" value="Yes" data-nl-subscribe-prop>`
+  ).replace(
     '<div data-nl-buy-area>',
-    `<label class="nl-offer"><input type="checkbox" data-nl-offer-input data-nl-offer-on="2" data-nl-offer-off="0" checked>
-      <span class="nl-offer__sub" data-nl-offer-sub data-guarantee="30-day money-back guarantee">Free shipping · 30-day money-back guarantee</span></label>
+    `<label class="nl-offer"><input type="checkbox" data-nl-subscribe value="99" checked></label>
       <div data-nl-buy-area>`
   );
   const env = createWindow({ url: 'https://nurellea.test/products/gut-gummies', html });
@@ -171,20 +175,27 @@ test('offer checkbox selects the best supply and clears back to one bag', async 
   env.window.eval(SCRIPT);
   await ready(env.window);
   const doc = env.window.document;
-  const offer = doc.querySelector('[data-nl-offer-input]');
-  assert.equal(offer.checked, true);
-  assert.equal(doc.querySelector('[data-nl-offer-sub]').textContent, 'Free shipping · 30-day money-back guarantee');
-  offer.checked = false;
-  offer.dispatchEvent(new env.window.Event('change', { bubbles: true }));
-  assert.equal(doc.querySelector('input[name="quantity"]').value, '1');
-  assert.equal(offer.checked, false);
-  assert.equal(doc.querySelector('[data-nl-offer-sub]').textContent, 'Free shipping · 30-day money-back guarantee');
-  offer.checked = true;
-  offer.dispatchEvent(new env.window.Event('change', { bubbles: true }));
+  const box = doc.querySelector('[data-nl-subscribe]');
+  const plan = doc.querySelector('input[name="selling_plan"]');
+  const prop = doc.querySelector('[data-nl-subscribe-prop]');
+  assert.equal(box.checked, true);
+  assert.equal(plan.disabled, false);
+  assert.equal(plan.value, '99');
+  assert.equal(prop.disabled, false);
   assert.equal(doc.querySelector('input[name="quantity"]').value, '3');
-  assert.equal(doc.querySelector('[data-nl-price]').textContent, '$102.48');
-  chooseTier(env.window, 1);
-  assert.equal(offer.checked, false);
+  box.checked = false;
+  box.dispatchEvent(new env.window.Event('change', { bubbles: true }));
+  assert.equal(plan.disabled, true);
+  assert.equal(prop.disabled, true);
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '3');
+  box.checked = true;
+  box.dispatchEvent(new env.window.Event('change', { bubbles: true }));
+  assert.equal(plan.disabled, false);
+  assert.equal(plan.value, '99');
+  assert.equal(prop.disabled, false);
+  chooseTier(env.window, 0);
+  assert.equal(box.checked, true);
+  assert.equal(doc.querySelector('input[name="quantity"]').value, '1');
 });
 
 test('bundle options: switching tiers updates quantity, Horizon quantity default, prices and attribution', async () => {

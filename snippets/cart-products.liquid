@@ -53,6 +53,25 @@
       </span>
     </a>
   {%- else -%}
+    {%- liquid
+      assign pack_extra = 0
+      assign cart_level_save = 0
+      for discount in cart.cart_level_discount_applications
+        assign cart_level_save = cart_level_save | plus: discount.total_allocated_amount
+      endfor
+      for item in cart.items
+        capture pack_line
+          render 'nurellea-pack-discount', price: item.original_price, quantity: item.quantity, final_line: item.final_line_price
+        endcapture
+        assign pack_parts = pack_line | strip | split: '|'
+        assign pack_extra = pack_extra | plus: pack_parts[2] | plus: 0
+      endfor
+      assign pack_uncovered = pack_extra | minus: cart_level_save
+      if pack_uncovered < 0
+        assign pack_uncovered = 0
+      endif
+      assign pack_total = cart.total_price | minus: pack_uncovered
+    -%}
     <span
       class="visually-hidden"
       ref="cartItemCount"
@@ -79,7 +98,7 @@
             role="caption"
           >
             {{ 'content.cart_total' | t }}
-            <span>{{ cart.total_price | money_with_currency }}</span>
+            <span>{{ pack_total | money_with_currency }}</span>
           </caption>
 
           <thead
@@ -124,6 +143,15 @@
           <tbody role="rowgroup">
             {% for item in cart.items %}
               {%- liquid
+                capture pack_line
+                  render 'nurellea-pack-discount', price: item.original_price, quantity: item.quantity, final_line: item.final_line_price
+                endcapture
+                assign pack_parts = pack_line | strip | split: '|'
+                assign pack_shown = pack_parts[0] | plus: 0
+                assign pack_full = pack_parts[1] | plus: 0
+                assign pack_percent = pack_parts[3] | plus: 0
+                assign pack_each = pack_shown | times: 1.0 | divided_by: item.quantity | round
+
                 # Auto refill lines: the plans this variant offers ("id:days,..."), so a quantity change can switch frequency.
                 assign refill_plans = ''
                 assign refill_units = 1
@@ -290,7 +318,12 @@
 
                   <div class="cart-items__unit-price-wrapper">
                     <div>
-                      {% if item.original_price != item.final_price %}
+                      {% if pack_shown < pack_full %}
+                        <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
+                        <span>{{ pack_each | money }}</span>
+                        <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
+                        <s class="compare-at-price">{{ item.original_price | money }}</s>
+                      {% elsif item.original_price != item.final_price %}
                         <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
                         <span>{{ item.final_price | money }}</span>
                         <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
@@ -379,10 +412,12 @@
                 </td>
                 {%- liquid
                   if settings.currency_code_enabled_cart_items
-                    assign price = item.final_line_price | money_with_currency
+                    assign price = pack_shown | money_with_currency
+                    assign pack_full_price = pack_full | money_with_currency
                     assign unit_price = item.unit_price | money_with_currency
                   else
-                    assign price = item.final_line_price | money
+                    assign price = pack_shown | money
+                    assign pack_full_price = pack_full | money
                     assign unit_price = item.unit_price | money
                   endif
                 -%}
@@ -392,6 +427,13 @@
                   headers="productTotal"
                 >
                   <text-component value="{{ price | strip_html }}">{{ price }}</text-component>
+                  {%- if pack_shown < pack_full -%}
+                    <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
+                    <s class="compare-at-price">{{ pack_full_price }}</s>
+                    {%- if pack_percent > 0 -%}
+                      <span class="cart-items__pack-discount">{{ pack_percent }}% pack discount</span>
+                    {%- endif -%}
+                  {%- endif -%}
                   {%- if item.unit_price_measurement -%}
                     <div class="cart-items__price-unit cart-secondary-typography">
                       {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}
@@ -651,6 +693,12 @@
   .cart-items__price-unit {
     font-size: var(--font-size--xs);
     padding-block-start: var(--padding-2xs);
+  }
+
+  .cart-items__pack-discount {
+    display: block;
+    font-size: var(--font-size--xs);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
   .cart-items__media-container {

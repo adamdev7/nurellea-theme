@@ -290,38 +290,23 @@
           {%- endif -%}
         </div>
 
-        <div class="nl-price" aria-live="polite">
-          {%- liquid
-            assign display_price = current_variant.price
-            assign display_compare = current_variant.compare_at_price
-            if selected_plan
-              assign alloc = current_variant.selected_selling_plan_allocation
-              assign display_price = alloc.price
-              assign display_compare = alloc.compare_at_price
-            elsif tier_mode
-              assign tier = tier_blocks[selected_tier]
-              capture tier_math
-                render 'nurellea-bundle-math', price: current_variant.price, qty: tier.settings.quantity, discount: tier.settings.discount, days: 0, live: tier_live
-              endcapture
-              assign tier_math = tier_math | strip | split: '|'
-              assign display_price = tier_math[0] | plus: 0
-              assign display_compare = tier_math[1] | plus: 0
-            endif
-          -%}
-          <span class="visually-hidden">Price</span>
-          <span class="nl-price__current" data-nl-price>{{ display_price | money }}</span>
-          <s class="nl-price__compare" data-nl-compare {% unless display_compare > display_price %}hidden{% endunless %}>
-            {%- if display_compare > display_price -%}{{ display_compare | money }}{%- endif -%}
-          </s>
-          <span class="nl-badge nl-badge--soft nl-price__save" data-nl-save {% unless display_compare > display_price %}hidden{% endunless %}>
-            {%- if display_compare > display_price -%}Save {{ display_compare | minus: display_price | money }}{%- endif -%}
-          </span>
-          <span class="nl-price__unit" data-nl-unit {% unless current_variant.unit_price_measurement %}hidden{% endunless %}>
-            {%- if current_variant.unit_price_measurement -%}
-              {{ current_variant.unit_price | money }}/{% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }}{% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
-            {%- endif -%}
-          </span>
-        </div>
+        {%- liquid
+          assign display_price = current_variant.price
+          assign display_compare = current_variant.compare_at_price
+          if selected_plan
+            assign alloc = current_variant.selected_selling_plan_allocation
+            assign display_price = alloc.price
+            assign display_compare = alloc.compare_at_price
+          elsif tier_mode
+            assign tier = tier_blocks[selected_tier]
+            capture tier_math
+              render 'nurellea-bundle-math', price: current_variant.price, qty: tier.settings.quantity, discount: tier.settings.discount, days: 0, live: tier_live
+            endcapture
+            assign tier_math = tier_math | strip | split: '|'
+            assign display_price = tier_math[0] | plus: 0
+            assign display_compare = tier_math[1] | plus: 0
+          endif
+        -%}
         {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
           <p class="nl-pdp__tax">
             {%- if cart.taxes_included -%}Taxes included.{% else %}Taxes calculated at checkout.{% endif %}

@@ -1,0 +1,41 @@
+{% doc %}
+  Pack price for one cart line, using the same bundle tiers as the product page.
+  2 bags are 10% off. 3 or more bags are 15% off.
+
+  Prints four numbers separated by pipes: shown|full|extra|percent
+  - shown: line price to display, in cents
+  - full: line price before the pack discount, in cents
+  - extra: pack savings not already included in Shopify's final line price, in cents
+  - percent: pack percent, or 0 when the line does not qualify
+
+  @param {number} price - Unit price in cents (line_item.original_price)
+  @param {number} quantity - Line quantity
+  @param {number} final_line - Shopify final line price in cents
+
+  @example
+  {% render 'nurellea-pack-discount', price: item.original_price, quantity: item.quantity, final_line: item.final_line_price %}
+{% enddoc %}
+{%- liquid
+  assign q = quantity | at_least: 1
+  assign full = price | times: q
+  assign percent = 0
+  if q >= 3
+    assign percent = 15
+  elsif q >= 2
+    assign percent = 10
+  endif
+  assign shown = full
+  if percent > 0
+    assign off = full | times: percent | divided_by: 100.0 | round
+    assign shown = full | minus: off
+  endif
+  assign shopify_final = final_line | default: full | plus: 0
+  if shopify_final < shown
+    assign shown = shopify_final
+  endif
+  assign extra = shopify_final | minus: shown
+  if extra < 0
+    assign extra = 0
+  endif
+  echo shown | append: '|' | append: full | append: '|' | append: extra | append: '|' | append: percent
+-%}

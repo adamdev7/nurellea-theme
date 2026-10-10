@@ -833,7 +833,7 @@
 .nl-price__compare { font-size: 1.05rem; color: var(--nl-muted); text-decoration: line-through; }
 .nl-price__save { font-size: 0.8rem; }
 .nl-price__unit { font-size: 0.85rem; color: var(--nl-muted); flex-basis: 100%; }
-.nl-pdp__tax { font-size: 0.82rem; color: var(--nl-muted); margin-top: -12px; }
+.nl-pdp__tax { font-size: 0.82rem; color: var(--nl-muted); }
 .nl-pdp__benefits { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .nl-pdp__benefits li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; line-height: 1.5; }
 .nl-pdp__benefits svg { width: 20px; height: 20px; color: var(--nl-rose-deep); margin-top: 2px; }

@@ -50,10 +50,10 @@
   endif
   assign subscribe_title = section.settings.subscribe_title
   if subscribe_title == blank
-    assign subscribe_title = 'Save 20% With Auto Refills'
+    assign subscribe_title = 'Save 20% on next order with auto refills'
   endif
   if subscribe_percent > 0
-    assign subscribe_title = 'Save ' | append: subscribe_percent | append: '% With Auto Refills'
+    assign subscribe_title = 'Save ' | append: subscribe_percent | append: '% on next order with auto refills'
   endif
   assign subscribe_subtitle = section.settings.subscribe_subtitle
   if subscribe_subtitle == blank
@@ -1184,8 +1184,8 @@
       "type": "text",
       "id": "subscribe_title",
       "label": "Checked label",
-      "default": "Save 20% With Auto Refills",
-      "info": "Used when the product has no percentage selling plan. A plan percent replaces this with “Save 20% With Auto Refills”."
+      "default": "Save 20% on next order with auto refills",
+      "info": "Used when the product has no percentage selling plan. A plan percent replaces this with “Save 20% on next order with auto refills”."
     },
     {
       "type": "text",

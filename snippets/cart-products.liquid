@@ -302,17 +302,6 @@
                       {%- if item.selling_plan_allocation -%}
                         <p>{{ item.selling_plan_allocation.selling_plan.name }}</p>
                       {%- endif -%}
-
-                      {%- if item.line_level_discount_allocations.size > 0 -%}
-                        <ul
-                          class="list-unstyled"
-                          role="list"
-                        >
-                          {%- for discount in item.line_level_discount_allocations -%}
-                            <li>{{ discount.discount_application.title | escape }}</li>
-                          {%- endfor -%}
-                        </ul>
-                      {%- endif -%}
                     {%- endif -%}
                   </div>
 
@@ -430,9 +419,18 @@
                   {%- if pack_shown < pack_full -%}
                     <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
                     <s class="compare-at-price">{{ pack_full_price }}</s>
-                    {%- if pack_percent > 0 -%}
-                      <span class="cart-items__pack-discount">{{ pack_percent }}% pack discount</span>
-                    {%- endif -%}
+                  {%- endif -%}
+                  {%- liquid
+                    assign pack_badge = item.line_level_discount_allocations | map: 'discount_application' | map: 'title' | uniq | join: ', '
+                    if pack_badge == blank and pack_percent > 0
+                      assign pack_badge = item.quantity | append: '-bag bundle'
+                    endif
+                  -%}
+                  {%- if pack_badge != blank -%}
+                    <span class="cart-items__pack-badge">
+                      {{- 'icon-discount.svg' | inline_asset_content -}}
+                      <span>{{ pack_badge | escape }}</span>
+                    </span>
                   {%- endif -%}
                   {%- if item.unit_price_measurement -%}
                     <div class="cart-items__price-unit cart-secondary-typography">
@@ -695,10 +693,25 @@
     padding-block-start: var(--padding-2xs);
   }
 
-  .cart-items__pack-discount {
-    display: block;
-    font-size: var(--font-size--xs);
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  .cart-items__pack-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-block-start: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--nl-rose-deep, #a3434f);
+    color: #fff;
+    font-size: var(--font-size--2xs);
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .cart-items__pack-badge svg {
+    width: 12px;
+    height: 12px;
+    flex: none;
   }
 
   .cart-items__media-container {

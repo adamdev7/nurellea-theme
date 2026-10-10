@@ -1,0 +1,56 @@
+{%- doc -%}
+  Faces row and Trustpilot photo banner at the top of the cart drawer items.
+  The faces are illustrations, not customer photos. Copy and photo come from Theme settings > Cart.
+{%- enddoc -%}
+{%- liquid
+  assign fans_text = settings.cart_fans_text | strip
+  assign banner_title = settings.cart_banner_title | strip
+  assign banner_image = settings.cart_banner_image
+  if banner_image == blank
+    assign banner_media = settings.nurellea_product.media | last
+    assign banner_image = banner_media.preview_image
+    if banner_image == blank
+      assign banner_image = settings.nurellea_product.featured_image
+    endif
+  endif
+-%}
+{%- if fans_text != blank -%}
+  <div class="nl-cart-fans">
+    <ul class="nl-cart-fans__faces" role="list" aria-hidden="true">
+      {% render 'nurellea-faces' %}
+    </ul>
+    <p class="nl-cart-fans__text">{{ fans_text | escape }}</p>
+  </div>
+{%- endif -%}
+{%- if banner_title != blank -%}
+  {%- if settings.cart_banner_link != blank -%}
+    <a class="nl-cart-banner" href="{{ settings.cart_banner_link }}" target="_blank" rel="noopener">
+  {%- else -%}
+    <div class="nl-cart-banner">
+  {%- endif -%}
+    {%- if banner_image != blank -%}
+      {{ banner_image | image_url: width: 900 | image_tag: class: 'nl-cart-banner__img', loading: 'lazy', sizes: '(min-width: 750px) 420px, 92vw', widths: '450, 700, 900', alt: '' }}
+    {%- endif -%}
+    <span class="nl-cart-banner__copy">
+      <span class="nl-cart-banner__brand">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="#00b67a" d="m12 2.2 2.9 6 6.6.8-4.8 4.5 1.3 6.5L12 16.8 6 20l1.3-6.5L2.5 9l6.6-.8L12 2.2z"/></svg>
+        Trustpilot
+      </span>
+      <span class="nl-cart-banner__title">{{ banner_title | escape }}</span>
+      <span class="nl-cart-banner__stars" role="img" aria-label="{{ banner_title | escape }} {{ settings.cart_banner_score | escape }}">
+        {%- for i in (1..5) -%}
+          <span class="nl-cart-banner__star{% if forloop.last %} nl-cart-banner__star--part{% endif %}">
+            <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="#fff" d="m12 2.4 2.8 5.8 6.4.8-4.7 4.4 1.3 6.3L12 16.7 6.2 19.7l1.3-6.3L2.8 9l6.4-.8L12 2.4z"/></svg>
+          </span>
+        {%- endfor -%}
+      </span>
+      {%- if settings.cart_banner_score != blank -%}
+        <span class="nl-cart-banner__score">{{ settings.cart_banner_score | escape }}</span>
+      {%- endif -%}
+    </span>
+  {%- if settings.cart_banner_link != blank -%}
+    </a>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+{%- endif -%}

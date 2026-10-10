@@ -198,12 +198,14 @@
                 id="cart-drawer-header"
               >
                 <div class="nl-cart-drawer__bar">
+                  <span class="nl-cart-drawer__bag svg-wrapper" aria-hidden="true">
+                    {{- 'icon-cart.svg' | inline_asset_content -}}
+                  </span>
                   <h2
-                    class="cart-drawer__heading h4"
+                    class="cart-drawer__heading nl-cart-drawer__title"
                     id="cart-drawer-heading"
                   >
-                    {{ 'content.cart_title' | t }}
-                    {% render 'cart-bubble' %}
+                    {{ 'content.nurellea_cart_heading' | t: count: cart.item_count }}
                   </h2>
 
                   <button
@@ -217,10 +219,23 @@
                     </span>
                   </button>
                 </div>
-                <p class="nl-cart-pulse">
-                  <span class="nl-cart-pulse__dot" aria-hidden="true"></span>
-                  <span>{{ 'content.nurellea_cart_pulse' | t }}</span>
-                </p>
+                {%- if settings.cart_timer_minutes > 0 -%}
+                  {%- liquid
+                    assign timer_text = settings.cart_timer_text | default: 'Your cart is reserved for [time] minutes' | escape
+                    assign timer_start = settings.cart_timer_minutes | append: ':00'
+                    if settings.cart_timer_minutes < 10
+                      assign timer_start = '0' | append: timer_start
+                    endif
+                    assign timer_clock = '<strong data-nl-timer-clock>' | append: timer_start | append: '</strong>'
+                  -%}
+                  <nl-cart-timer
+                    class="nl-cart-timer"
+                    data-minutes="{{ settings.cart_timer_minutes }}"
+                    data-expired="{{ settings.cart_timer_expired_text | default: 'Your cart is saved. Check out when you are ready.' | escape }}"
+                  >
+                    <span data-nl-timer-text>{{ timer_text | replace: '[time]', timer_clock }}</span>
+                  </nl-cart-timer>
+                {%- endif -%}
               </div>
 
               <scroll-hint
@@ -231,13 +246,14 @@
                 <scroll-hint
                   class="cart-drawer__items"
                 >
+                  {% render 'nurellea-cart-proof' %}
                   {% render 'cart-products' %}
                 </scroll-hint>
 
                 <div
                   class="cart-drawer__summary"
                 >
-                  {% render 'cart-summary', section_id: section.id %}
+                  {% render 'cart-summary', section_id: section.id, drawer: true %}
                 </div>
               </scroll-hint>
             {%- endif -%}

@@ -193,6 +193,12 @@
     "cart_total": "Cart total",
     "checkout": "Check out",
     "nurellea_cart_pulse": "Act fast. 10,561 women already take this daily.",
+    "nurellea_cart_heading": "Your Cart ({{ count }})",
+    "nurellea_cart_ship_left_html": "Add {{ amount }} to unlock <strong>Free Shipping</strong>",
+    "nurellea_cart_ship_done_html": "You unlocked <strong>Free Shipping</strong>",
+    "nurellea_cart_ship_label": "Free Shipping",
+    "nurellea_cart_discounts": "Discounts",
+    "nurellea_cart_discounts_info": "Pack discounts and codes taken off this order",
     "nurellea_cart_save": {
       "one": "You save {{ amount }} on this order",
       "other": "You save {{ amount }} on {{ count }} in your cart"

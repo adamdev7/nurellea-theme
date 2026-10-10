@@ -1770,6 +1770,65 @@
       },
       {
         "type": "header",
+        "content": "Nurellea cart drawer"
+      },
+      {
+        "type": "range",
+        "id": "cart_timer_minutes",
+        "label": "Cart timer (minutes)",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "default": 10,
+        "info": "Set to 0 to hide the timer. Shopify does not hold stock while it counts down."
+      },
+      {
+        "type": "text",
+        "id": "cart_timer_text",
+        "label": "Timer text",
+        "default": "Your cart is reserved for [time] minutes",
+        "info": "[time] is replaced by the countdown."
+      },
+      {
+        "type": "text",
+        "id": "cart_timer_expired_text",
+        "label": "Text when the timer ends",
+        "default": "Your cart is saved. Check out when you are ready."
+      },
+      {
+        "type": "text",
+        "id": "cart_fans_text",
+        "label": "Fans line",
+        "default": "Sarah, Emma, Chloe and 10,558 others love Nurellea",
+        "info": "Leave blank to hide the faces row."
+      },
+      {
+        "type": "image_picker",
+        "id": "cart_banner_image",
+        "label": "Trustpilot banner photo",
+        "info": "Falls back to the last photo of the Nurellea product."
+      },
+      {
+        "type": "text",
+        "id": "cart_banner_title",
+        "label": "Banner rating word",
+        "default": "Rated Excellent.",
+        "info": "Leave blank to hide the banner."
+      },
+      {
+        "type": "text",
+        "id": "cart_banner_score",
+        "label": "Banner review count",
+        "default": "Over 10,561 reviews"
+      },
+      {
+        "type": "url",
+        "id": "cart_banner_link",
+        "label": "Banner link",
+        "info": "Your Trustpilot profile."
+      },
+      {
+        "type": "header",
         "content": "t:content.product_media"
       },
       {

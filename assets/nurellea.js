@@ -516,6 +516,55 @@
     initReveal(root);
   }
 
+  // Cart drawer countdown. The drawer is re-rendered by morphing, which resets the text,
+  // so the observer repaints the clock straight away instead of waiting for the next tick.
+  const TIMER_KEY = 'nl_cart_reserved_until';
+  class CartTimer extends HTMLElement {
+    connectedCallback() {
+      this.paint = this.paint.bind(this);
+      this.paint();
+      this.interval = setInterval(this.paint, 1000);
+      this.observer = new MutationObserver(this.paint);
+      this.observer.observe(this, { childList: true, subtree: true, characterData: true });
+    }
+
+    disconnectedCallback() {
+      clearInterval(this.interval);
+      this.observer?.disconnect();
+    }
+
+    until() {
+      let until = 0;
+      try {
+        until = Number(sessionStorage.getItem(TIMER_KEY)) || 0;
+        if (!until) {
+          until = Date.now() + (Number(this.dataset.minutes) || 10) * 60000;
+          sessionStorage.setItem(TIMER_KEY, String(until));
+        }
+      } catch (e) {
+        until = this.fallbackUntil ||= Date.now() + (Number(this.dataset.minutes) || 10) * 60000;
+      }
+      return until;
+    }
+
+    paint() {
+      const left = Math.max(0, Math.round((this.until() - Date.now()) / 1000));
+      const text = this.querySelector('[data-nl-timer-text]');
+      if (!text) return;
+      if (left === 0) {
+        clearInterval(this.interval);
+        this.classList.add('is-expired');
+        const expired = this.dataset.expired || '';
+        if (text.textContent !== expired) text.textContent = expired;
+        return;
+      }
+      const clock = this.querySelector('[data-nl-timer-clock]');
+      const value = `${String(Math.floor(left / 60)).padStart(2, '0')}:${String(left % 60).padStart(2, '0')}`;
+      if (clock && clock.textContent !== value) clock.textContent = value;
+    }
+  }
+  if (!customElements.get('nl-cart-timer')) customElements.define('nl-cart-timer', CartTimer);
+
   window.Nurellea = Object.freeze({ init });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => init());

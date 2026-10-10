@@ -289,6 +289,12 @@
     },
     "quick_order_list": "Liste de commande rapide",
     "nurellea_cart_pulse": "Dépêchez-vous. 10 561 femmes le prennent déjà chaque jour.",
+    "nurellea_cart_heading": "Votre panier ({{ count }})",
+    "nurellea_cart_ship_left_html": "Ajoutez {{ amount }} pour la <strong>livraison gratuite</strong>",
+    "nurellea_cart_ship_done_html": "Vous avez débloqué la <strong>livraison gratuite</strong>",
+    "nurellea_cart_ship_label": "Livraison gratuite",
+    "nurellea_cart_discounts": "Réductions",
+    "nurellea_cart_discounts_info": "Réductions de pack et codes appliqués à cette commande",
     "nurellea_cart_save": {
       "one": "Vous économisez {{ amount }} sur cette commande",
       "other": "Vous économisez {{ amount }} sur {{ count }} au panier"

@@ -118,7 +118,9 @@
       this.variants = this.data.variants || [];
       this.form = $('form[data-type="add-to-cart-form"]', root);
       this.idInput = this.form ? $('input[name="id"]', this.form) : null;
-      this.planInput = this.form ? $('input[name="selling_plan"]', this.form) : null;
+      this.planInput = this.form
+        ? $('input[data-nl-refill-plan]', this.form) || $('input[name="selling_plan"]', this.form)
+        : null;
       this.atcButton = this.form ? $('button[name="add"]', this.form) : null;
       this.gallery = root.__nlGallery || null;
       this.sticky = $('[data-nl-sticky-atc]', document);
@@ -138,17 +140,17 @@
         input.addEventListener('change', () => input.checked && this.selectTier(Number(input.value)))
       );
       this.subscribeInput = $('[data-nl-subscribe]', root);
-      this.subscribeProp = this.form ? $('input[data-nl-subscribe-prop]', this.form) : null;
-      this.subscribeInput?.addEventListener('change', () => {
-        this.applySubscribe(this.subscribeInput.checked);
-      });
+      this.qtyInput = this.form ? $('input[name="quantity"]', this.form) : null;
+      this.subscribeInput?.addEventListener('change', () => this.applySubscribe());
+      ['input', 'change'].forEach((type) => this.qtyInput?.addEventListener(type, () => this.syncRefillPlan()));
+      this.form?.addEventListener('submit', () => this.syncRefillPlan(), true);
       const checkedTier = this.tierInputs.find((input) => input.checked);
       this.tierIndex = checkedTier ? Number(checkedTier.value) : 0;
 
       const initial = this.idInput?.value;
       this.current = this.variants.find((v) => String(v.id) === String(initial)) || this.variants[0];
       this.currentPlan = '';
-      if (this.subscribeInput) this.applySubscribe(this.subscribeInput.checked, false);
+      if (this.subscribeInput) this.applySubscribe(false);
       else this.currentPlan = this.planInput?.value || '';
       if (this.tierInputs.length) this.selectTier(this.tierIndex);
       else this.render();
@@ -199,15 +201,46 @@
       this.render();
     }
 
-    applySubscribe(checked, render = true) {
-      const planId = checked ? this.subscribeInput?.value || '' : '';
-      this.currentPlan = planId;
-      if (this.planInput) {
-        this.planInput.value = planId;
-        this.planInput.disabled = !planId;
-      }
-      if (this.subscribeProp) this.subscribeProp.disabled = !checked;
+    applySubscribe(render = true) {
+      this.syncRefillPlan();
       if (render) this.render();
+    }
+
+    refillDays() {
+      const perUnit = Number(this.data.refill_days_per_unit) || 30;
+      const units = this.tierInputs.length ? 1 : Number(this.current?.units) || 1;
+      const qty = Math.max(1, parseInt(this.qtyInput?.value, 10) || 1);
+      return units * qty * perUnit;
+    }
+
+    refillPlanId(variant = this.current) {
+      const target = this.refillDays();
+      let best = null;
+      Object.entries(variant?.plans || {}).forEach(([id, plan]) => {
+        const gap = Math.abs((Number(plan.days) || 0) - target);
+        if (!best || gap < best.gap) best = { id, gap };
+      });
+      return best ? best.id : '';
+    }
+
+    // Like Kaching: checked adds the line with the selling plan matching the supply (30/60/90 days); unchecked adds it as a one-time purchase.
+    syncRefillPlan() {
+      if (!this.subscribeInput) return;
+      this.currentPlan = this.subscribeInput.checked ? this.refillPlanId() : '';
+      if (this.planInput) {
+        this.planInput.value = this.currentPlan;
+        this.planInput.disabled = !this.currentPlan;
+      }
+      // Subscription app widgets (e.g. Shopify Subscriptions' app embed) inject their own selling_plan field,
+      // preset to their first plan; it would override the plan chosen here.
+      Array.from(this.form?.elements || []).forEach((el) => {
+        if (el.name === 'selling_plan' && el !== this.planInput) el.disabled = true;
+      });
+      const plan = this.currentPlan ? this.current?.plans?.[this.currentPlan] : null;
+      $$('[data-nl-refill-name]', this.root).forEach((el) => {
+        el.textContent = plan?.name || '';
+        el.hidden = !plan?.name;
+      });
     }
 
     selectPlan(planId) {
@@ -217,7 +250,6 @@
         this.planInput.disabled = !this.currentPlan;
       }
       if (this.subscribeInput) this.subscribeInput.checked = Boolean(this.currentPlan);
-      if (this.subscribeProp) this.subscribeProp.disabled = !this.subscribeInput?.checked;
       this.render();
     }
 
@@ -231,6 +263,7 @@
     render() {
       const v = this.current;
       if (!v) return;
+      this.syncRefillPlan();
       const p = this.priceFor(v);
       const set = (sel, text) => $$(sel, this.root).concat(this.sticky ? $$(sel, this.sticky) : []).forEach((el) => {
         if (text) {
@@ -241,7 +274,7 @@
           el.hidden = true;
         }
       });
-      const tier = this.currentPlan ? null : this.tier(v);
+      const tier = this.tier(v);
       const tierTitle = this.tierInputs.length ? this.tierInputs[this.tierIndex]?.dataset.title || '' : '';
       const variantTitle = this.variants.length > 1 ? v.title : '';
       if (tier) {

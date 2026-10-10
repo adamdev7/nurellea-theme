@@ -88,6 +88,33 @@ test('cart checkout button hands off to the configured Nurellea Phoenix URL with
   assert.equal(dest.searchParams.get('utm_source'), 'newsletter');
 });
 
+async function runBuyNow(planField) {
+  const out = await render(BASE);
+  const script = out.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/window\.location\.href\s*=/g, 'window.__phxNav =');
+  const env = createWindow({
+    url: 'https://nurellea.test/products/gut-gummies',
+    html: `<!doctype html><html><body><form action="/cart/add" method="post">
+      <input type="hidden" name="id" value="7"><input type="hidden" name="quantity" value="3">${planField}
+      <button type="button" data-action="buy-now">Buy now</button></form></body></html>`,
+    routes: (url) => (url.endsWith('/cart.js') ? mockResponse(CART) : undefined),
+  });
+  env.window.Shopify = { shop: 'nurellea-test.myshopify.com' };
+  env.window.eval(script);
+  await ready(env.window);
+  env.window.document.querySelector('[data-action="buy-now"]').click();
+  await tick(50);
+  const add = env.calls.find((c) => c.url.endsWith('/cart/add.js'));
+  return JSON.parse(add.init.body).items[0];
+}
+
+test('Buy Now keeps the auto refill selling plan on the line, and leaves one-time purchases without one', async () => {
+  const subscription = await runBuyNow('<input type="hidden" name="selling_plan" value="901">');
+  assert.equal(subscription.selling_plan, 901);
+  assert.equal(subscription.quantity, 3);
+  const oneTime = await runBuyNow('<input type="hidden" name="selling_plan" value="901" disabled>');
+  assert.equal('selling_plan' in oneTime, false);
+});
+
 test('allowlist mode keeps non-listed products on native Shopify checkout', async () => {
   const { window } = await runCheckout({ ...BASE, phx_routing_mode: 'allowlist', phx_product_allowlist: '1, 2' }, CART);
   assert.equal(window.__phxNav, '/checkout');

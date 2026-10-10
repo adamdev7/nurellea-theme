@@ -159,43 +159,81 @@ test('bundle options: the pre-selected tier sets cart quantity, prices and the p
   assert.equal(doc.querySelector('[data-nl-tier="0"] [data-nl-tier-save]').hidden, true);
 });
 
-test('auto refill stays checked by default and unchecking it is a one-time purchase', async () => {
-  const html = TIER_PDP.replace(
+const PLAN_30 = { days: 30, name: 'Delivery every month', price: '$40.19', compare_at: null, savings: null };
+const PLAN_60 = { days: 60, name: 'Delivery every 2 months', price: '$40.19', compare_at: null, savings: null };
+const PLAN_90 = { days: 90, name: 'Delivery every 3 months', price: '$40.19', compare_at: null, savings: null };
+
+async function bootAutoRefillPdp(plans = { 301: PLAN_30, 601: PLAN_60, 901: PLAN_90 }, appWidget = '') {
+  const json = { ...tierJson, refill_days_per_unit: 30, variants: [{ ...tierJson.variants[0], plans }] };
+  const html = TIER_PDP.replace(JSON.stringify(tierJson), JSON.stringify(json)).replace(
     '<form data-type="add-to-cart-form" action="/cart/add" method="post">',
     `<form data-type="add-to-cart-form" action="/cart/add" method="post">
-      <input type="hidden" name="selling_plan" value="99">
-      <input type="hidden" name="properties[Auto refill]" value="Yes" data-nl-subscribe-prop>`
+      <input type="hidden" name="selling_plan" value="901" data-nl-refill-plan>${appWidget}`
   ).replace(
     '<div data-nl-buy-area>',
-    `<label class="nl-offer"><input type="checkbox" data-nl-subscribe value="99" checked></label>
+    `<label class="nl-offer"><input type="checkbox" data-nl-subscribe checked><span data-nl-refill-name></span></label>
       <div data-nl-buy-area>`
   );
   const env = createWindow({ url: 'https://nurellea.test/products/gut-gummies', html });
   env.window.__META_CAPI__ = { variantId: 11, productPrice: 40.19 };
   env.window.eval(SCRIPT);
   await ready(env.window);
-  const doc = env.window.document;
-  const box = doc.querySelector('[data-nl-subscribe]');
-  const plan = doc.querySelector('input[name="selling_plan"]');
-  const prop = doc.querySelector('[data-nl-subscribe-prop]');
-  assert.equal(box.checked, true);
-  assert.equal(plan.disabled, false);
-  assert.equal(plan.value, '99');
-  assert.equal(prop.disabled, false);
-  assert.equal(doc.querySelector('input[name="quantity"]').value, '3');
-  box.checked = false;
-  box.dispatchEvent(new env.window.Event('change', { bubbles: true }));
-  assert.equal(plan.disabled, true);
-  assert.equal(prop.disabled, true);
-  assert.equal(doc.querySelector('input[name="quantity"]').value, '3');
-  box.checked = true;
-  box.dispatchEvent(new env.window.Event('change', { bubbles: true }));
-  assert.equal(plan.disabled, false);
-  assert.equal(plan.value, '99');
-  assert.equal(prop.disabled, false);
-  chooseTier(env.window, 0);
-  assert.equal(box.checked, true);
-  assert.equal(doc.querySelector('input[name="quantity"]').value, '1');
+  return env;
+}
+
+// What /cart/add receives: the selling plan id for a subscription, nothing for a one-time purchase.
+const submittedPlan = (window) => new window.FormData(window.document.querySelector('form')).get('selling_plan');
+
+const toggleAutoRefill = (window, checked) => {
+  const box = window.document.querySelector('[data-nl-subscribe]');
+  box.checked = checked;
+  box.dispatchEvent(new window.Event('change', { bubbles: true }));
+};
+
+test('auto refill checked adds the selling plan matching the supply: 1 bag/30 days, 2 bags/60, 3 bags/90', async () => {
+  const { window } = await bootAutoRefillPdp();
+  assert.equal(window.document.querySelector('[data-nl-subscribe]').checked, true);
+  assert.equal(submittedPlan(window), '901');
+  chooseTier(window, 1);
+  assert.equal(submittedPlan(window), '601');
+  chooseTier(window, 0);
+  assert.equal(submittedPlan(window), '301');
+  assert.equal(window.document.querySelector('input[name="quantity"]').value, '1');
+});
+
+test('auto refill unchecked adds a one-time purchase (no selling plan), re-checking restores it', async () => {
+  const { window } = await bootAutoRefillPdp();
+  toggleAutoRefill(window, false);
+  assert.equal(submittedPlan(window), null);
+  assert.equal(window.document.querySelector('input[name="quantity"]').value, '3');
+  assert.equal(window.document.querySelector('[data-nl-price]').textContent, '$102.48', 'bundle price still shown');
+  toggleAutoRefill(window, true);
+  assert.equal(submittedPlan(window), '901');
+  assert.equal(window.document.querySelector('[data-nl-price]').textContent, '$102.48');
+});
+
+test('a subscription app widget preset to "every month" cannot override the 3-bag plan; the chosen plan is shown', async () => {
+  const widget = '<div class="shopify-subscriptions-widget"><input type="radio" name="selling_plan" value="301" checked></div>';
+  const { window } = await bootAutoRefillPdp(undefined, widget);
+  const form = window.document.querySelector('form');
+  form.addEventListener('submit', (e) => e.preventDefault());
+  form.requestSubmit(form.querySelector('button[name="add"]'));
+  assert.deepEqual(new window.FormData(form).getAll('selling_plan'), ['901']);
+  const name = window.document.querySelector('[data-nl-refill-name]');
+  assert.equal(name.textContent, 'Delivery every 3 months');
+  chooseTier(window, 0);
+  assert.equal(name.textContent, 'Delivery every month');
+  toggleAutoRefill(window, false);
+  assert.equal(name.hidden, true);
+  assert.deepEqual(new window.FormData(form).getAll('selling_plan'), []);
+});
+
+test('auto refill uses the closest plan when an exact frequency is missing', async () => {
+  const { window } = await bootAutoRefillPdp({ 301: PLAN_30, 901: PLAN_90 });
+  chooseTier(window, 1);
+  assert.equal(submittedPlan(window), '301', '60 days: ties go to the first plan');
+  chooseTier(window, 2);
+  assert.equal(submittedPlan(window), '901');
 });
 
 test('bundle options: switching tiers updates quantity, Horizon quantity default, prices and attribution', async () => {

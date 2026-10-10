@@ -1,0 +1,44 @@
+{%- comment -%}
+  Outputs a selling plan's delivery frequency in days, read from its option values and name
+  ("Every 30 days", "2 months", "Deliver monthly, save 20%"). Outputs 0 when no frequency is found.
+  Usage: {% render 'nurellea-plan-days', plan: selling_plan %}
+{%- endcomment -%}
+{%- liquid
+  assign plan_days = 0
+  assign plan_text = plan.options | map: 'value' | join: ' '
+  assign plan_text = plan_text | append: ' ' | append: plan.name | downcase
+  assign plan_text = plan_text | replace: '-', ' ' | replace: ',', ' ' | replace: '(', ' ' | replace: ')', ' ' | replace: ':', ' ' | replace: '/', ' '
+  assign words = plan_text | split: ' '
+  assign pending = 1
+  for word in words
+    if word contains '%' or word contains '$'
+      assign pending = 1
+      continue
+    endif
+    assign number = word | plus: 0
+    if number > 0
+      assign pending = number
+      continue
+    endif
+    assign stem3 = word | slice: 0, 3
+    assign stem4 = word | slice: 0, 4
+    if stem3 == 'day' or word == 'daily'
+      assign plan_days = pending
+    elsif stem4 == 'week'
+      assign plan_days = pending | times: 7
+    elsif stem4 == 'fort'
+      assign plan_days = pending | times: 14
+    elsif stem4 == 'mont'
+      assign plan_days = pending | times: 30
+    elsif stem4 == 'quar'
+      assign plan_days = pending | times: 90
+    elsif stem4 == 'year' or stem4 == 'annu'
+      assign plan_days = pending | times: 365
+    endif
+    if plan_days > 0
+      break
+    endif
+    assign pending = 1
+  endfor
+  echo plan_days
+-%}

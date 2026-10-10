@@ -353,6 +353,40 @@
           <div class="nl-prose nl-small">{{ p.description | strip_html | truncatewords: 40 }}</div>
         {%- endif -%}
 
+        {%- liquid
+          # Auto refill renews the same supply: 1 bag every 30 days, 2 bags every 60, 3 bags every 90.
+          assign refill_days_per_bag = supply_days
+          if refill_days_per_bag < 1
+            assign refill_days_per_bag = 30
+          endif
+          if tier_mode
+            assign refill_bags = tier_blocks[selected_tier].settings.quantity | at_least: 1
+          else
+            assign refill_bags = current_variant.metafields.nurellea.units.value | default: 0 | plus: 0
+            if refill_bags < 1
+              assign refill_bags = current_variant.option1 | split: ' ' | first | plus: 0
+            endif
+            assign refill_min_qty = current_variant.quantity_rule.min | default: 1
+            assign refill_bags = refill_bags | at_least: 1 | times: refill_min_qty
+          endif
+          assign refill_days = refill_bags | times: refill_days_per_bag
+
+          # Same as Kaching: the cart line carries the Shopify selling plan whose frequency matches the supply.
+          assign refill_plan = nil
+          assign refill_gap = 0
+          if subscriptions_on
+            for allocation in current_variant.selling_plan_allocations
+              capture plan_days
+                render 'nurellea-plan-days', plan: allocation.selling_plan
+              endcapture
+              assign plan_gap = plan_days | strip | plus: 0 | minus: refill_days | abs
+              if refill_plan == nil or plan_gap < refill_gap
+                assign refill_plan = allocation.selling_plan
+                assign refill_gap = plan_gap
+              endif
+            endfor
+          endif
+        -%}
         <product-form-component
           data-section-id="{{ section.id }}"
           data-product-id="{{ p.id }}"
@@ -365,10 +399,9 @@
           <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
           {%- form 'product', p, id: form_id, data-type: 'add-to-cart-form' -%}
             <input type="hidden" name="id" ref="variantId" value="{{ current_variant.id }}">
-            {%- if subscribe_plan -%}
-              <input type="hidden" name="selling_plan" value="{{ subscribe_plan.id }}">
+            {%- if subscriptions_on -%}
+              <input type="hidden" name="selling_plan" value="{{ refill_plan.id }}" data-nl-refill-plan {% unless refill_plan %}disabled{% endunless %}>
             {%- endif -%}
-            <input type="hidden" name="properties[Auto refill]" value="Yes" data-nl-subscribe-prop>
 
             <div class="nl-stack">
               {%- if tier_mode -%}
@@ -665,21 +698,21 @@
               {%- endif -%}
 
               <div class="nl-stack nl-stack--sm" data-nl-buy-area>
-                <label class="nl-offer">
-                  <input
-                    type="checkbox"
-                    data-nl-subscribe
-                    value="{{ subscribe_plan.id }}"
-                    checked
-                  >
-                  <span class="nl-offer__box">
-                    <span class="nl-offer__check" aria-hidden="true"></span>
-                    <span class="nl-offer__copy">
-                      <span class="nl-offer__title">{{ subscribe_title | escape }}</span>
-                      <span class="nl-offer__sub">{{ subscribe_subtitle | escape }}</span>
+                {%- if subscriptions_on -%}
+                  <label class="nl-offer">
+                    <input type="checkbox" data-nl-subscribe checked>
+                    <span class="nl-offer__box">
+                      <span class="nl-offer__check" aria-hidden="true"></span>
+                      <span class="nl-offer__copy">
+                        <span class="nl-offer__title">{{ subscribe_title | escape }}</span>
+                        <span class="nl-offer__sub">{{ subscribe_subtitle | escape }}</span>
+                        <span class="nl-offer__sub" data-nl-refill-name>{{ refill_plan.name | escape }}</span>
+                      </span>
                     </span>
-                  </span>
-                </label>
+                  </label>
+                {%- elsif request.design_mode -%}
+                  <p class="nl-setup-note">The Auto Refills box is hidden: this product has no subscription plans yet (or “Offer subscriptions” is off in Theme settings). Create plans every 30, 60 and 90 days in your subscription app.</p>
+                {%- endif -%}
                 <span class="nl-stock" data-nl-stock data-available="{{ current_variant.available }}">
                   {%- if current_variant.available -%}In stock{%- else -%}Sold out{%- endif -%}
                 </span>
@@ -992,10 +1025,18 @@
         "per_day": "Just [amount]/day",
         "free_shipping": "Free shipping"
       },
+      "refill_days_per_unit": {{ refill_days_per_bag }},
       "variants": [
         {%- for variant in p.variants -%}
+          {%- liquid
+            assign v_units = variant.metafields.nurellea.units.value | default: 0 | plus: 0
+            if v_units < 1
+              assign v_units = variant.option1 | split: ' ' | first | plus: 0
+            endif
+          -%}
           {
             "id": {{ variant.id }},
+            "units": {{ v_units | at_least: 1 }},
             "title": {{ variant.title | json }},
             "available": {{ variant.available | json }},
             "price_cents": {{ variant.price }},
@@ -1034,7 +1075,10 @@
             "plans": {
               {%- if subscriptions_on -%}
                 {%- for a in variant.selling_plan_allocations -%}
+                  {%- capture plan_days -%}{% render 'nurellea-plan-days', plan: a.selling_plan %}{%- endcapture -%}
                   "{{ a.selling_plan.id }}": {
+                    "days": {{ plan_days | strip | plus: 0 }},
+                    "name": {{ a.selling_plan.name | json }},
                     "price": {{ a.price | money | json }},
                     "compare_at": {% if a.compare_at_price > a.price %}{{ a.compare_at_price | money | json }}{% else %}null{% endif %},
                     "savings": {% if a.compare_at_price > a.price %}{{ a.compare_at_price | minus: a.price | money | json }}{% else %}null{% endif %}

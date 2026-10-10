@@ -620,7 +620,19 @@ window.__PHX_CHECKOUT_URL = PHX_CHECKOUT_URL;
         ?.querySelector('input[name="quantity"]')?.value ||
       document.querySelector('input[name="quantity"]')?.value ||
       '1';
-    return { variantId, qty: parseInt(qtyRaw, 10) };
+    const properties = {};
+    form?.querySelectorAll('input[name^="properties["]:not(:disabled)').forEach((input) => {
+      properties[input.name.slice('properties['.length, -1)] = input.value;
+    });
+    // Subscription (selling plan) chosen on the product page; empty for one-time purchases.
+    const sellingPlan = form?.querySelector('[name="selling_plan"]:not(:disabled)')?.value || '';
+    return { variantId, qty: parseInt(qtyRaw, 10), properties, sellingPlan };
+  }
+
+  function cartLine(id, quantity, properties, sellingPlan) {
+    const line = { id, quantity, properties };
+    if (sellingPlan) line.selling_plan = Number(sellingPlan);
+    return line;
   }
 
 
@@ -647,7 +659,7 @@ window.__PHX_CHECKOUT_URL = PHX_CHECKOUT_URL;
       }
 
 
-      const { variantId } = getVariantFromContext(el);
+      const { variantId, properties, sellingPlan } = getVariantFromContext(el);
       const qtyBreakItems = getQtyBreakItems();
 
 
@@ -665,7 +677,7 @@ window.__PHX_CHECKOUT_URL = PHX_CHECKOUT_URL;
           await fetchWithTimeout('/cart/add.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] }),
+            body: JSON.stringify({ items: [cartLine(variantId, 1, properties, sellingPlan)] }),
           });
         }
         await handleCartRedirect();
@@ -704,7 +716,7 @@ window.__PHX_CHECKOUT_URL = PHX_CHECKOUT_URL;
         await fetchWithTimeout('/cart/add.js', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: [{ id: variantId, quantity: qty }] }),
+          body: JSON.stringify({ items: [cartLine(variantId, qty, properties, sellingPlan)] }),
         });
      
         log.info('Buy Now: variant', variantId, 'qty', qty);

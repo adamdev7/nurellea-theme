@@ -5,6 +5,8 @@
   'use strict';
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Auto refill: 1 bag every 30 days, 2 every 60, 3 or more every 90 (same cap as the cart).
+  const MAX_REFILL_BAGS = 3;
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -210,7 +212,7 @@
       const perUnit = Number(this.data.refill_days_per_unit) || 30;
       const units = this.tierInputs.length ? 1 : Number(this.current?.units) || 1;
       const qty = Math.max(1, parseInt(this.qtyInput?.value, 10) || 1);
-      return units * qty * perUnit;
+      return Math.min(units * qty, MAX_REFILL_BAGS) * perUnit;
     }
 
     refillPlanId(variant = this.current) {

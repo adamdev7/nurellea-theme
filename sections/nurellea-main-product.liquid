@@ -354,7 +354,7 @@
         {%- endif -%}
 
         {%- liquid
-          # Auto refill renews the same supply: 1 bag every 30 days, 2 bags every 60, 3 bags every 90.
+          # Auto refill renews the same supply: 1 bag every 30 days, 2 bags every 60, 3 or more every 90.
           assign refill_days_per_bag = supply_days
           if refill_days_per_bag < 1
             assign refill_days_per_bag = 30
@@ -369,7 +369,7 @@
             assign refill_min_qty = current_variant.quantity_rule.min | default: 1
             assign refill_bags = refill_bags | at_least: 1 | times: refill_min_qty
           endif
-          assign refill_days = refill_bags | times: refill_days_per_bag
+          assign refill_days = refill_bags | at_most: 3 | times: refill_days_per_bag
 
           # Same as Kaching: the cart line carries the Shopify selling plan whose frequency matches the supply.
           assign refill_plan = nil

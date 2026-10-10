@@ -19,6 +19,11 @@ import { cartPerformance } from '@theme/performance';
 
 /** @typedef {import('./utilities').TextComponent} TextComponent */
 
+/** Auto refill frequency follows the bags in the line (1 → shortest plan, 2 → twice that…) and stops growing at this many. */
+const MAX_REFILL_BAGS = 3;
+/** Plan switches already requested, so a switch Shopify refuses is never retried in a loop. */
+const requestedRefillSwitches = new Set();
+
 /**
  * A custom element that displays a cart items component.
  *
@@ -149,9 +154,12 @@ class CartItemsComponent extends Component {
       }
     });
 
+    const sellingPlan = this.#refillPlanFor(this.#rows()[line - 1], quantity);
+
     const body = JSON.stringify({
       line: line,
       quantity: quantity,
+      ...(sellingPlan && { selling_plan: sellingPlan }),
       sections: Array.from(sectionsToUpdate).join(','),
       sections_url: window.location.pathname,
     });
@@ -195,6 +203,7 @@ class CartItemsComponent extends Component {
         morphSection(this.sectionId, parsedResponseText.sections[this.sectionId], { mode: this.isDrawer ? 'hydration' : 'full' });
 
         this.#updateCartQuantitySelectorButtonStates();
+        this.#reconcileRefillPlans();
       })
       .catch((error) => {
         console.error(error);
@@ -255,10 +264,51 @@ class CartItemsComponent extends Component {
 
       // Update button states for all cart quantity selectors after morph
       this.#updateCartQuantitySelectorButtonStates();
+      this.#reconcileRefillPlans();
     } else {
-      sectionRenderer.renderSection(this.sectionId, { cache: false });
+      sectionRenderer.renderSection(this.sectionId, { cache: false }).then(() => this.#reconcileRefillPlans());
     }
   };
+
+  /** @returns {HTMLElement[]} The cart item rows, read from the DOM so they are current right after a morph. */
+  #rows() {
+    return Array.from(this.querySelectorAll('[ref="cartItemRows[]"]'));
+  }
+
+  /**
+   * The selling plan an auto refill line should have for a quantity, or null if it already has it (or isn't one).
+   * @param {HTMLElement | undefined} row
+   * @param {number} quantity
+   * @returns {number | null}
+   */
+  #refillPlanFor(row, quantity) {
+    const current = row?.dataset.nlRefillPlan;
+    if (!row || !current || quantity < 1) return null;
+    const plans = (row.dataset.nlRefillPlans || '')
+      .split(',')
+      .map((pair) => pair.split(':').map(Number))
+      .filter(([id, days]) => id > 0 && days > 0);
+    if (!plans.length) return null;
+    const daysPerBag = Math.min(...plans.map(([, days]) => days));
+    const bags = Math.min(quantity * (Number(row.dataset.nlRefillUnits) || 1), MAX_REFILL_BAGS);
+    const target = bags * daysPerBag;
+    const [best] = plans.reduce((a, b) => (Math.abs(b[1] - target) < Math.abs(a[1] - target) ? b : a));
+    return String(best) === current ? null : best;
+  }
+
+  /** Fixes an auto refill line whose plan no longer matches its quantity (e.g. after adding more of the same product). */
+  #reconcileRefillPlans() {
+    const rows = this.#rows();
+    const index = rows.findIndex((row) => {
+      const plan = this.#refillPlanFor(row, Number(row.dataset.nlRefillQty));
+      return plan !== null && !requestedRefillSwitches.has(`${row.dataset.key}:${plan}`);
+    });
+    if (index < 0) return;
+    const row = rows[index];
+    const quantity = Number(row.dataset.nlRefillQty);
+    requestedRefillSwitches.add(`${row.dataset.key}:${this.#refillPlanFor(row, quantity)}`);
+    this.updateQuantity({ line: index + 1, quantity, action: 'change' });
+  }
 
   /**
    * Disables the cart items.

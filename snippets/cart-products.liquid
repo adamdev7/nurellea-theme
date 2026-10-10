@@ -123,12 +123,36 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
+              {%- liquid
+                # Auto refill lines: the plans this variant offers ("id:days,..."), so a quantity change can switch frequency.
+                assign refill_plans = ''
+                assign refill_units = 1
+                if item.selling_plan_allocation
+                  for allocation in item.variant.selling_plan_allocations
+                    capture plan_days
+                      render 'nurellea-plan-days', plan: allocation.selling_plan
+                    endcapture
+                    assign plan_days = plan_days | strip
+                    assign refill_plans = refill_plans | append: allocation.selling_plan.id | append: ':' | append: plan_days | append: ','
+                  endfor
+                  assign refill_units = item.variant.metafields.nurellea.units.value | default: 0 | plus: 0
+                  if refill_units < 1
+                    assign refill_units = item.variant.option1 | split: ' ' | first | plus: 0 | at_least: 1
+                  endif
+                endif
+              -%}
               <tr
                 role="row"
                 class="cart-items__table-row{% if item.parent_relationship.parent != null %} cart-items__nested-line{% endif %}{% unless item.unit_price_measurement %} cart-items__table-row--full-width-variants{% endunless %}"
                 ref="cartItemRows[]"
                 data-parent-key="{{ item.parent_relationship.parent.key }}"
                 data-key="{{ item.key }}"
+                {%- if refill_plans != blank %}
+                  data-nl-refill-plan="{{ item.selling_plan_allocation.selling_plan.id }}"
+                  data-nl-refill-plans="{{ refill_plans }}"
+                  data-nl-refill-units="{{ refill_units }}"
+                  data-nl-refill-qty="{{ item.quantity }}"
+                {%- endif %}
               >
                 <td
                   class="cart-items__media"

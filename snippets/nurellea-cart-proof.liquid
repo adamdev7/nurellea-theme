@@ -1,18 +1,12 @@
 {%- doc -%}
   Faces row and Trustpilot photo banner at the top of the cart drawer items.
-  The faces are illustrations, not customer photos. Copy and photo come from Theme settings > Cart.
+  The faces are illustrations, not customer photos. Copy and photo come from Theme settings > Cart;
+  without an uploaded photo the banner uses the walking lifestyle shot from the theme assets.
 {%- enddoc -%}
 {%- liquid
   assign fans_text = settings.cart_fans_text | strip
   assign banner_title = settings.cart_banner_title | strip
   assign banner_image = settings.cart_banner_image
-  if banner_image == blank
-    assign banner_media = settings.nurellea_product.media | last
-    assign banner_image = banner_media.preview_image
-    if banner_image == blank
-      assign banner_image = settings.nurellea_product.featured_image
-    endif
-  endif
 -%}
 {%- if fans_text != blank -%}
   <div class="nl-cart-fans">
@@ -30,6 +24,8 @@
   {%- endif -%}
     {%- if banner_image != blank -%}
       {{ banner_image | image_url: width: 900 | image_tag: class: 'nl-cart-banner__img', loading: 'lazy', sizes: '(min-width: 750px) 420px, 92vw', widths: '450, 700, 900', alt: '' }}
+    {%- else -%}
+      <img class="nl-cart-banner__img nl-cart-banner__img--walk" src="{{ 'nl-life-walk.webp' | asset_url }}" alt="" width="864" height="1152" loading="lazy">
     {%- endif -%}
     <span class="nl-cart-banner__copy">
       <span class="nl-cart-banner__brand">

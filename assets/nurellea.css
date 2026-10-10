@@ -1437,6 +1437,7 @@ a.nl-pdp-intro__trustpilot:hover { text-decoration: underline; text-underline-of
   height: 100%;
   object-fit: cover;
 }
+.nl-cart-banner__img--walk { object-position: 40% 18%; }
 .nl-cart-banner::after {
   content: '';
   position: absolute;

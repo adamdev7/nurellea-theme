@@ -1806,7 +1806,7 @@
         "type": "image_picker",
         "id": "cart_banner_image",
         "label": "Trustpilot banner photo",
-        "info": "Falls back to the last photo of the Nurellea product."
+        "info": "Leave empty to use the walking lifestyle photo."
       },
       {
         "type": "text",

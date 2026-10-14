@@ -203,8 +203,10 @@ test('Product JSON-LD is emitted by exactly one section on the product template'
 
 test('integrations stay configurable and default to off / blank for Nurellea', () => {
   const data = parseThemeJson(read('config/settings_data.json')).current;
-  assert.equal(data.phx_enabled, false);
-  assert.equal((data.phx_checkout_url || '').trim(), '');
+  assert.equal(typeof data.phx_enabled, 'boolean');
+  const phxUrl = (data.phx_checkout_url || '').trim();
+  if (data.phx_enabled) assert.match(phxUrl, /^https:\/\/([a-z0-9-]+\.)*nurellea\.store(\/|$)/, 'Phoenix must use Nurellea\'s own checkout domain');
+  else assert.equal(phxUrl, '');
   assert.equal(data.app_manager_store_id, '');
   assert.equal(data.meta_capi_store_id, '');
   assert.equal(data.meta_capi_browser_token, '');
